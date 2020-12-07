@@ -1,5 +1,6 @@
 package server;
 
+import javafx.collections.ObservableList;
 import mailer.Message;
 
 import java.io.IOException;
@@ -9,14 +10,18 @@ import java.net.Socket;
 
 public final class ClientHandler implements Runnable {
 
+    private final String address;
     private final Socket socket;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
+    private final ObservableList<String> log;
 
-    public ClientHandler(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
+    public ClientHandler(String address, Socket socket, ObjectOutputStream out, ObjectInputStream in, ObservableList<String> log) {
+        this.address = address;
         this.socket = socket;
         this.out = out;
         this.in = in;
+        this.log = log;
     }
 
     @Override
@@ -27,14 +32,13 @@ public final class ClientHandler implements Runnable {
             if (msg == null) {
                 return;
             }
-            System.out.println("Received a message from a client");
 
             // Reply with an Hello message
             if (msg == Message.Hello) {
+                log.add(String.format("[%s] - received HELLO message", address));
                 out.writeObject(Message.Hello);
+                log.add(String.format("[%s] - sent HELLO message in response", address));
             }
-            System.out.println("Message is HELLO");
-            System.out.println("Sent hello as a response");
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
