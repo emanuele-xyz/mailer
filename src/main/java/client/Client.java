@@ -1,26 +1,53 @@
 package client;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import mailer.Constants;
+import mailer.Message;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-public class Client extends Application {
+public final class Client {
 
     public static void main(String[] args) {
-        launch(args);
+        try {
+            String hostname = InetAddress.getLocalHost().getHostName();
+            connectToServer(hostname);
+        } catch (UnknownHostException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
-    @Override
-    public void start(Stage stage) throws IOException {
-        URL fxmlURL = getClass().getResource("/client.fxml");
-        Parent root = FXMLLoader.load(fxmlURL);
-        stage.setTitle("First App!");
-        stage.setScene(new Scene(root));
-        stage.show();
+    private static void connectToServer(String hostname) {
+        try (Socket s = new Socket(hostname, Constants.SERVER_PORT);
+             ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+             ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream())) {
+
+            System.out.println("Connected to server");
+
+            out.writeObject(Message.Hello);
+
+            System.out.println("Sent HELLO message to server");
+
+            try {
+                Object tmp = in.readObject();
+                if (tmp != null && tmp.getClass().equals(Message.class)) {
+                    Message response = (Message) tmp;
+                    if (response == Message.Hello) {
+                        System.out.println("Received HELLO message from server");
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                System.err.println(e.getMessage());
+            }
+
+        } catch (UnknownHostException e) {
+            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
