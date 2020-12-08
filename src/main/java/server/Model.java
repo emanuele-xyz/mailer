@@ -1,5 +1,6 @@
 package server;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
@@ -9,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,7 +63,7 @@ public final class Model {
     }
 
     public void close() {
-        stopped.set(true);
+        stop();
 
         try {
             socket.close();
@@ -81,14 +83,20 @@ public final class Model {
                 // Log client connection
                 String clientAddress = incoming.getRemoteSocketAddress().toString();
                 String logMessage = String.format("Client %s - connection accepted", clientAddress);
-                log.add(logMessage);
+                Platform.runLater(() -> log.add(logMessage));
 
                 Runnable task = new ClientHandler(clientAddress, incoming, out, in, log);
                 exec.submit(task);
-
+            } catch (SocketException e) {
+                // Forcefully closing the server will cause this exception since
+                // the server always waits calling socket.accept(), but in the close method
+                // we close socket.
+                // e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        exec.shutdown();
     }
 }

@@ -1,5 +1,6 @@
 package server;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import mailer.Message;
 
@@ -33,17 +34,21 @@ public final class ClientHandler implements Runnable {
                 return;
             }
 
+            Thread.sleep(1000000000);
+
             // Reply with an Hello message
             if (msg == Message.Hello) {
-                log.add(String.format("[%s] - received HELLO message", address));
+                Platform.runLater(() -> log.add(String.format("[%s] - received HELLO message", address)));
                 out.writeObject(Message.Hello);
-                log.add(String.format("[%s] - sent HELLO message in response", address));
+                Platform.runLater(() -> log.add(String.format("[%s] - sent HELLO message in response", address)));
             }
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println(e.getMessage());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             // Close resources
 
