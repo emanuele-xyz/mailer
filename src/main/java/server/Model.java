@@ -28,7 +28,9 @@ public final class Model {
         socket = new ServerSocket(Constants.SERVER_PORT);
         stopped = new AtomicBoolean(true);
         // TODO: should I handle synchronization myself?
-        log = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+        // TODO: should I remove the synchronized part now that i use Platform.runLater?
+        // log = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+        log = FXCollections.observableArrayList();
     }
 
     public ObservableList<String> getLog() {
