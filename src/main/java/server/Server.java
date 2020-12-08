@@ -11,6 +11,10 @@ import java.net.URL;
 
 public final class Server extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         URL fxmlURL = getClass().getResource("/server.fxml");
@@ -20,13 +24,10 @@ public final class Server extends Application {
 
         Model model = new Model();
         controller.initModel(model);
+        controller.setStage(stage);
 
         stage.setTitle("First App!");
         stage.setScene(new Scene(root));
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

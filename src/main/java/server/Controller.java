@@ -3,6 +3,7 @@ package server;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 
 public final class Controller {
 
@@ -29,4 +30,7 @@ public final class Controller {
         stopButton.setOnAction(e -> model.stop());
     }
 
+    public void setStage(Stage stage){
+        stage.setOnCloseRequest(e -> model.close());
+    }
 }
