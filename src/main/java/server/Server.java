@@ -28,6 +28,7 @@ public final class Server extends Application {
 
         stage.setTitle("First App!");
         stage.setScene(new Scene(root));
+        stage.setAlwaysOnTop(true);
         stage.show();
     }
 }

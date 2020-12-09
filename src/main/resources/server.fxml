@@ -11,8 +11,7 @@
     <bottom>
         <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="startButton" mnemonicParsing="false" text="Start" />
-                <Button fx:id="stopButton" mnemonicParsing="false" text="Stop" />
+                <Button fx:id="closeButton" mnemonicParsing="false" text="Close" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />

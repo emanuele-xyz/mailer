@@ -12,9 +12,7 @@ public final class Controller {
     @FXML
     private ListView<String> logListView;
     @FXML
-    private Button startButton;
-    @FXML
-    private Button stopButton;
+    private Button closeButton;
 
     public void initModel(Model model) {
         if (this.model != null) {
@@ -22,12 +20,10 @@ public final class Controller {
         }
 
         this.model = model;
-
+        closeButton.setOnAction(e -> model.close());
         logListView.setItems(model.getLog());
 
-        startButton.setOnAction(e -> model.start());
-
-        stopButton.setOnAction(e -> model.stop());
+        model.start();
     }
 
     public void setStage(Stage stage){

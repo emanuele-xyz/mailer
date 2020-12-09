@@ -1,7 +1,5 @@
 package server;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import mailer.Message;
 
 import java.io.IOException;
@@ -15,14 +13,30 @@ public final class ClientHandler implements Runnable {
     private final Socket socket;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
-    private final ObservableList<String> log;
+    private final Logger logger;
 
-    public ClientHandler(String address, Socket socket, ObjectOutputStream out, ObjectInputStream in, ObservableList<String> log) {
+    public ClientHandler(String address, Socket socket, Logger logger) throws IOClientHandlerException {
         this.address = address;
         this.socket = socket;
-        this.out = out;
-        this.in = in;
-        this.log = log;
+
+        // If we cannot open input or output stream we are done!
+        // Remember that we have to close the socket
+        try {
+            this.out = new ObjectOutputStream(socket.getOutputStream());
+            this.in = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+
+            try {
+                socket.close();
+            } catch (IOException ioException) {
+                // TODO: what can we do if closing the socket fails?
+                ioException.printStackTrace();
+            }
+
+            throw new IOClientHandlerException(e.getMessage(), e.getCause());
+        }
+
+        this.logger = logger;
     }
 
     @Override
@@ -34,21 +48,17 @@ public final class ClientHandler implements Runnable {
                 return;
             }
 
-            Thread.sleep(1000000000);
-
             // Reply with an Hello message
             if (msg == Message.Hello) {
-                Platform.runLater(() -> log.add(String.format("[%s] - received HELLO message", address)));
+                logger.print(String.format("[%s] - received HELLO message", address));
                 out.writeObject(Message.Hello);
-                Platform.runLater(() -> log.add(String.format("[%s] - sent HELLO message in response", address)));
+                logger.print(String.format("[%s] - sent HELLO message in response", address));
             }
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println(e.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } finally {
             // Close resources
 
