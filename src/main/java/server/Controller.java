@@ -20,13 +20,19 @@ public final class Controller {
         }
 
         this.model = model;
-        closeButton.setOnAction(e -> model.close());
+        closeButton.setOnAction(e -> {
+            model.close();
+
+            // Disable the close button so that the user cannot press it anymore
+            // and trigger the model's close method multiple times
+            closeButton.setDisable(true);
+        });
         logListView.setItems(model.getLog());
 
         model.start();
     }
 
-    public void setStage(Stage stage){
+    public void setStage(Stage stage) {
         stage.setOnCloseRequest(e -> model.close());
     }
 }
