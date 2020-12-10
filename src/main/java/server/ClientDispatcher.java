@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ClientDispatcher implements Runnable {
 
+    private static final String THREAD_NAME = "Client Dispatcher";
     private static final int CORES = Runtime.getRuntime().availableProcessors();
 
     private final Logger logger;
@@ -32,6 +33,7 @@ public final class ClientDispatcher implements Runnable {
     public void close() {
         logger.print("Closing client dispatcher");
         closeRequested.set(true);
+
         exec.shutdown();
         try {
             serverSocket.close();
@@ -42,6 +44,9 @@ public final class ClientDispatcher implements Runnable {
 
     @Override
     public void run() {
+        // For debugging purposes
+        Thread.currentThread().setName(THREAD_NAME);
+
         while (true) {
             try {
                 // the incoming socket must be closed by its handler
@@ -64,7 +69,10 @@ public final class ClientDispatcher implements Runnable {
                 }
 
             } catch (SocketException e) {
-                // Thrown when the server socket is closed
+                // Thrown when the server socket is closed.
+                // If socket is closed, then the client dispatcher was closed.
+                // Hence we return, terminating the dispatcher thread.
+                return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
