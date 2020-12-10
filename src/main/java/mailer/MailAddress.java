@@ -1,8 +1,6 @@
 package mailer;
 
-import java.io.Serializable;
-
-public final class MailAddress implements Serializable {
+public final class MailAddress {
 
     private final String localPart;
     private final String domain;
@@ -12,11 +10,8 @@ public final class MailAddress implements Serializable {
         this.domain = domain;
     }
 
-    public String getLocalPart() {
-        return localPart;
-    }
-
-    public String getDomain() {
-        return domain;
+    @Override
+    public String toString() {
+        return localPart + "@" + domain;
     }
 }
