@@ -30,6 +30,21 @@ public final class Mail implements Serializable {
         this.text = text;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public MailAddress getFrom() {
+        return from;
+    }
+
+    public MailAddress[] getTo() {
+        // Why an array instead of a list?
+        // I want my Mail objects to be immutable!
+        MailAddress[] to = new MailAddress[this.to.size()];
+        return this.to.toArray(to);
+    }
+
     public String toJson() {
         return GSON.toJson(this);
     }
