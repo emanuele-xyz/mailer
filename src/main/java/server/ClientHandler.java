@@ -79,6 +79,8 @@ public final class ClientHandler implements Runnable {
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
+
+            logger.print(String.format("[%s] - connection closed", address));
         }
     }
 
