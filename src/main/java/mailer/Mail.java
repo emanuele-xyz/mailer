@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public final class Mail implements Serializable {
 
@@ -14,14 +15,14 @@ public final class Mail implements Serializable {
         return GSON.fromJson(json, Mail.class);
     }
 
-    private final int id;
+    private final UUID id;
     private final MailAddress from;
     private final List<MailAddress> to;
     private final Date date;
     private final String subject;
     private final String text;
 
-    public Mail(int id, MailAddress from, List<MailAddress> to, Date date, String subject, String text) {
+    public Mail(UUID id, MailAddress from, List<MailAddress> to, Date date, String subject, String text) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -30,7 +31,7 @@ public final class Mail implements Serializable {
         this.text = text;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
