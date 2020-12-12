@@ -40,6 +40,6 @@ public final class MailAddress {
 
     @Override
     public String toString() {
-        return local + "@" + domain;
+        return local + AT + domain;
     }
 }
