@@ -10,9 +10,9 @@ import java.util.*;
 
 public final class MailManager {
 
-    public static void main(String[] args) throws MkdirException, InvalidMailAddressException {
+    public static void main(String[] args) throws MkdirException, InvalidMailAddressException, NoSuchAddressException {
         Mail mail = new Mail(
-                781263,
+                UUID.randomUUID(),
                 new MailAddress("luca", "mailer.xyz"),
                 Arrays.asList(
                         new MailAddress("marco", "mailer.xyz"),
@@ -32,22 +32,36 @@ public final class MailManager {
         accounts = loadAccounts();
     }
 
-    // TODO: I have to make this method thread safe
-    // TODO: We don't want multiple threads to interfere during the processing of a mail
-    // TODO: We also don't want to kill parallelization blocking the entire mail manager
-    // TODO: How should I handle concurrency?
-    public void process(Mail mail) {
+    // To avoid killing parallelization we don't synchronize this method
+    // on the entire email manager.
+    // Each time we extract an account from 'accounts' we do that in mutual
+    // exclusion.
+    // Then, each 'send' and 'write' lock their account.
+    public void process(Mail mail) throws NoSuchAddressException {
         MailAddress from = mail.getFrom();
         MailAddress[] to = mail.getTo();
 
-        // TODO: what happens when there is no such account?
-        accounts.get(from).send(mail);
+        getAccount(from).send(mail);
         for (MailAddress recipient : to) {
-            accounts.get(recipient).receive(mail);
+            getAccount(recipient).receive(mail);
         }
     }
 
-    private Map<MailAddress, Account> loadAccounts() throws MkdirException, InvalidMailAddressException {
+    private Account getAccount(MailAddress address) throws NoSuchAddressException {
+        Account account;
+
+        // synchronize access to shared resource
+        synchronized (accounts) {
+            account = accounts.get(address);
+            if (account == null) {
+                // This server doesn't know of such an email address
+                throw new NoSuchAddressException(String.format("Unknown mail address '%s'", address));
+            }
+        }
+        return account;
+    }
+
+    private static Map<MailAddress, Account> loadAccounts() throws MkdirException, InvalidMailAddressException {
         String[] dirs = listAccountsDirectories();
         Map<MailAddress, Account> tmp = new HashMap<>(dirs.length);
 
@@ -58,7 +72,7 @@ public final class MailManager {
         return tmp;
     }
 
-    private String[] listAccountsDirectories() throws MkdirException {
+    private static String[] listAccountsDirectories() throws MkdirException {
         File dir = new File(Constants.SERVER_DIRECTORY);
         if (!dir.exists()) {
             boolean result = dir.mkdir();
