@@ -2,6 +2,8 @@ package server;
 
 import mailer.Constants;
 import mailer.InvalidMailAddressException;
+import server.exceptions.IOClientHandlerException;
+import server.exceptions.MkdirException;
 
 import java.io.IOException;
 import java.net.ServerSocket;

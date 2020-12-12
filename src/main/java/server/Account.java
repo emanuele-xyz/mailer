@@ -1,6 +1,7 @@
 package server;
 
 import mailer.Mail;
+import server.exceptions.MkdirException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

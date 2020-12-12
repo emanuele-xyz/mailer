@@ -4,6 +4,8 @@ import mailer.Constants;
 import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
+import server.exceptions.MkdirException;
+import server.exceptions.NoSuchAddressException;
 
 import java.io.File;
 import java.util.*;

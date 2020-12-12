@@ -1,6 +1,7 @@
 package server;
 
 import mailer.Message;
+import server.exceptions.IOClientHandlerException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

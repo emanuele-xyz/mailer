@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import mailer.InvalidMailAddressException;
+import server.exceptions.MkdirException;
 
 import java.io.IOException;
 import java.net.URL;

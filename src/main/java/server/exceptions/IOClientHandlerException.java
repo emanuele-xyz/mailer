@@ -1,4 +1,4 @@
-package server;
+package server.exceptions;
 
 public final class IOClientHandlerException extends Exception {
 

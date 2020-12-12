@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
 import mailer.InvalidMailAddressException;
+import server.exceptions.MkdirException;
 
 import java.io.IOException;
 
