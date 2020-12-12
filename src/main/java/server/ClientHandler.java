@@ -13,14 +13,15 @@ public final class ClientHandler implements Runnable {
     private final Socket socket;
     private final ObjectOutputStream out;
     private final ObjectInputStream in;
+    private final MailManager mailManager;
     private final Logger logger;
 
-    public ClientHandler(String address, Socket socket, Logger logger) throws IOClientHandlerException {
+    public ClientHandler(String address, Socket socket, MailManager mailManager, Logger logger) throws IOClientHandlerException {
         this.address = address;
         this.socket = socket;
 
         // If we cannot open input or output stream we are done!
-        // Remember that we have to close the socket
+        // Remember that is our job to close the socket
         try {
             this.out = new ObjectOutputStream(socket.getOutputStream());
             this.in = new ObjectInputStream(socket.getInputStream());
@@ -35,6 +36,8 @@ public final class ClientHandler implements Runnable {
 
             throw new IOClientHandlerException(e.getMessage(), e.getCause());
         }
+
+        this.mailManager = mailManager;
 
         this.logger = logger;
     }

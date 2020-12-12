@@ -3,6 +3,7 @@ package server;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
+import mailer.InvalidMailAddressException;
 
 import java.io.IOException;
 
@@ -10,9 +11,10 @@ public final class Model {
 
     private final ObservableList<String> log;
     private final Logger logger;
+
     private final ClientDispatcher clientDispatcher;
 
-    public Model() throws IOException {
+    public Model() throws IOException, MkdirException, InvalidMailAddressException {
         log = FXCollections.observableArrayList();
         logger = new Logger(log);
         // If ClientDispatcher creation fails, we are done
