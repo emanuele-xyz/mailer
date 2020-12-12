@@ -10,22 +10,6 @@ import java.util.*;
 
 public final class MailManager {
 
-    public static void main(String[] args) throws MkdirException, InvalidMailAddressException, NoSuchAddressException {
-        Mail mail = new Mail(
-                UUID.randomUUID(),
-                new MailAddress("luca", "mailer.xyz"),
-                Arrays.asList(
-                        new MailAddress("marco", "mailer.xyz"),
-                        new MailAddress("matteo", "mailer.xyz")),
-                new Date(),
-                "Important info!",
-                "Hi, I have important things to discuss with you. Would you come to my place this evening?"
-        );
-
-        MailManager manager = new MailManager();
-        manager.process(mail);
-    }
-
     private final Map<MailAddress, Account> accounts;
 
     public MailManager() throws MkdirException, InvalidMailAddressException {
