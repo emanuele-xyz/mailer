@@ -14,4 +14,8 @@ public final class Logger {
     public void print(String message) {
         Platform.runLater(() -> log.add(message));
     }
+
+    public void print(String message, Object ... args) {
+        Platform.runLater(() -> log.add(String.format(message, args)));
+    }
 }

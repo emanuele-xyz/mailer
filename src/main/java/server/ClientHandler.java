@@ -46,22 +46,16 @@ public final class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // Wait for Hello message
-            Message msg = readMessage();
+            // Wait for client message
+            Message msg = read(Message.class);
             if (msg == null) {
                 return;
             }
 
-            // Reply with an Hello message
-            if (msg == Message.Hello) {
-                logger.print(String.format("[%s] - received HELLO message", address));
-                out.writeObject(Message.Hello);
-                logger.print(String.format("[%s] - sent HELLO message in response", address));
-            }
+            // Process message
+            processMessage(msg);
 
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.err.println(e.getMessage());
         } finally {
             // Close resources
@@ -84,17 +78,38 @@ public final class ClientHandler implements Runnable {
                 System.err.println(e.getMessage());
             }
 
-            logger.print(String.format("[%s] - connection closed", address));
+            logger.print("[%s] - connection closed", address);
         }
     }
 
-    private Message readMessage() throws IOException, ClassNotFoundException {
+    private <T> T read(Class<T> target) throws IOException, ClassNotFoundException {
         Object tmp = in.readObject();
-        Message msg = null;
-        if (tmp != null && tmp.getClass().equals(Message.class)) {
-            msg = (Message) tmp;
+        if (tmp != null && tmp.getClass().equals(target)) {
+            return (T) tmp;
+        } else {
+            return null;
         }
+    }
 
-        return msg;
+    private void processMessage(Message message) throws IOException, ClassNotFoundException {
+        switch (message) {
+            case Hello: {
+                logger.print("[%s] - received HELLO message", address);
+                out.writeObject(Message.Hello);
+                logger.print("[%s] - sent HELLO message in response", address);
+                break;
+            }
+            case Login: {
+                logger.print("[%s] - received LOGIN message", address);
+
+                // Wait for mail address and verify it
+                String mailAddress = read(String.class);
+                boolean result = mailManager.verify(mailAddress);
+
+                logger.print("[%s] - user is %s registered", address, result ? "" : "not");
+                out.writeObject(result);
+                break;
+            }
+        }
     }
 }

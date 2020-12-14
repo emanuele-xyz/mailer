@@ -28,24 +28,25 @@ public final class Client {
 
             System.out.println("Connected to server");
 
-            out.writeObject(Message.Hello);
+            out.writeObject(Message.Login);
+            out.writeObject("marco@mailer.xyz");
 
-            System.out.println("Sent HELLO message to server");
+            System.out.println("Sent LOGIN message to server");
 
             try {
                 Object tmp = in.readObject();
-                if (tmp != null && tmp.getClass().equals(Message.class)) {
-                    Message response = (Message) tmp;
-                    if (response == Message.Hello) {
-                        System.out.println("Received HELLO message from server");
+                if (tmp != null && tmp.getClass().equals(Boolean.class)) {
+                    Boolean response = (Boolean) tmp;
+                    if (response) {
+                        System.out.println("Identified!");
+                    } else {
+                        System.out.println("Not identified!");
                     }
                 }
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
             }
 
-        } catch (UnknownHostException e) {
-            System.out.println(e.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

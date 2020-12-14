@@ -61,7 +61,7 @@ public final class ClientDispatcher implements Runnable {
                 }
 
                 String clientAddress = incoming.getRemoteSocketAddress().toString();
-                logger.print(String.format("[%s] - connection accepted", clientAddress));
+                logger.print("[%s] - connection accepted", clientAddress);
 
                 // Remember that is the client handler that has to close the socket,
                 // even when initialization fails
@@ -69,8 +69,8 @@ public final class ClientDispatcher implements Runnable {
                     Runnable task = new ClientHandler(clientAddress, incoming, mailManager, logger);
                     exec.submit(task);
                 } catch (IOClientHandlerException e) {
-                    logger.print(String.format("[%s] - cannot open data stream", clientAddress));
-                    logger.print(String.format("[%s] - closing connection", clientAddress));
+                    logger.print("[%s] - cannot open data stream", clientAddress);
+                    logger.print("[%s] - closing connection", clientAddress);
                 }
 
             } catch (SocketException e) {

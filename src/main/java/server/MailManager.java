@@ -18,6 +18,19 @@ public final class MailManager {
         accounts = loadAccounts();
     }
 
+    public boolean verify(String mailAddress) {
+        MailAddress address;
+        try {
+            address = new MailAddress(mailAddress);
+        } catch (InvalidMailAddressException e) {
+            return false;
+        }
+
+        synchronized (accounts) {
+            return accounts.containsKey(address);
+        }
+    }
+
     // To avoid killing parallelization we don't synchronize this method
     // on the entire email manager.
     // Each time we extract an account from 'accounts' we do that in mutual
