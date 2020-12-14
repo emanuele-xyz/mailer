@@ -2,6 +2,7 @@ package client;
 
 import mailer.Constants;
 import mailer.Message;
+import mailer.Utils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,15 +35,18 @@ public final class Client {
             System.out.println("Sent LOGIN message to server");
 
             try {
-                Object tmp = in.readObject();
-                if (tmp != null && tmp.getClass().equals(Boolean.class)) {
-                    Boolean response = (Boolean) tmp;
-                    if (response) {
-                        System.out.println("Identified!");
-                    } else {
-                        System.out.println("Not identified!");
-                    }
+                Boolean response = Utils.read(Boolean.class, in);
+                if (response == null) {
+                    System.err.println("Error during login protocol: cannot read result as a Boolean");
+                    return;
                 }
+
+                if (response) {
+                    System.out.println("Identified!");
+                } else {
+                    System.out.println("Not identified!");
+                }
+
             } catch (ClassNotFoundException e) {
                 System.err.println(e.getMessage());
             }

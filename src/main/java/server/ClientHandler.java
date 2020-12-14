@@ -1,6 +1,7 @@
 package server;
 
 import mailer.Message;
+import mailer.Utils;
 import server.exceptions.IOClientHandlerException;
 
 import java.io.IOException;
@@ -47,7 +48,7 @@ public final class ClientHandler implements Runnable {
     public void run() {
         try {
             // Wait for client message
-            Message msg = read(Message.class);
+            Message msg = Utils.read(Message.class, in);
             if (msg == null) {
                 return;
             }
@@ -82,15 +83,6 @@ public final class ClientHandler implements Runnable {
         }
     }
 
-    private <T> T read(Class<T> target) throws IOException, ClassNotFoundException {
-        Object tmp = in.readObject();
-        if (tmp != null && tmp.getClass().equals(target)) {
-            return (T) tmp;
-        } else {
-            return null;
-        }
-    }
-
     private void processMessage(Message message) throws IOException, ClassNotFoundException {
         switch (message) {
             case Hello: {
@@ -103,7 +95,7 @@ public final class ClientHandler implements Runnable {
                 logger.print("[%s] - received LOGIN message", address);
 
                 // Wait for mail address and verify it
-                String mailAddress = read(String.class);
+                String mailAddress = Utils.read(String.class, in);
                 boolean result = mailManager.verify(mailAddress);
 
                 logger.print("[%s] - user is %s registered", address, result ? "" : "not");
