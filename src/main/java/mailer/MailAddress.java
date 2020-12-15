@@ -1,6 +1,7 @@
 package mailer;
 
 import java.util.Objects;
+import org.apache.commons.validator.routines.EmailValidator;
 
 public final class MailAddress {
 
@@ -9,13 +10,19 @@ public final class MailAddress {
     private final String local;
     private final String domain;
 
-    // TODO: we should add better mail validation!
-    public MailAddress(String address) throws InvalidMailAddressException {
-        String[] tmp = address.split(AT);
-        if (tmp.length != 2) {
-            throw new InvalidMailAddressException(address);
+    public static boolean validate(String mailAddress) {
+        return EmailValidator.getInstance().isValid(mailAddress);
+    }
+
+    public MailAddress(String mailAddress) throws InvalidMailAddressException {
+        boolean isValid = validate(mailAddress);
+        if (!isValid) {
+            throw new InvalidMailAddressException(mailAddress);
         }
 
+        // If mailAddress is a valid mail address then splitting
+        // it will result in a String array with two elements
+        String[] tmp = mailAddress.split(AT);
         local = tmp[0];
         domain = tmp[1];
     }

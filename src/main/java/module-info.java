@@ -3,6 +3,7 @@ module mailer {
     requires javafx.graphics;
     requires javafx.fxml;
     requires com.google.gson;
+    requires commons.validator;
 
     opens client;
     opens server;
