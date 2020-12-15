@@ -20,7 +20,6 @@ public final class Server extends Application {
     @Override
     public void start(Stage stage) {
         try {
-
             URL fxmlURL = getClass().getResource("/server.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlURL);
             Parent root = loader.load();
@@ -30,14 +29,12 @@ public final class Server extends Application {
             controller.initModel(model);
             controller.setStage(stage);
 
-            stage.setTitle("First App!");
+            stage.setTitle("Mailer server");
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.show();
 
-        } catch (MkdirException e) {
-            System.err.printf("Error initializing server: '%s'", e.getMessage());
-        } catch (InvalidMailAddressException e) {
+        } catch (MkdirException | InvalidMailAddressException e) {
             System.err.printf("Error initializing server: '%s'", e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
