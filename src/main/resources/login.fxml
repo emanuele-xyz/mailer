@@ -5,41 +5,43 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <VBox alignment="CENTER_LEFT" prefHeight="400.0" prefWidth="429.0" spacing="20.0">
-         <children>
-            <Label text="Log in">
-               <font>
-                  <Font size="24.0" />
-               </font></Label>
-            <VBox prefHeight="0.0" prefWidth="520.0" spacing="5.0">
-               <children>
-                  <Label text="Username">
-                     <font>
-                        <Font size="16.0" />
-                     </font></Label>
-                  <TextField />
-               </children>
-            </VBox>
-            <VBox alignment="CENTER_RIGHT" prefHeight="6.0" prefWidth="320.0" spacing="10.0">
-               <children>
-                  <Button mnemonicParsing="false" text="Login">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Label text="Error during log in">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </VBox>
-         </children>
-         <padding>
-            <Insets left="40.0" right="40.0" />
-         </padding>
-      </VBox>
-   </children>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.LoginController">
+    <children>
+        <VBox alignment="CENTER_LEFT" prefHeight="400.0" prefWidth="429.0" spacing="20.0">
+            <children>
+                <Label text="Log in">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Label>
+                <VBox prefHeight="0.0" prefWidth="520.0" spacing="5.0">
+                    <children>
+                        <Label text="Username">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="usernameTextField" />
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER_RIGHT" prefHeight="6.0" prefWidth="320.0" spacing="10.0">
+                    <children>
+                        <Button fx:id="loginButton" mnemonicParsing="false" text="Login">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Button>
+                        <Label fx:id="errorLabel" text="Error during log in" textFill="#cb3234">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets left="40.0" right="40.0" />
+            </padding>
+        </VBox>
+    </children>
 </StackPane>
