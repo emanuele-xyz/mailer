@@ -6,6 +6,8 @@ public final class Constants {
 
     public static final String SERVER_DIRECTORY = "mailerServer";
 
+    public static final int CORES = Runtime.getRuntime().availableProcessors();
+
     private Constants() {
     }
 }

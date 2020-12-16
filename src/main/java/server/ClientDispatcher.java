@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class ClientDispatcher implements Runnable {
 
     private static final String THREAD_NAME = "Client Dispatcher";
-    private static final int CORES = Runtime.getRuntime().availableProcessors();
 
     private final Logger logger;
     private final AtomicBoolean closeRequested;
@@ -32,7 +31,7 @@ public final class ClientDispatcher implements Runnable {
         mailManager = new MailManager();
         // Be careful, we initialize exec last so that we don't
         // have to shutdown exec if something goes wrong
-        exec = Executors.newFixedThreadPool(CORES);
+        exec = Executors.newFixedThreadPool(Constants.CORES);
     }
 
     public void close() {
