@@ -1,7 +1,10 @@
 package server;
 
-import mailer.Message;
 import mailer.Utils;
+import mailer.messages.Error;
+import mailer.messages.Login;
+import mailer.messages.Message;
+import mailer.messages.Success;
 import server.exceptions.IOClientHandlerException;
 
 import java.io.IOException;
@@ -50,6 +53,9 @@ public final class ClientHandler implements Runnable {
             // Wait for client message
             Message msg = Utils.read(Message.class, in);
             if (msg == null) {
+                // If we cannot read the message send an error to the client
+                // to avoid leaving it hanging
+                sendMessage(new Error("Unable to correctly read message"));
                 return;
             }
 
@@ -84,24 +90,47 @@ public final class ClientHandler implements Runnable {
     }
 
     private void processMessage(Message message) throws IOException, ClassNotFoundException {
-        switch (message) {
-            case Hello: {
-                logger.print("[%s] - received HELLO message", address);
-                out.writeObject(Message.Hello);
-                logger.print("[%s] - sent HELLO message in response", address);
-                break;
+        switch (message.getType()) {
+            case LOGIN: {
+                Login login = castMessage(Login.class, message);
+                if (login == null) {
+                    sendMessage(new Error("Cannot interpret message as login message"));
+                } else {
+                    processLogin(login);
+                }
             }
-            case Login: {
-                logger.print("[%s] - received LOGIN message", address);
 
-                // Wait for mail address and verify it
-                String mailAddress = Utils.read(String.class, in);
-                boolean result = mailManager.verify(mailAddress);
-
-                logger.print("[%s] - user is %s registered", address, result ? "" : "not");
-                out.writeObject(result);
+            case ERROR:
+            case SUCCESS:
+                // If server receives a success or error message
+                // without any context it doesn't do anything
                 break;
-            }
+        }
+    }
+
+    private void processLogin(Login loginMessage) throws IOException {
+        logger.print("[%s] - received %s message", address, loginMessage.getType());
+
+        // Verify mail address and log result
+        boolean result = mailManager.verify(loginMessage.getMailAddress());
+        logger.print("[%s] - user is %s registered", address, result ? "" : "not");
+
+        if (result) {
+            sendMessage(new Success());
+        } else {
+            sendMessage(new Error("Unknown mail"));
+        }
+    }
+
+    private void sendMessage(Message message) throws IOException {
+        out.writeObject(message);
+    }
+
+    private <T> T castMessage(Class<T> target, Message message) {
+        if (message != null && message.getClass().equals(target)) {
+            return (T) message;
+        } else {
+            return null;
         }
     }
 }
