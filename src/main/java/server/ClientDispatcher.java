@@ -2,10 +2,11 @@ package server;
 
 import mailer.Constants;
 import mailer.InvalidMailAddressException;
-import server.exceptions.IOClientHandlerException;
 import server.exceptions.MkdirException;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -62,14 +63,25 @@ public final class ClientDispatcher implements Runnable {
                 String clientAddress = incoming.getRemoteSocketAddress().toString();
                 logger.print("[%s] - connection accepted", clientAddress);
 
-                // Remember that is the client handler that has to close the socket,
-                // even when initialization fails
+                // If data stream initialization fails, we will close the socket, otherwise it is
+                // responsibility of our handler to close all the resources
                 try {
-                    Runnable task = new ClientHandler(clientAddress, incoming, mailManager, logger);
+                    ObjectOutputStream out = new ObjectOutputStream(incoming.getOutputStream());
+                    ObjectInputStream in = new ObjectInputStream(incoming.getInputStream());
+                    Runnable task = new ClientHandler(incoming, in, out, clientAddress, mailManager, logger);
                     exec.submit(task);
-                } catch (IOClientHandlerException e) {
-                    logger.print("[%s] - cannot open data stream", clientAddress);
-                    logger.print("[%s] - closing connection", clientAddress);
+                } catch (IOException e) {
+                    // Data stream initialization failed, we have to close the socket ourselves
+
+                    logger.print("[%s] - cannot open data stream, connection is automatically closed", clientAddress);
+
+                    try {
+                        incoming.close();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+
+                    e.printStackTrace();
                 }
 
             } catch (SocketException e) {

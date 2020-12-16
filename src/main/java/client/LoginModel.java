@@ -15,7 +15,7 @@ public final class LoginModel {
 
     public void tryLogin() {
         if (validateUsername()) {
-            // Load main app window
+            // TODO: Load main app window
             errorMessage.set("");
         } else {
             errorMessage.set("Error! Cannot login");

@@ -5,21 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import mailer.Constants;
-import mailer.InvalidMailAddressException;
-import mailer.Message;
-import mailer.Utils;
-import server.Controller;
-import server.Model;
-import server.exceptions.MkdirException;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 public final class Client extends Application {
 
