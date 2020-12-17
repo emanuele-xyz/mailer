@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
-public final class ServerHandler extends ConnectionHandler {
+public final class ServerHandler extends ConnectionHandler implements Callable<Message> {
 
     private final Message message;
 
@@ -18,21 +19,30 @@ public final class ServerHandler extends ConnectionHandler {
     }
 
     @Override
-    public void execute() throws IOException, ClassNotFoundException {
-        // TODO: dispatch message
+    public Message call() throws IOException {
+        Message result = processMessage(message);
+        closeConnection();
+        return result;
+    }
+
+    private Message processMessage(Message message) throws IOException {
+        if (message == null) {
+            return null;
+        }
 
         switch (message.getType()) {
-            case LOGIN:
-                // TODO: send login message
-                break;
+            case LOGIN: {
+                sendMessage(message);
+                Message tmp = readMessage();
+                processMessage(tmp);
+            }
 
             case ERROR:
-                // TODO: send error message
-                break;
-
-            case SUCCESS:
-                // TODO: send success message
-                break;
+            case SUCCESS: {
+                return message;
+            }
         }
+
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public final class LoginController {
 
@@ -29,5 +30,9 @@ public final class LoginController {
         loginButton.setOnAction(e -> this.model.tryLogin());
 
         errorLabel.textProperty().bind(this.model.errorMessageProperty());
+    }
+
+    public void setStage(Stage stage) {
+        stage.setOnCloseRequest(e -> model.close());
     }
 }

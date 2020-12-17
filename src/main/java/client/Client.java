@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public final class Client extends Application {
 
@@ -16,7 +17,7 @@ public final class Client extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         try {
             URL fxmlURL = getClass().getResource("/login.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlURL);
@@ -25,12 +26,15 @@ public final class Client extends Application {
 
             LoginModel model = new LoginModel();
             controller.initModel(model);
+            controller.setStage(stage);
 
             stage.setTitle("Mailer client");
             stage.setScene(new Scene(root));
             stage.setAlwaysOnTop(true);
             stage.show();
 
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public final class ClientHandler extends ConnectionHandler {
+public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     private final String address;
     private final MailManager mailManager;
@@ -25,23 +25,30 @@ public final class ClientHandler extends ConnectionHandler {
     }
 
     @Override
-    public void execute() throws IOException, ClassNotFoundException {
-        // Wait for client message
-        Message msg = readMessage();
-        if (msg == null) {
-            // If we cannot read the message send an error to the client
-            // to avoid leaving it hanging
-            sendMessage(new Error("Unable to correctly read message"));
-            return;
+    public void run() {
+        try {
+            // Wait for client message
+            Message msg = readMessage();
+            if (msg == null) {
+                // If we cannot read the message send an error to the client
+                // to avoid leaving it hanging
+                sendMessage(new Error("Unable to correctly read message"));
+                return;
+            }
+
+            // Process message
+            processMessage(msg);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+            logger.print("[%s] - closing connection", address);
         }
 
-        // Process message
-        processMessage(msg);
+  }
 
-        logger.print("[%s] - closing connection", address);
-    }
-
-    private void processMessage(Message message) throws IOException, ClassNotFoundException {
+    private void processMessage(Message message) throws IOException {
         switch (message.getType()) {
             case LOGIN: {
                 Login login = castMessage(Login.class, message);

@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public abstract class ConnectionHandler implements Runnable {
+public abstract class ConnectionHandler {
 
     private final Socket socket;
     private final ObjectInputStream in;
@@ -20,49 +20,35 @@ public abstract class ConnectionHandler implements Runnable {
         this.out = out;
     }
 
-    public abstract void execute() throws IOException, ClassNotFoundException;
-
-    @Override
-    public final void run() {
+    public final void closeConnection() {
         try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            execute();
+        try {
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-        } finally {
-
-            // Close resources
-
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    protected Message readMessage() throws IOException, ClassNotFoundException {
+    protected final Message readMessage() {
         return Utils.read(Message.class, in);
     }
 
-    protected void sendMessage(Message message) throws IOException {
+    protected final void sendMessage(Message message) throws IOException {
         out.writeObject(message);
     }
 
-    protected <T> T castMessage(Class<T> target, Message message) {
+    protected final <T> T castMessage(Class<T> target, Message message) {
         if (message != null && message.getClass().equals(target)) {
             return (T) message;
         } else {
