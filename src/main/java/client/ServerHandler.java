@@ -19,9 +19,15 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
     }
 
     @Override
-    public Message call() throws IOException {
-        Message result = processMessage(message);
-        closeConnection();
+    public Message call() {
+        Message result = null;
+        try {
+            result = processMessage(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
         return result;
     }
 
