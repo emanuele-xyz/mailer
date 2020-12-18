@@ -44,8 +44,17 @@ public abstract class ConnectionHandler {
         return Utils.read(Message.class, in);
     }
 
-    protected final void sendMessage(Message message) throws IOException {
-        out.writeObject(message);
+    protected final boolean sendMessage(Message message) {
+        boolean success = true;
+
+        try {
+            out.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
     }
 
     protected final <T> T castMessage(Class<T> target, Message message) {

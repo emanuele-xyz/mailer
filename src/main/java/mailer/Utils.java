@@ -15,7 +15,7 @@ public final class Utils {
             e.printStackTrace();
         }
 
-        if (tmp != null && tmp.getClass().equals(target)) {
+        if (tmp != null && target.isAssignableFrom(tmp.getClass())) {
             return (T) tmp;
         } else {
             return null;

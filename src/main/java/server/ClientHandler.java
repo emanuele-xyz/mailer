@@ -6,7 +6,6 @@ import mailer.messages.Login;
 import mailer.messages.Message;
 import mailer.messages.Success;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -26,29 +25,26 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     @Override
     public void run() {
-        try {
-            // Wait for client message
-            Message msg = readMessage();
-            if (msg == null) {
-                // If we cannot read the message send an error to the client
-                // to avoid leaving it hanging
-                sendMessage(new Error("Unable to correctly read message"));
-                return;
-            }
-
-            // Process message
-            processMessage(msg);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection();
-            logger.print("[%s] - closing connection", address);
+        // Wait for client message
+        Message msg = readMessage();
+        if (msg == null) {
+            // If we cannot read the message send an error to the client
+            // to avoid leaving it hanging
+            // TODO: always check send message return value
+            sendMessage(new Error("Unable to correctly read message"));
+            logger.print("[%s] - error reading message");
+            return;
         }
 
+        // Process message
+        // TODO: return boolean flag to signify failure
+        processMessage(msg);
+
+        closeConnection();
+        logger.print("[%s] - closing connection", address);
   }
 
-    private void processMessage(Message message) throws IOException {
+    private void processMessage(Message message) {
         switch (message.getType()) {
             case LOGIN: {
                 Login login = castMessage(Login.class, message);
@@ -67,7 +63,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         }
     }
 
-    private void processLogin(Login loginMessage) throws IOException {
+    private void processLogin(Login loginMessage) {
         logger.print("[%s] - received %s message", address, loginMessage.getType());
 
         // Verify mail address and log result
