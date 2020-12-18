@@ -30,6 +30,8 @@ public final class LoginController {
         loginButton.setOnAction(e -> this.model.tryLogin());
 
         errorLabel.textProperty().bind(this.model.errorMessageProperty());
+
+        // TODO: set isLoggedIn event handler
     }
 
     public void setStage(Stage stage) {

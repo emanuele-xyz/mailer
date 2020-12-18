@@ -1,5 +1,6 @@
 package client;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mailer.MailAddress;
 import mailer.Utils;
@@ -15,12 +16,14 @@ public final class LoginModel {
 
     private final SimpleStringProperty username;
     private final SimpleStringProperty errorMessage;
+    private final SimpleBooleanProperty isLoggedIn;
 
     private final ServerDispatcher serverDispatcher;
 
     public LoginModel() throws UnknownHostException {
         username = new SimpleStringProperty();
         errorMessage = new SimpleStringProperty();
+        isLoggedIn = new SimpleBooleanProperty(false);
         this.serverDispatcher = new ServerDispatcher();
     }
 
@@ -43,9 +46,7 @@ public final class LoginModel {
             }
 
             if (isLoginSuccessful(message)) {
-                // TODO: Load main app window
-                // TODO: Remove this
-                errorMessage.set("Login successful");
+                isLoggedIn.set(true);
             } else {
                 ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
                 if (err != null) {
