@@ -22,6 +22,14 @@ public final class Utils {
         }
     }
 
+    public static <T> T tryCast(Class<T> target, Object obj) {
+        if (obj != null && target.isAssignableFrom(obj.getClass())) {
+            return (T) obj;
+        } else {
+            return null;
+        }
+    }
+
     private Utils() {
     }
 }

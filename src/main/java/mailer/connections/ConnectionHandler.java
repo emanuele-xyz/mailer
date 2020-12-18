@@ -58,10 +58,6 @@ public abstract class ConnectionHandler {
     }
 
     protected final <T> T castMessage(Class<T> target, Message message) {
-        if (message != null && message.getClass().equals(target)) {
-            return (T) message;
-        } else {
-            return null;
-        }
+        return Utils.tryCast(target, message);
     }
 }
