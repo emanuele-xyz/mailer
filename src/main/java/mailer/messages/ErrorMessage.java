@@ -1,10 +1,10 @@
 package mailer.messages;
 
-public final class Error extends Message {
+public final class ErrorMessage extends Message {
 
     private final String message;
 
-    public Error(String message) {
+    public ErrorMessage(String message) {
         super(MessageType.ERROR);
         this.message = message;
     }

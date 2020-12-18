@@ -1,8 +1,8 @@
 package server;
 
 import mailer.connections.ConnectionHandler;
-import mailer.messages.Error;
-import mailer.messages.Login;
+import mailer.messages.ErrorMessage;
+import mailer.messages.LoginMessage;
 import mailer.messages.Message;
 import mailer.messages.Success;
 
@@ -31,7 +31,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
             // If we cannot read the message send an error to the client
             // to avoid leaving it hanging
             // TODO: always check send message return value
-            sendMessage(new Error("Unable to correctly read message"));
+            sendMessage(new ErrorMessage("Unable to correctly read message"));
             logger.print("[%s] - error reading message");
             return;
         }
@@ -47,11 +47,11 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
     private void processMessage(Message message) {
         switch (message.getType()) {
             case LOGIN: {
-                Login login = castMessage(Login.class, message);
-                if (login == null) {
-                    sendMessage(new Error("Cannot interpret message as login message"));
+                LoginMessage loginMessage = castMessage(LoginMessage.class, message);
+                if (loginMessage == null) {
+                    sendMessage(new ErrorMessage("Cannot interpret message as login message"));
                 } else {
-                    processLogin(login);
+                    processLogin(loginMessage);
                 }
             }
 
@@ -63,7 +63,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         }
     }
 
-    private void processLogin(Login loginMessage) {
+    private void processLogin(LoginMessage loginMessage) {
         logger.print("[%s] - received %s message", address, loginMessage.getType());
 
         // Verify mail address and log result
@@ -73,7 +73,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         if (result) {
             sendMessage(new Success());
         } else {
-            sendMessage(new Error("Unknown mail"));
+            sendMessage(new ErrorMessage("Unknown mail"));
         }
     }
 }

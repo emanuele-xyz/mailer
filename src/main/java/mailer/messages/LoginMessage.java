@@ -1,10 +1,10 @@
 package mailer.messages;
 
-public final class Login extends Message {
+public final class LoginMessage extends Message {
 
     private final String mailAddress;
 
-    public Login(String mailAddress) {
+    public LoginMessage(String mailAddress) {
         super(MessageType.LOGIN);
         this.mailAddress = mailAddress;
     }

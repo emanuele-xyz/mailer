@@ -15,16 +15,12 @@ public final class Utils {
             e.printStackTrace();
         }
 
-        if (tmp != null && target.isAssignableFrom(tmp.getClass())) {
-            return (T) tmp;
-        } else {
-            return null;
-        }
+        return tryCast(target, tmp);
     }
 
     public static <T> T tryCast(Class<T> target, Object obj) {
-        if (obj != null && target.isAssignableFrom(obj.getClass())) {
-            return (T) obj;
+        if (target.isInstance(obj)) {
+            return target.cast(obj);
         } else {
             return null;
         }

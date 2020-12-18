@@ -2,7 +2,9 @@ package client;
 
 import javafx.beans.property.SimpleStringProperty;
 import mailer.MailAddress;
-import mailer.messages.Login;
+import mailer.Utils;
+import mailer.messages.LoginMessage;
+import mailer.messages.ErrorMessage;
 import mailer.messages.Message;
 
 import java.net.UnknownHostException;
@@ -30,7 +32,8 @@ public final class LoginModel {
         String mailAddress = validateUsername();
 
         if (mailAddress != null) {
-            Future<Message> response = serverDispatcher.sendToServer(new Login(mailAddress));
+            LoginMessage msg = new LoginMessage(mailAddress);
+            Future<Message> response = serverDispatcher.sendToServer(msg);
             Message message = getResult(response);
             if (message == null) {
                 // Something went wrong during communication between client
@@ -39,9 +42,19 @@ public final class LoginModel {
                 return;
             }
 
-            // TODO: Load main app window
-            // TODO: Remove this
-            errorMessage.set("Login successful");
+            if (isLoginSuccessful(message)) {
+                // TODO: Load main app window
+                // TODO: Remove this
+                errorMessage.set("Login successful");
+            } else {
+                ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
+                if (err != null) {
+                    errorMessage.set(err.getMessage());
+                } else {
+                    errorMessage.set("Login error!");
+                }
+            }
+
         } else {
             errorMessage.set("This is not a correct mail address :(");
         }
@@ -66,7 +79,7 @@ public final class LoginModel {
         }
     }
 
-    private <T> T getResult(Future<T> future) {
+    private static <T> T getResult(Future<T> future) {
         if (future == null) {
             return null;
         }
@@ -80,5 +93,17 @@ public final class LoginModel {
         }
 
         return tmp;
+    }
+
+    private static boolean isLoginSuccessful(Message message) {
+        switch (message.getType()) {
+            case SUCCESS:
+                return true;
+
+            case ERROR:
+            case LOGIN:
+            default:
+                return false;
+        }
     }
 }

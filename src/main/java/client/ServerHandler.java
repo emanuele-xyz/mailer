@@ -40,7 +40,7 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
             case LOGIN: {
                 sendMessage(message);
                 Message tmp = readMessage();
-                processMessage(tmp);
+                return processMessage(tmp);
             }
 
             case ERROR:
