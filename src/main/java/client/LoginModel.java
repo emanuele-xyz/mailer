@@ -69,6 +69,14 @@ public final class LoginModel {
         return errorMessage;
     }
 
+    public SimpleBooleanProperty isLoggedInProperty() {
+        return isLoggedIn;
+    }
+
+    public ServerDispatcher getServerDispatcher() {
+        return serverDispatcher;
+    }
+
     private String validateUsername() {
         // Trim the input text since user can mistype some
         // spaces at the start and at the end of the input field

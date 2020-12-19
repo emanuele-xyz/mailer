@@ -14,7 +14,6 @@ public final class MainController {
         this.model = model;
     }
 
-    // TODO: what happens to the previous close request handler? Will it replace the previous one?
     public void setStage(Stage stage) {
         stage.setOnCloseRequest(e -> model.close());
     }

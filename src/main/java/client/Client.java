@@ -24,13 +24,15 @@ public final class Client extends Application {
             Parent root = loader.load();
             LoginController controller = loader.getController();
 
+            stage.setTitle("Mailer client");
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setAlwaysOnTop(true);
+
             LoginModel model = new LoginModel();
             controller.initModel(model);
-            controller.setStage(stage);
+            controller.setStageAndScene(stage, scene);
 
-            stage.setTitle("Mailer client");
-            stage.setScene(new Scene(root));
-            stage.setAlwaysOnTop(true);
             stage.show();
 
         } catch (UnknownHostException e) {
