@@ -25,10 +25,11 @@ public final class ServerDispatcher {
     }
 
     public void shutdown() {
-        exec.shutdown();
+        synchronized (exec) {
+            exec.shutdown();
+        }
     }
 
-    // TODO: report operation failure
     public Future<Message> sendToServer(Message message) {
         Future<Message> result = null;
 
@@ -40,7 +41,11 @@ public final class ServerDispatcher {
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                 Callable<Message> task = new ServerHandler(socket, in, out, message);
-                result = exec.submit(task);
+
+                synchronized (exec) {
+                    result = exec.submit(task);
+                }
+
             } catch (IOException e) {
                 // Input or output stream creation
                 e.printStackTrace();

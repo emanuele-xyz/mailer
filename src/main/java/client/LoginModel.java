@@ -3,62 +3,72 @@ package client;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mailer.MailAddress;
-import mailer.Utils;
-import mailer.messages.LoginMessage;
-import mailer.messages.ErrorMessage;
-import mailer.messages.Message;
 
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public final class LoginModel {
 
+    private static final int LOGIN_TIMEOUT = 10;
+    private static final int LOGIN_EXECUTOR_THREADS = 1;
+
     private final SimpleStringProperty username;
     private final SimpleStringProperty errorMessage;
+    private final SimpleBooleanProperty isLoginButtonDisabled;
     private final SimpleBooleanProperty isLoggedIn;
 
     private final ServerDispatcher serverDispatcher;
+    private final ExecutorService loginExecutor;
 
     public LoginModel() throws UnknownHostException {
         username = new SimpleStringProperty();
         errorMessage = new SimpleStringProperty();
+        isLoginButtonDisabled = new SimpleBooleanProperty(false);
         isLoggedIn = new SimpleBooleanProperty(false);
-        this.serverDispatcher = new ServerDispatcher();
+
+        serverDispatcher = new ServerDispatcher();
+        loginExecutor = Executors.newFixedThreadPool(LOGIN_EXECUTOR_THREADS);
     }
 
     public void close() {
-        serverDispatcher.shutdown();
+
+        // If login flag is set to false it means that there was no
+        // successful login, hence we won't be transitioning to the next scene
+        if (!isLoggedIn.get()) {
+            serverDispatcher.shutdown();
+        }
+
+        loginExecutor.shutdown();
     }
 
     public void tryLogin() {
         String mailAddress = validateUsername();
+        if (mailAddress == null) {
+            errorMessage.set("This is not a correct mail address :(");
+            return;
+        }
 
-        if (mailAddress != null) {
-            LoginMessage msg = new LoginMessage(mailAddress);
-            Future<Message> response = serverDispatcher.sendToServer(msg);
-            Message message = getResult(response);
-            if (message == null) {
-                // Something went wrong during communication between client
-                // and server. Anyway login has failed
-                errorMessage.set("Server connection failure, please retry :(");
-                return;
-            }
+        isLoginButtonDisabled.set(true);
+        Callable<LoginResult> tryLoginTask = new TryLoginTask(mailAddress, serverDispatcher);
+        Future<LoginResult> tryLoginResult = loginExecutor.submit(tryLoginTask);
+        try {
 
-            if (isLoginSuccessful(message)) {
+            // TODO: this blocks the javafx thread, which is not a good idea
+            // TODO: use event driven programming to avoid this!
+            // TODO: add a synchronized boolean property, share it with login task, set its change event
+            // TODO: to signal that the login task has finished
+            LoginResult loginResult = tryLoginResult.get();
+            if (loginResult.getResult()) {
                 isLoggedIn.set(true);
             } else {
-                ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
-                if (err != null) {
-                    errorMessage.set(err.getMessage());
-                } else {
-                    errorMessage.set("Login error!");
-                }
+                errorMessage.set(loginResult.getMessage());
             }
 
-        } else {
-            errorMessage.set("This is not a correct mail address :(");
+        } catch (InterruptedException | ExecutionException e) {
+            errorMessage.set("Login error!");
+            e.printStackTrace();
         }
+        isLoginButtonDisabled.set(false);
     }
 
     public SimpleStringProperty usernameProperty() {
@@ -67,6 +77,10 @@ public final class LoginModel {
 
     public SimpleStringProperty errorMessageProperty() {
         return errorMessage;
+    }
+
+    public SimpleBooleanProperty isLoginButtonDisabledProperty() {
+        return isLoginButtonDisabled;
     }
 
     public SimpleBooleanProperty isLoggedInProperty() {
@@ -85,34 +99,6 @@ public final class LoginModel {
             return tmp;
         } else {
             return null;
-        }
-    }
-
-    private static <T> T getResult(Future<T> future) {
-        if (future == null) {
-            return null;
-        }
-
-        T tmp = null;
-
-        try {
-            tmp = future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return tmp;
-    }
-
-    private static boolean isLoginSuccessful(Message message) {
-        switch (message.getType()) {
-            case SUCCESS:
-                return true;
-
-            case ERROR:
-            case LOGIN:
-            default:
-                return false;
         }
     }
 }

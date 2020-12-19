@@ -2,6 +2,10 @@ package mailer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public final class Utils {
 
@@ -24,6 +28,38 @@ public final class Utils {
         } else {
             return null;
         }
+    }
+
+    public static <T> T getResult(Future<T> future) {
+        if (future == null) {
+            return null;
+        }
+
+        T tmp = null;
+
+        try {
+            tmp = future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return tmp;
+    }
+
+    public static <T> T getResult(Future<T> future, long timeout, TimeUnit timeUnit) {
+        if (future == null) {
+            return null;
+        }
+
+        T tmp = null;
+
+        try {
+            tmp = future.get(timeout, timeUnit);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+        }
+
+        return tmp;
     }
 
     private Utils() {

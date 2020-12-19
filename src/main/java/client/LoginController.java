@@ -30,6 +30,7 @@ public final class LoginController {
 
         this.model = model;
         this.model.usernameProperty().bind(usernameTextField.textProperty());
+        this.model.isLoginButtonDisabledProperty().addListener((__, ___, newVal) -> loginButton.setDisable(newVal));
 
         loginButton.setOnAction(e -> this.model.tryLogin());
 
@@ -55,6 +56,9 @@ public final class LoginController {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+
+            // close model resources
+            model.close();
         });
     }
 }
