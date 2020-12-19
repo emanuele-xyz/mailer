@@ -9,7 +9,6 @@ import java.util.concurrent.*;
 
 public final class LoginModel {
 
-    private static final int LOGIN_TIMEOUT = 10;
     private static final int LOGIN_EXECUTOR_THREADS = 1;
 
     private final SimpleStringProperty username;

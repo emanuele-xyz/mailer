@@ -27,6 +27,7 @@ public final class TryLoginTask implements Callable<LoginResult> {
 
         LoginMessage msg = new LoginMessage(mailAddress);
         Future<Message> response = serverDispatcher.sendToServer(msg);
+        // this blocks the thread!
         Message message = Utils.getResult(response, LOGIN_WAIT_TIME, LOGIN_WAIT_TIME_UNIT);
         if (message == null) {
             // Something went wrong during communication between client
