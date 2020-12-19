@@ -50,6 +50,7 @@ public final class LoginController {
                 MainController mainController = loader.getController();
                 MainModel mainModel = new MainModel(this.model.getServerDispatcher());
                 mainController.initModel(mainModel);
+                mainController.setStage(stage);
 
             } catch (IOException ioException) {
                 ioException.printStackTrace();
