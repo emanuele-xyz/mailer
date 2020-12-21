@@ -5,41 +5,41 @@ import mailer.messages.ErrorMessage;
 import mailer.messages.LoginMessage;
 import mailer.messages.Message;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public final class TryLoginTask implements Callable<LoginResult> {
+public final class TryLoginTask implements Runnable {
 
     private static final int LOGIN_WAIT_TIME = 10;
     private static final TimeUnit LOGIN_WAIT_TIME_UNIT = TimeUnit.SECONDS;
 
     private final String mailAddress;
     private final ServerDispatcher serverDispatcher;
+    private final TryLoginCallback onResult;
 
-    public TryLoginTask(String mailAddress, ServerDispatcher serverDispatcher) {
+    public TryLoginTask(String mailAddress, ServerDispatcher serverDispatcher, TryLoginCallback onResult) {
         this.mailAddress = mailAddress;
         this.serverDispatcher = serverDispatcher;
+        this.onResult = onResult;
     }
 
     @Override
-    public LoginResult call() {
-
+    public void run() {
         LoginMessage msg = new LoginMessage(mailAddress);
         Future<Message> response = serverDispatcher.sendToServer(msg);
-        // this blocks the thread!
         Message message = Utils.getResult(response, LOGIN_WAIT_TIME, LOGIN_WAIT_TIME_UNIT);
         if (message == null) {
             // Something went wrong during communication between client
             // and server. Anyway login has failed
-            return new LoginResult(false, "Server connection failure, please retry :(");
+            onResult.run(false, "Server connection failure :(");
+            return;
         }
 
         if (isLoginSuccessful(message)) {
-            return new LoginResult(true, "Success!");
+            onResult.run(true, "Success!");
         } else {
             ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
-            return new LoginResult(false, err != null ? err.getMessage() : "Login error!");
+            onResult.run(false, err != null ? err.getMessage() : "Login error!");
         }
     }
 

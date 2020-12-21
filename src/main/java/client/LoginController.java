@@ -40,7 +40,12 @@ public final class LoginController {
     public void setStageAndScene(Stage stage, Scene scene) {
         stage.setOnCloseRequest(e -> model.close());
 
-        model.isLoggedInProperty().addListener(e -> {
+        model.isLoggedInProperty().addListener((__, ___, newVal) -> {
+
+            if (!newVal) {
+                return;
+            }
+
             // Disable stage close event handler
             stage.setOnCloseRequest(null);
 

@@ -1,5 +1,6 @@
 package client;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mailer.MailAddress;
@@ -30,7 +31,6 @@ public final class LoginModel {
     }
 
     public void close() {
-
         // If login flag is set to false it means that there was no
         // successful login, hence we won't be transitioning to the next scene
         if (!isLoggedIn.get()) {
@@ -48,26 +48,16 @@ public final class LoginModel {
         }
 
         isLoginButtonDisabled.set(true);
-        Callable<LoginResult> tryLoginTask = new TryLoginTask(mailAddress, serverDispatcher);
-        Future<LoginResult> tryLoginResult = loginExecutor.submit(tryLoginTask);
-        try {
-
-            // TODO: this blocks the javafx thread, which is not a good idea
-            // TODO: use event driven programming to avoid this!
-            // TODO: add a synchronized boolean property, share it with login task, set its change event
-            // TODO: to signal that the login task has finished
-            LoginResult loginResult = tryLoginResult.get();
-            if (loginResult.getResult()) {
-                isLoggedIn.set(true);
+        TryLoginCallback onResult = (result, msg) -> {
+            if (result) {
+                Platform.runLater(() -> isLoggedIn.set(true));
             } else {
-                errorMessage.set(loginResult.getMessage());
+                Platform.runLater(() -> errorMessage.set(msg));
             }
-
-        } catch (InterruptedException | ExecutionException e) {
-            errorMessage.set("Login error!");
-            e.printStackTrace();
-        }
-        isLoginButtonDisabled.set(false);
+            Platform.runLater(() -> isLoginButtonDisabled.set(false));
+        };
+        Runnable tryLoginTask = new TryLoginTask(mailAddress, serverDispatcher, onResult);
+        loginExecutor.submit(tryLoginTask);
     }
 
     public SimpleStringProperty usernameProperty() {

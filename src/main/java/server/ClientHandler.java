@@ -48,11 +48,11 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         switch (message.getType()) {
             case LOGIN: {
                 // TODO: test very slow connection
-//                try {
-//                    Thread.sleep(100000000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    Thread.sleep(100000000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 LoginMessage loginMessage = castMessage(LoginMessage.class, message);
                 if (loginMessage == null) {
                     sendMessage(new ErrorMessage("Cannot interpret message as login message"));
