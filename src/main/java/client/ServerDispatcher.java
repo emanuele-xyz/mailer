@@ -30,11 +30,12 @@ public final class ServerDispatcher {
         }
     }
 
-    public Future<Message> sendToServer(Message message) {
+    public Future<Message> sendToServer(Message message, int timeoutAfter) {
         Future<Message> result = null;
 
         try  {
             Socket socket = new Socket(hostname, Constants.SERVER_PORT);
+            socket.setSoTimeout(timeoutAfter);
 
             try {
                 // The socket will be closed in any case by our handler
