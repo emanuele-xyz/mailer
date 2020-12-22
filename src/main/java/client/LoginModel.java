@@ -1,12 +1,15 @@
 package client;
 
+import client.login.TryLoginCallback;
+import client.login.TryLoginTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mailer.MailAddress;
 
 import java.net.UnknownHostException;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class LoginModel {
 

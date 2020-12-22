@@ -1,5 +1,6 @@
-package client;
+package client.login;
 
+import client.ServerDispatcher;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
 import mailer.messages.LoginMessage;

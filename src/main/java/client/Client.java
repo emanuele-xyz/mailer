@@ -17,7 +17,7 @@ public final class Client extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         try {
             URL fxmlURL = getClass().getResource("/login.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlURL);
@@ -36,8 +36,6 @@ public final class Client extends Application {
             stage.show();
 
         } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
