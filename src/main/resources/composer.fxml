@@ -4,40 +4,40 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" spacing="15.0">
-         <children>
-            <Label text="Subject:" />
-            <TextField />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <Separator prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" spacing="15.0">
-         <children>
-            <Label text="To:" />
-            <FlowPane alignment="CENTER_LEFT" hgap="10.0" prefHeight="115.0" prefWidth="396.0" vgap="5.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <TextField />
-               </children>
-            </FlowPane>
-            <Button mnemonicParsing="false" text="+" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <TextArea prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-      <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="600.0" spacing="15.0">
-         <children>
-            <Button mnemonicParsing="false" text="Send" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-   </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.ComposerController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" spacing="15.0">
+            <children>
+                <Label text="Subject:" />
+                <TextField fx:id="subject" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <Separator prefWidth="200.0" />
+        <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" spacing="15.0">
+            <children>
+                <Label text="To:" />
+                <FlowPane fx:id="to" alignment="CENTER_LEFT" hgap="10.0" prefHeight="115.0" prefWidth="396.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <TextField />
+                    </children>
+                </FlowPane>
+                <Button fx:id="addRecipient" mnemonicParsing="false" text="+" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <TextArea fx:id="text" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+        <HBox alignment="CENTER_RIGHT" prefHeight="10.0" prefWidth="600.0" spacing="15.0">
+            <children>
+                <Button fx:id="send" mnemonicParsing="false" text="Send" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </children>
 </VBox>

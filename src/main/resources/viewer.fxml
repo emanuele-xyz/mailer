@@ -5,56 +5,57 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox alignment="CENTER" prefHeight="77.0" prefWidth="600.0">
-         <children>
-            <Label text="Subject">
-               <font>
-                  <Font size="16.0" />
-               </font></Label>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <Separator layoutX="10.0" layoutY="126.0" prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
-         <children>
-            <Label text="From:" />
-            <Label layoutX="20.0" layoutY="31.0" text="sample@mailer.xyz" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <Separator layoutX="10.0" layoutY="187.0" prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
-         <children>
-            <Label text="To:" />
-            <FlowPane alignment="CENTER_LEFT" hgap="15.0" prefHeight="38.0" prefWidth="521.0" vgap="5.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Label text="sample@mailer.xyz" />
-               </children>
-            </FlowPane>
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <Separator layoutX="10.0" layoutY="247.0" prefWidth="200.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="13.0" prefWidth="600.0" spacing="20.0">
-         <children>
-            <Label text="Date:" />
-            <Label layoutX="20.0" layoutY="31.0" text="23/12/2020" />
-         </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-      </HBox>
-      <TextArea prefHeight="345.0" prefWidth="708.0" VBox.vgrow="ALWAYS" />
-   </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.ViewerController">
+    <children>
+        <HBox alignment="CENTER" prefHeight="77.0" prefWidth="600.0">
+            <children>
+                <Label fx:id="subject" text="Subject">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <Separator layoutX="10.0" layoutY="126.0" prefWidth="200.0" />
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+            <children>
+                <Label text="From:" />
+                <Label fx:id="from" layoutX="20.0" layoutY="31.0" text="sample@mailer.xyz" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <Separator layoutX="10.0" layoutY="187.0" prefWidth="200.0" />
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            <children>
+                <Label text="To:" />
+                <FlowPane fx:id="to" alignment="CENTER_LEFT" hgap="15.0" prefHeight="38.0" prefWidth="521.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="sample@mailer.xyz" />
+                    </children>
+                </FlowPane>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <Separator layoutX="10.0" layoutY="247.0" prefWidth="200.0" />
+        <HBox alignment="CENTER_LEFT" prefHeight="13.0" prefWidth="600.0" spacing="20.0">
+            <children>
+                <Label text="Date:" />
+                <Label fx:id="date" layoutX="20.0" layoutY="31.0" text="23/12/2020" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+        <TextArea fx:id="text" prefHeight="345.0" prefWidth="708.0" VBox.vgrow="ALWAYS" />
+    </children>
 </VBox>
