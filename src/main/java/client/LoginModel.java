@@ -34,12 +34,7 @@ public final class LoginModel {
     }
 
     public void close() {
-        // If login flag is set to false it means that there was no
-        // successful login, hence we won't be transitioning to the next scene
-        if (!isLoggedIn.get()) {
-            serverDispatcher.shutdown();
-        }
-
+        serverDispatcher.shutdown();
         loginExecutor.shutdown();
     }
 
@@ -79,8 +74,8 @@ public final class LoginModel {
         return isLoggedIn;
     }
 
-    public ServerDispatcher getServerDispatcher() {
-        return serverDispatcher;
+    public boolean isLoggedIn() {
+        return isLoggedIn.get();
     }
 
     private String validateUsername() {
