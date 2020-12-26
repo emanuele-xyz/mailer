@@ -19,13 +19,13 @@ public final class Client extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        boolean loginResult = showLoginAndWait();
-        if (loginResult) {
-            showMainScreen(stage);
+        LoginResult loginResult = showLoginAndWait();
+        if (loginResult.isSuccessful()) {
+            showMainScreen(stage, loginResult.getAccount());
         }
     }
 
-    private boolean showLoginAndWait() throws IOException {
+    private LoginResult showLoginAndWait() throws IOException {
         try {
             Stage stage = new Stage();
 
@@ -44,16 +44,16 @@ public final class Client extends Application {
 
             stage.showAndWait();
 
-            return model.isLoggedIn();
+            return new LoginResult(model.isLoggedIn(), model.getUsername());
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return new LoginResult(false, "");
     }
 
-    private void showMainScreen(Stage stage) throws IOException {
+    private void showMainScreen(Stage stage, String user) throws IOException {
         try {
             FXMLLoader mailboxLoader = new FXMLLoader(getClass().getResource("/mailbox.fxml"));
             Parent mailbox = mailboxLoader.load();
@@ -67,14 +67,20 @@ public final class Client extends Application {
             Parent composer = composerLoader.load();
             ComposerController composerController = composerLoader.getController();
 
+            FXMLLoader errorLoader = new FXMLLoader(getClass().getResource("/error.fxml"));
+            Parent error = errorLoader.load();
+            ErrorController errorController = errorLoader.getController();
+
             BorderPane root = new BorderPane();
             root.setLeft(mailbox);
             root.setCenter(viewer);
+            root.setBottom(error);
 
-            MainModel mainModel = new MainModel();
+            MainModel mainModel = new MainModel(user);
             mailboxController.initModel(mainModel);
             viewerController.initModel(mainModel);
             composerController.initModel(mainModel);
+            errorController.initModel(mainModel);
 
             stage.setOnCloseRequest((____) -> mainModel.close());
             stage.setTitle("Mailer client");
