@@ -1,11 +1,16 @@
 package server;
 
 import mailer.Mail;
+import mailer.MailJSONConverter;
 import server.exceptions.MkdirException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 public final class Account {
 
@@ -38,6 +43,22 @@ public final class Account {
         write(mail, inboxDir);
     }
 
+    public synchronized Mail[] loadMails() {
+        ArrayList<Mail> mails = new ArrayList<>();
+
+        boolean result = loadMails(inboxDir, mails);
+        if (!result) {
+            return null;
+        }
+
+        result = loadMails(outboxDir, mails);
+        if (!result) {
+            return null;
+        }
+
+        return mails.toArray(new Mail[0]);
+    }
+
     @Override
     public String toString() {
         return accountDirectory;
@@ -53,7 +74,7 @@ public final class Account {
 
         // TODO: find better handling later
         try (PrintWriter out = new PrintWriter(file)) {
-            out.println(mail.toJson());
+            out.println(MailJSONConverter.mailToJson(mail));
             out.flush();
         } catch (FileNotFoundException e) {
             // If there is no such file, it's a programming error
@@ -70,5 +91,28 @@ public final class Account {
                 throw new MkdirException(String.format("Unable to create '%s' directory", dir));
             }
         }
+    }
+
+    private static boolean loadMails(String path, ArrayList<Mail> mails) {
+        File filePath = new File(path);
+        String[] mailFilePaths = filePath.list((File current, String name) -> new File(current, name).isFile());
+        if (mailFilePaths == null) {
+            System.err.printf("Error loading emails in '%s' directory\n", path);
+            return false;
+        }
+
+        for (String mailFilePath : mailFilePaths) {
+            Path fileName = Path.of(path, mailFilePath);
+            try {
+                String json = Files.readString(fileName);
+                Mail mail = MailJSONConverter.mailFromJson(json);
+                mails.add(mail);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        return true;
     }
 }

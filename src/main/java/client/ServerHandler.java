@@ -39,8 +39,12 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
         switch (message.getType()) {
             case LOGIN: {
                 sendMessage(message);
-                Message tmp = readMessage();
-                return processMessage(tmp);
+                return readMessage();
+            }
+
+            case FETCH_REQUEST: {
+                sendMessage(message);
+                return readMessage();
             }
 
             case ERROR:

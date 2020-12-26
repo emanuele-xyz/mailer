@@ -19,15 +19,17 @@ public final class MailManager {
     }
 
     public boolean verify(String mailAddress) {
-        MailAddress address;
         try {
-            address = new MailAddress(mailAddress);
+            MailAddress address = new MailAddress(mailAddress);
+            return verify(address);
         } catch (InvalidMailAddressException e) {
             return false;
         }
+    }
 
+    public boolean verify(MailAddress mailAddress) {
         synchronized (accounts) {
-            return accounts.containsKey(address);
+            return accounts.containsKey(mailAddress);
         }
     }
 
@@ -44,6 +46,10 @@ public final class MailManager {
         for (MailAddress recipient : to) {
             getAccount(recipient).receive(mail);
         }
+    }
+
+    public Mail[] loadMails(MailAddress address) {
+        return accounts.get(address).loadMails();
     }
 
     private Account getAccount(MailAddress address) throws NoSuchAddressException {

@@ -1,9 +1,10 @@
 package mailer;
 
+import java.io.Serializable;
 import java.util.Objects;
 import org.apache.commons.validator.routines.EmailValidator;
 
-public final class MailAddress {
+public final class MailAddress implements Serializable {
 
     private static final String AT = "@";
 

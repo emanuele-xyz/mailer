@@ -1,10 +1,10 @@
 package server;
 
+import mailer.InvalidMailAddressException;
+import mailer.Mail;
+import mailer.MailAddress;
 import mailer.connections.ConnectionHandler;
-import mailer.messages.ErrorMessage;
-import mailer.messages.LoginMessage;
-import mailer.messages.Message;
-import mailer.messages.Success;
+import mailer.messages.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -42,7 +42,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
         closeConnection();
         logger.print("[%s] - closing connection", address);
-  }
+    }
 
     private void processMessage(Message message) {
         switch (message.getType()) {
@@ -54,12 +54,58 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
                     processLogin(loginMessage);
                 }
             }
+            break;
+
+            case FETCH_REQUEST: {
+                MailFetchRequestMessage fetchRequestMessage = castMessage(MailFetchRequestMessage.class, message);
+                if (fetchRequestMessage == null) {
+                    sendMessage(new ErrorMessage("Cannot interpret message as fetch request message"));
+                } else {
+                    processFetchRequestMessage(fetchRequestMessage);
+                }
+            }
+            break;
 
             case ERROR:
             case SUCCESS:
                 // If server receives a success or error message
                 // without any context it doesn't do anything
                 break;
+        }
+    }
+
+    private void processFetchRequestMessage(MailFetchRequestMessage fetchRequestMessage) {
+        logger.print("[%s] - received %s message", address, fetchRequestMessage.getType());
+
+        String addressString = fetchRequestMessage.getMailAddress();
+
+        try {
+            MailAddress mailAddress = new MailAddress(addressString);
+            if (!mailManager.verify(mailAddress)) {
+                logger.print("[%s] - user '%s' not registered", address, addressString);
+                sendMessage(new ErrorMessage(
+                        String.format("Mail address '%s' is not registered", addressString)
+                ));
+                return;
+            }
+
+            Mail[] mails = mailManager.loadMails(mailAddress);
+            if (mails == null) {
+                logger.print("[%s] - error loading mails from storage", address);
+                sendMessage(new ErrorMessage("Error loading mails"));
+                return;
+            }
+
+            sendMessage(new MailFetchResponseMessage(mails));
+
+        } catch (InvalidMailAddressException e) {
+            // Mail address is invalid, send error message back to the client
+            logger.print("[%s] - invalid address '%s'", address, addressString);
+            sendMessage(new ErrorMessage(
+                    String.format("Invalid mail address '%s'", addressString))
+            );
+
+            e.printStackTrace();
         }
     }
 

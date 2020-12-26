@@ -1,18 +1,11 @@
 package mailer;
 
-import com.google.gson.Gson;
-
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public final class Mail {
-
-    private static final Gson GSON = new Gson();
-
-    public static Mail fromJson(String json) {
-        return GSON.fromJson(json, Mail.class);
-    }
+public final class Mail implements Serializable {
 
     private final UUID id;
     private final MailAddress from;
@@ -45,19 +38,8 @@ public final class Mail {
         return this.to.toArray(to);
     }
 
-    public String toJson() {
-        return GSON.toJson(this);
-    }
-
     @Override
     public String toString() {
-        return "Mail{" +
-                "id=" + id +
-                ", from=" + from +
-                ", to=" + to +
-                ", date=" + date +
-                ", subject='" + subject + '\'' +
-                ", text='" + text + '\'' +
-                '}';
+        return subject;
     }
 }

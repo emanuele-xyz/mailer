@@ -1,10 +1,12 @@
 package client.controllers;
 
 import client.MainModel;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import mailer.Mail;
 
 public final class MailboxController {
 
@@ -17,7 +19,7 @@ public final class MailboxController {
     private Button newMail;
 
     @FXML
-    private ListView<String> mails;
+    private ListView<Mail> mails;
 
     public void initModel(MainModel model) {
         if (this.model != null) {
@@ -27,5 +29,6 @@ public final class MailboxController {
         this.model = model;
 
         username.setText(model.getUser());
+        mails.setItems(model.getMails());
     }
 }

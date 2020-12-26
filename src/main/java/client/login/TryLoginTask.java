@@ -5,6 +5,7 @@ import mailer.Utils;
 import mailer.messages.ErrorMessage;
 import mailer.messages.LoginMessage;
 import mailer.messages.Message;
+import mailer.messages.MessageType;
 
 import java.util.concurrent.Future;
 
@@ -43,14 +44,6 @@ public final class TryLoginTask implements Runnable {
     }
 
     private static boolean isLoginSuccessful(Message message) {
-        switch (message.getType()) {
-            case SUCCESS:
-                return true;
-
-            case ERROR:
-            case LOGIN:
-            default:
-                return false;
-        }
+        return message.getType() == MessageType.SUCCESS;
     }
 }

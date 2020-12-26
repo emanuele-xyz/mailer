@@ -1,15 +1,22 @@
 package mailer.messages;
 
+import mailer.Mail;
+
 public final class MailFetchResponseMessage extends Message {
 
-    private final int count;
+    private final Mail[] mails;
 
-    public MailFetchResponseMessage(int count) {
+    public MailFetchResponseMessage(Mail ... mails) {
         super(MessageType.FETCH_RESPONSE);
-        this.count = count;
+        this.mails = mails;
     }
 
-    public int getCount() {
-        return count;
+    public MailFetchResponseMessage(MessageType type, Mail[] mails) {
+        super(type);
+        this.mails = mails;
+    }
+
+    public Mail[] getMails() {
+        return mails;
     }
 }

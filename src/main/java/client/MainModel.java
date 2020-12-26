@@ -1,44 +1,62 @@
 package client;
 
-import javafx.beans.property.SimpleListProperty;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mailer.Mail;
-import mailer.Utils;
-import mailer.messages.ErrorMessage;
-import mailer.messages.MailFetchRequestMessage;
-import mailer.messages.Message;
 
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class MainModel {
 
-    private static final int MESSAGE_WAIT_TIME = 10 * 1000;
+    private static final int MAIL_FETCH_THREADS = 1;
 
     private final String user;
     private final SimpleStringProperty errorMessage;
-    private final SimpleListProperty<Mail> mails;
+    private final ObservableList<Mail> mails;
 
+    private final Logger logger;
     private final ServerDispatcher serverDispatcher;
+    private final ExecutorService mailFetcherExecutor;
 
     public MainModel(String user) throws UnknownHostException {
         this.user = user;
         errorMessage = new SimpleStringProperty();
-        mails = new SimpleListProperty<>();
+        mails = FXCollections.observableArrayList();
 
+        logger = new Logger(errorMessage);
         this.serverDispatcher = new ServerDispatcher();
+        mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
+
+        getMailsFromServer();
     }
 
     public void close() {
         serverDispatcher.shutdown();
+        mailFetcherExecutor.shutdown();
     }
 
     public String getUser() {
         return user;
     }
 
+    public ObservableList<Mail> getMails() {
+        return mails;
+    }
+
     public SimpleStringProperty errorMessageProperty() {
         return errorMessage;
+    }
+
+    private void getMailsFromServer() {
+        mailFetcherExecutor.submit(new MailsFetchTask(
+                serverDispatcher,
+                logger,
+                (mail) -> Platform.runLater(() -> mails.add(mail)),
+                user)
+        );
     }
 }
