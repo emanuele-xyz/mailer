@@ -6,6 +6,7 @@ module mailer {
     requires commons.validator;
 
     opens client;
+    opens client.login;
     opens server;
     opens mailer;
 }

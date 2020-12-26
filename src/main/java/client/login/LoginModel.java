@@ -1,7 +1,6 @@
-package client;
+package client.login;
 
-import client.login.TryLoginCallback;
-import client.login.TryLoginTask;
+import client.ServerDispatcher;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;

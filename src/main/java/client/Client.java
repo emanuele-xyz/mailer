@@ -1,5 +1,8 @@
 package client;
 
+import client.login.LoginController;
+import client.login.LoginModel;
+import client.login.LoginResult;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

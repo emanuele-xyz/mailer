@@ -1,4 +1,4 @@
-package client;
+package client.login;
 
 public final class LoginResult {
 

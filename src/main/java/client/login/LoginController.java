@@ -1,4 +1,4 @@
-package client;
+package client.login;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
