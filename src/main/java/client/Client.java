@@ -1,5 +1,9 @@
 package client;
 
+import client.controllers.ComposerController;
+import client.controllers.ErrorController;
+import client.controllers.MailboxController;
+import client.controllers.ViewerController;
 import client.login.LoginController;
 import client.login.LoginModel;
 import client.login.LoginResult;

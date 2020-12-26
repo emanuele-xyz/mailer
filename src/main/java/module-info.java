@@ -7,6 +7,7 @@ module mailer {
 
     opens client;
     opens client.login;
+    opens client.controllers;
     opens server;
     opens mailer;
 }

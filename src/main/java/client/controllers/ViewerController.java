@@ -1,5 +1,6 @@
-package client;
+package client.controllers;
 
+import client.MainModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
