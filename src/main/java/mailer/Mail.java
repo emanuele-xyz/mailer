@@ -2,12 +2,11 @@ package mailer;
 
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public final class Mail implements Serializable {
+public final class Mail {
 
     private static final Gson GSON = new Gson();
 
