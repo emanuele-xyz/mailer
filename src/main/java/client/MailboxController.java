@@ -19,6 +19,12 @@ public final class MailboxController {
     private ListView<String> mails;
 
     public void initModel(MainModel model) {
+        if (this.model != null) {
+            throw new IllegalStateException("Cannot initialize model more than once");
+        }
 
+        this.model = model;
+
+        username.setText(model.getUser());
     }
 }

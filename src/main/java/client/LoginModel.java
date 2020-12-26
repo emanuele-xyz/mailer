@@ -78,10 +78,14 @@ public final class LoginModel {
         return isLoggedIn.get();
     }
 
+    public String getUsername() {
+        return username.get().trim();
+    }
+
     private String validateUsername() {
         // Trim the input text since user can mistype some
         // spaces at the start and at the end of the input field
-        String tmp = username.get().trim();
+        String tmp = getUsername();
         if (MailAddress.validate(tmp)) {
             return tmp;
         } else {
