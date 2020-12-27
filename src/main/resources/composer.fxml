@@ -19,11 +19,7 @@
         <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" spacing="15.0">
             <children>
                 <Label text="To:" />
-                <FlowPane fx:id="to" alignment="CENTER_LEFT" hgap="10.0" prefHeight="115.0" prefWidth="396.0" vgap="5.0" HBox.hgrow="ALWAYS">
-                    <children>
-                        <TextField />
-                    </children>
-                </FlowPane>
+                <FlowPane fx:id="to" alignment="CENTER_LEFT" hgap="10.0" prefHeight="115.0" prefWidth="396.0" vgap="5.0" HBox.hgrow="ALWAYS" />
                 <Button fx:id="addRecipient" mnemonicParsing="false" text="+" />
             </children>
             <padding>

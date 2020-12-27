@@ -5,17 +5,19 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Mail;
+import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public final class MainModel {
 
     private static final int MAIL_FETCH_THREADS = 1;
 
     private final MainModelStateProperty currentState;
-    private final String user;
+    private final MailAddress user;
     private final SimpleStringProperty errorMessage;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
@@ -25,16 +27,16 @@ public final class MainModel {
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService mailFetcherExecutor;
 
-    public MainModel(String user) throws UnknownHostException {
+    public MainModel(MailAddress user) throws UnknownHostException {
         currentState = new MainModelStateProperty();
         this.user = user;
         errorMessage = new SimpleStringProperty();
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
-        mailDraft = new MailDraftProperty();
+        mailDraft = new MailDraftProperty(user);
 
         logger = new Logger(errorMessage);
-        this.serverDispatcher = new ServerDispatcher();
+        serverDispatcher = new ServerDispatcher();
         mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
 
         getMailsFromServer();
@@ -45,12 +47,20 @@ public final class MainModel {
         mailFetcherExecutor.shutdown();
     }
 
+    public void send(Mail mail, Consumer<MailDraftProperty> onSuccess) {
+
+    }
+
+    public void setErrorMessage(String msg) {
+        logger.print(msg);
+    }
+
     public MainModelStateProperty getCurrentState() {
         return currentState;
     }
 
     public String getUser() {
-        return user;
+        return user.toString();
     }
 
     public SimpleStringProperty errorMessageProperty() {
@@ -74,7 +84,7 @@ public final class MainModel {
                 serverDispatcher,
                 logger,
                 (mail) -> Platform.runLater(() -> mails.add(mail)),
-                user)
+                user.toString())
         );
     }
 }

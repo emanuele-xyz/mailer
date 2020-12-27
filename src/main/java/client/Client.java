@@ -13,6 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import mailer.InvalidMailAddressException;
+import mailer.MailAddress;
 
 import java.io.IOException;
 import java.net.URL;
@@ -83,7 +85,15 @@ public final class Client extends Application {
             root.setCenter(viewer);
             root.setBottom(error);
 
-            MainModel mainModel = new MainModel(user);
+            MailAddress userAddress = null;
+            try {
+                userAddress = new MailAddress(user);
+            } catch (InvalidMailAddressException e) {
+                // Passing an invalid user should not happen.
+                // If it does, it's a programmer error
+                assert false;
+            }
+            MainModel mainModel = new MainModel(userAddress);
             mailboxController.initModel(mainModel);
             viewerController.initModel(mainModel);
             composerController.initModel(mainModel);
