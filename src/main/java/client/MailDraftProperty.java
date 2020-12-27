@@ -1,5 +1,8 @@
 package client;
 
+import client.exceptions.InvalidRecipientsException;
+import client.exceptions.InvalidSubjectException;
+import client.exceptions.InvalidTextException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
 import mailer.InvalidMailAddressException;
@@ -32,18 +35,25 @@ public final class MailDraftProperty {
         text.set("");
     }
 
-    public Mail makeMail() throws InvalidMailAddressException {
+    public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException {
         UUID id = UUID.randomUUID();
-        List<MailAddress> recipients = getRecipients();
 
-        return new Mail(
-                id,
-                user,
-                recipients,
-                new Date(),
-                subject.getValue().trim(),
-                text.getValue().trim()
-        );
+        String subject = this.subject.getValue().trim();
+        if (subject.isEmpty()) {
+            throw new InvalidSubjectException("Subject is empty");
+        }
+
+        List<MailAddress> recipients = getRecipients();
+        if (recipients.isEmpty()) {
+            throw new InvalidRecipientsException("There are no valid recipients");
+        }
+
+        String text = this.text.getValue().trim();
+        if (text.isEmpty()) {
+            throw new InvalidTextException("Mail has no text");
+        }
+
+        return new Mail(id, user, recipients, new Date(), subject, text);
     }
 
     public SimpleStringProperty addRecipient() {
@@ -71,12 +81,15 @@ public final class MailDraftProperty {
     private List<MailAddress> getRecipients() throws InvalidMailAddressException {
         List<String> addresses = tos.stream()
                 .map(StringPropertyBase::get)
-                .distinct().filter(s -> !s.equals(user.toString()))
+                .map(String::trim)
+                .distinct()
+                .filter(s -> !s.isEmpty())
+                .filter(s -> !s.equals(user.toString()))
                 .collect(Collectors.toList());
 
         List<MailAddress> result = new ArrayList<>();
         for (String address : addresses) {
-            MailAddress tmp = new MailAddress(address);
+            result.add(new MailAddress(address));
         }
         return result;
     }

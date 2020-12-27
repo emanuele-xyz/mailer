@@ -1,5 +1,7 @@
 package client;
 
+import client.tasks.MailSendTask;
+import client.tasks.MailsFetchTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
 public final class MainModel {
 
     private static final int MAIL_FETCH_THREADS = 1;
+    private static final int MAIL_SEND_THREADS = 1;
 
     private final MainModelStateProperty currentState;
     private final MailAddress user;
@@ -26,6 +29,7 @@ public final class MainModel {
     private final Logger logger;
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService mailFetcherExecutor;
+    private final ExecutorService mailSenderExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
         currentState = new MainModelStateProperty();
@@ -38,6 +42,7 @@ public final class MainModel {
         logger = new Logger(errorMessage);
         serverDispatcher = new ServerDispatcher();
         mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
+        mailSenderExecutor = Executors.newFixedThreadPool(MAIL_SEND_THREADS);
 
         getMailsFromServer();
     }
@@ -45,10 +50,11 @@ public final class MainModel {
     public void close() {
         serverDispatcher.shutdown();
         mailFetcherExecutor.shutdown();
+        mailSenderExecutor.shutdown();
     }
 
     public void send(Mail mail, Consumer<MailDraftProperty> onSuccess) {
-
+        mailSenderExecutor.submit(new MailSendTask(mail, serverDispatcher, logger, onSuccess));
     }
 
     public void setErrorMessage(String msg) {

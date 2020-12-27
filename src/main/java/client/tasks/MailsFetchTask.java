@@ -1,5 +1,7 @@
-package client;
+package client.tasks;
 
+import client.Logger;
+import client.ServerDispatcher;
 import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.*;
@@ -13,13 +15,13 @@ public class MailsFetchTask implements Runnable {
 
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
-    private final Consumer<Mail> onMailReceive;
+    private final Consumer<Mail> onMailReceived;
     private final String address;
 
-    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, Consumer<Mail> onMailReceive, String address) {
+    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, Consumer<Mail> onMailReceived, String address) {
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
-        this.onMailReceive = onMailReceive;
+        this.onMailReceived = onMailReceived;
         this.address = address;
     }
 
@@ -37,7 +39,7 @@ public class MailsFetchTask implements Runnable {
                 MailFetchResponseMessage tmp = Utils.tryCast(MailFetchResponseMessage.class, message);
                 assert tmp != null;
                 for (Mail mail : tmp.getMails()) {
-                    onMailReceive.accept(mail);
+                    onMailReceived.accept(mail);
                 }
             }
             break;
