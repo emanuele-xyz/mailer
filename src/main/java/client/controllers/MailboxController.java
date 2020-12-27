@@ -28,9 +28,13 @@ public final class MailboxController {
         this.model = model;
 
         username.setText(model.getUser());
+
         mails.setItems(model.getMails());
         mails.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            model.getCurrentState().setViewing();
             model.getSelectedMail().select(newSel);
         });
+
+        newMail.setOnAction(e -> model.getCurrentState().setComposing());
     }
 }

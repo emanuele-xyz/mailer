@@ -14,20 +14,24 @@ public final class MainModel {
 
     private static final int MAIL_FETCH_THREADS = 1;
 
+    private final MainModelStateProperty currentState;
     private final String user;
     private final SimpleStringProperty errorMessage;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
+    private final MailDraftProperty mailDraft;
 
     private final Logger logger;
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService mailFetcherExecutor;
 
     public MainModel(String user) throws UnknownHostException {
+        currentState = new MainModelStateProperty();
         this.user = user;
         errorMessage = new SimpleStringProperty();
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
+        mailDraft = new MailDraftProperty();
 
         logger = new Logger(errorMessage);
         this.serverDispatcher = new ServerDispatcher();
@@ -39,6 +43,10 @@ public final class MainModel {
     public void close() {
         serverDispatcher.shutdown();
         mailFetcherExecutor.shutdown();
+    }
+
+    public MainModelStateProperty getCurrentState() {
+        return currentState;
     }
 
     public String getUser() {
@@ -55,6 +63,10 @@ public final class MainModel {
 
     public MailProperty getSelectedMail() {
         return selectedMail;
+    }
+
+    public MailDraftProperty getMailDraft() {
+        return mailDraft;
     }
 
     private void getMailsFromServer() {

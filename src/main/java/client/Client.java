@@ -89,6 +89,26 @@ public final class Client extends Application {
             composerController.initModel(mainModel);
             errorController.initModel(mainModel);
 
+            // Set main model state transitions after all controllers have been initialized
+            mainModel.getCurrentState().stateIndexProperty().addListener((__, oldVal, newVal) -> {
+                if (oldVal.equals(newVal)) {
+                    // the state is the same
+                    return;
+                }
+
+                if (newVal.equals(MainModelStateProperty.VIEWING)) {
+                    // Transition to viewing state
+                    root.setCenter(viewer);
+                } else if (newVal.equals(MainModelStateProperty.COMPOSING)) {
+                    // Transition to composing state
+                    root.setCenter(composer);
+                } else {
+                    // This should never happen.
+                    // If it does, it's a programmer error!
+                    assert false;
+                }
+            });
+
             stage.setOnCloseRequest((____) -> mainModel.close());
             stage.setTitle("Mailer client");
             Scene scene = new Scene(root);
