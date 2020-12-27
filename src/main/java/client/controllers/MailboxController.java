@@ -1,7 +1,6 @@
 package client.controllers;
 
 import client.MainModel;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

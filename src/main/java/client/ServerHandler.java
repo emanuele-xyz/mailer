@@ -31,6 +31,7 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
         return result;
     }
 
+    // TODO: should i simplify it? Since all messages are of the form request-response
     private Message processMessage(Message message) throws IOException {
         if (message == null) {
             return null;
