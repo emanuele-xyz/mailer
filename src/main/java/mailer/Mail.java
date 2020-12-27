@@ -38,6 +38,18 @@ public final class Mail implements Serializable {
         return this.to.toArray(to);
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public String getText() {
+        return text;
+    }
+
     @Override
     public String toString() {
         return subject;

@@ -39,11 +39,7 @@
         <HBox alignment="CENTER_LEFT" spacing="20.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="To:" />
-                <FlowPane fx:id="to" alignment="CENTER_LEFT" hgap="15.0" prefHeight="38.0" prefWidth="521.0" vgap="5.0" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label text="sample@mailer.xyz" />
-                    </children>
-                </FlowPane>
+                  <Label fx:id="to" maxWidth="800.0" text="sample@mailer.xyz" wrapText="true" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -59,7 +55,7 @@
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
         </HBox>
-        <TextArea fx:id="text" prefHeight="345.0" prefWidth="708.0" VBox.vgrow="ALWAYS" />
+        <TextArea fx:id="text" prefHeight="345.0" prefWidth="708.0" wrapText="true" VBox.vgrow="ALWAYS" />
     </children>
    <padding>
       <Insets bottom="10.0" left="5.0" right="10.0" />

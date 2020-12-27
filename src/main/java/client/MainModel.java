@@ -17,6 +17,7 @@ public final class MainModel {
     private final String user;
     private final SimpleStringProperty errorMessage;
     private final ObservableList<Mail> mails;
+    private final MailProperty selectedMail;
 
     private final Logger logger;
     private final ServerDispatcher serverDispatcher;
@@ -26,6 +27,7 @@ public final class MainModel {
         this.user = user;
         errorMessage = new SimpleStringProperty();
         mails = FXCollections.observableArrayList();
+        selectedMail = new MailProperty();
 
         logger = new Logger(errorMessage);
         this.serverDispatcher = new ServerDispatcher();
@@ -43,12 +45,16 @@ public final class MainModel {
         return user;
     }
 
+    public SimpleStringProperty errorMessageProperty() {
+        return errorMessage;
+    }
+
     public ObservableList<Mail> getMails() {
         return mails;
     }
 
-    public SimpleStringProperty errorMessageProperty() {
-        return errorMessage;
+    public MailProperty getSelectedMail() {
+        return selectedMail;
     }
 
     private void getMailsFromServer() {

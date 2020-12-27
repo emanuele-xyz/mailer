@@ -4,7 +4,6 @@ import client.MainModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.FlowPane;
 
 public final class ViewerController {
 
@@ -17,7 +16,7 @@ public final class ViewerController {
     private Label from;
 
     @FXML
-    private FlowPane to;
+    private Label to;
 
     @FXML
     private Label date;
@@ -26,7 +25,20 @@ public final class ViewerController {
     private TextArea text;
 
     public void initModel(MainModel model) {
+        if (this.model != null) {
+            throw new IllegalStateException("Cannot initialize model more than once");
+        }
 
+        this.model = model;
+
+        subject.textProperty().bind(model.getSelectedMail().subjectProperty());
+        from.textProperty().bind(model.getSelectedMail().fromProperty());
+        to.textProperty().bind(model.getSelectedMail().toProperty());
+        date.textProperty().bind(model.getSelectedMail().dateProperty());
+
+        text.textProperty().bind(model.getSelectedMail().textProperty());
+        text.setEditable(false);
+        text.setMouseTransparent(true);
+        text.setFocusTraversable(false);
     }
-
 }
