@@ -34,6 +34,11 @@ public final class MailboxController {
             model.getCurrentState().setViewing();
             model.getSelectedMail().select(newSel);
         });
+        mails.focusedProperty().addListener((__, wasFocused, isFocused) -> {
+            if (isFocused) {
+                model.getCurrentState().setViewing();
+            }
+        });
 
         newMail.setOnAction(e -> model.getCurrentState().setComposing());
     }

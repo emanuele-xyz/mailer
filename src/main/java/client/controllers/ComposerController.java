@@ -43,8 +43,8 @@ public final class ComposerController {
             recipient.bind(textField.textProperty());
             to.getChildren().add(textField);
 
-            textField.focusedProperty().addListener((___, ____, newValue) -> {
-                if (!newValue && textField.getText().isEmpty()) {
+            textField.focusedProperty().addListener((___, ____, isFocused) -> {
+                if (!isFocused && textField.getText().isEmpty()) {
                     // Focusing out from text field and text field is empty
                     // No recipient was added, delete this recipient and remove
                     // text field from flow pane
