@@ -37,14 +37,24 @@ public final class MailManager {
     // on the entire email manager.
     // Each time we extract an account from 'accounts' we do that in mutual
     // exclusion.
-    // Then, each 'send' and 'write' lock their account.
+    // Then, each 'send' and 'write' lock their respective account.
     public void process(Mail mail) throws NoSuchAddressException {
         MailAddress from = mail.getFrom();
         MailAddress[] to = mail.getTo();
 
-        getAccount(from).send(mail);
-        for (MailAddress recipient : to) {
-            getAccount(recipient).receive(mail);
+        // First get all required accounts for this email to
+        // be processed correctly.
+        // If there there is an error getting an account
+        // we don't write any mail to disk.
+        Account fromAccount = getAccount(from);
+        Account[] toAccounts = new Account[to.length];
+        for (int i = 0; i < toAccounts.length; i++) {
+            toAccounts[i] = getAccount(to[i]);
+        }
+
+        fromAccount.send(mail);
+        for (Account recipient : toAccounts) {
+            recipient.receive(mail);
         }
     }
 

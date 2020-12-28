@@ -5,6 +5,7 @@ import mailer.Mail;
 import mailer.MailAddress;
 import mailer.connections.ConnectionHandler;
 import mailer.messages.*;
+import server.exceptions.NoSuchAddressException;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -48,30 +49,54 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         switch (message.getType()) {
             case LOGIN: {
                 LoginMessage loginMessage = castMessage(LoginMessage.class, message);
-                if (loginMessage == null) {
-                    sendMessage(new ErrorMessage("Cannot interpret message as login message"));
-                } else {
-                    processLogin(loginMessage);
-                }
+                // If it's null there is a mismatch between message type and class. This is a bug.
+                // Fix it in LoginMessage class
+                assert loginMessage != null;
+
+                processLogin(loginMessage);
             }
             break;
 
             case FETCH_REQUEST: {
                 MailFetchRequestMessage fetchRequestMessage = castMessage(MailFetchRequestMessage.class, message);
-                if (fetchRequestMessage == null) {
-                    sendMessage(new ErrorMessage("Cannot interpret message as fetch request message"));
-                } else {
-                    processFetchRequestMessage(fetchRequestMessage);
-                }
+                // If it's null there is a mismatch between message type and class. This is a bug.
+                // Fix it in MailFetchRequestMessage class
+                assert fetchRequestMessage != null;
+
+                processFetchRequestMessage(fetchRequestMessage);
+            }
+            break;
+
+            case MAIL_PUSH: {
+                MailPushMessage mailPushMessage = castMessage(MailPushMessage.class, message);
+                // If it's null there is a mismatch between message type and class. This is a bug.
+                // Fix it in MailPushMessage class
+                assert mailPushMessage != null;
+
+                processMailPushMessage(mailPushMessage);
             }
             break;
 
             case ERROR:
             case SUCCESS:
+                // TODO: is it a programmer error?
                 // If server receives a success or error message
                 // without any context it doesn't do anything
                 break;
         }
+    }
+
+    private void processMailPushMessage(MailPushMessage mailPushMessage) {
+        logger.print("[%s] - received %s message", address, mailPushMessage.getType());
+
+        try {
+            mailManager.process(mailPushMessage.getMail());
+        } catch (NoSuchAddressException e) {
+            sendMessage(new ErrorMessage(e.getMessage()));
+            return;
+        }
+
+        sendMessage(new Success());
     }
 
     private void processFetchRequestMessage(MailFetchRequestMessage fetchRequestMessage) {
