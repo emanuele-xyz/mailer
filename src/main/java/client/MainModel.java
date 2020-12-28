@@ -79,7 +79,28 @@ public final class MainModel {
         }
     }
 
-    // TODO: implement and add button to ui
+    // TODO: implement
+    public void reply() {
+        System.err.println("To be implemented");
+
+        // Get currently selected mail from field
+        // Clear draft
+        // Add to draft recipient
+        // Change state to composing
+    }
+
+    // TODO: implement
+    public void replyAll() {
+        System.err.println("To be implemented");
+
+        // Get currently selected mail from and to fields
+        // Remove from to fields this account
+        // Clear draft
+        // Add to draft recipients
+        // Change state to composing
+    }
+
+    // TODO: implement
     public void clearDraft() {
         System.err.println("To be implemented");
     }

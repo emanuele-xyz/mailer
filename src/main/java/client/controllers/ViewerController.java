@@ -2,6 +2,7 @@ package client.controllers;
 
 import client.MainModel;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
@@ -24,6 +25,12 @@ public final class ViewerController {
     @FXML
     private TextArea text;
 
+    @FXML
+    private Button reply;
+
+    @FXML
+    private Button replyAll;
+
     public void initModel(MainModel model) {
         if (this.model != null) {
             throw new IllegalStateException("Cannot initialize model more than once");
@@ -40,5 +47,9 @@ public final class ViewerController {
         text.setEditable(false);
         text.setMouseTransparent(true);
         text.setFocusTraversable(false);
+
+        reply.setOnAction(__ -> model.reply());
+
+        replyAll.setOnAction(__ -> model.replyAll());
     }
 }
