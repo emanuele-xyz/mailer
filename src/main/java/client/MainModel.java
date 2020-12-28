@@ -67,6 +67,10 @@ public final class MainModel {
 
     public void sendMail() {
         try {
+            // TODO: we have to disable send button and also state transitioning
+            // TODO: enable send button and state transitioning when sending procedure has finished
+            // TODO: mind that mail sending can fail and we have enable things even in this scenario
+            // TODO: to do so add a onFinish callback to MailSendTask
             Mail mail = mailDraft.makeMail();
             mailSenderExecutor.submit(new MailSendTask(
                     mail,
@@ -79,7 +83,28 @@ public final class MainModel {
         }
     }
 
-    // TODO: implement and add button to ui
+    // TODO: implement
+    public void reply() {
+        System.err.println("To be implemented");
+
+        // Get currently selected mail from field
+        // Clear draft
+        // Add to draft recipient
+        // Change state to composing
+    }
+
+    // TODO: implement
+    public void replyAll() {
+        System.err.println("To be implemented");
+
+        // Get currently selected mail from and to fields
+        // Remove from to fields this account
+        // Clear draft
+        // Add to draft recipients
+        // Change state to composing
+    }
+
+    // TODO: implement
     public void clearDraft() {
         System.err.println("To be implemented");
     }
