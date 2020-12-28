@@ -1,11 +1,14 @@
 package client.tasks;
 
 import client.Logger;
-import client.MailDraftProperty;
 import client.ServerDispatcher;
 import mailer.Mail;
+import mailer.Utils;
+import mailer.messages.ErrorMessage;
+import mailer.messages.MailPushMessage;
+import mailer.messages.Message;
 
-import java.util.function.Consumer;
+import java.util.concurrent.Future;
 
 public final class MailSendTask implements Runnable {
 
@@ -14,17 +17,46 @@ public final class MailSendTask implements Runnable {
     private final Mail mail;
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
-    private final Consumer<MailDraftProperty> onSuccess;
 
-    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger, Consumer<MailDraftProperty> onSuccess) {
+    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger) {
         this.mail = mail;
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
-        this.onSuccess = onSuccess;
     }
 
     @Override
     public void run() {
-        // TODO: implement email send
+        Future<Message> message = serverDispatcher.sendToServer(new MailPushMessage(mail), MESSAGE_WAIT_TIME);
+        Message response = Utils.getResult(message);
+        if (message == null) {
+            logger.print("Error sending mail to the server. Try later");
+            return;
+        }
+
+        switch (response.getType()) {
+            case SUCCESS: {
+                logger.print("Mail successfully sent");
+            }
+            break;
+
+            case ERROR: {
+                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, response);
+                assert tmp != null;
+                // If tmp where null it means that there is a mismatch between message class
+                // and message type. This is a bug. We have to fix it in ErrorMessage class.
+
+                logger.print(tmp.getMessage());
+            }
+            break;
+
+            default:
+                // This case should never be reached.
+                // If it happens the server sends back an unexpected
+                // message.
+                // This is a server bug.
+                assert false;
+                break;
+        }
+
     }
 }

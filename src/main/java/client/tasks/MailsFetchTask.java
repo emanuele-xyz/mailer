@@ -27,17 +27,20 @@ public class MailsFetchTask implements Runnable {
 
     @Override
     public void run() {
-        Future<Message> response = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
-        Message message = Utils.getResult(response);
-        if (message == null) {
+        Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
+        Message response = Utils.getResult(message);
+        if (response == null) {
             logger.print("Error fetching mails from server! Try again");
             return;
         }
 
-        switch (message.getType()) {
+        switch (response.getType()) {
             case FETCH_RESPONSE: {
-                MailFetchResponseMessage tmp = Utils.tryCast(MailFetchResponseMessage.class, message);
+                MailFetchResponseMessage tmp = Utils.tryCast(MailFetchResponseMessage.class, response);
                 assert tmp != null;
+                // If tmp where null it means that there is a mismatch between message class
+                // and message type. This is a bug. We have to fix it in MailFetchResponseMessage class.
+
                 for (Mail mail : tmp.getMails()) {
                     onMailReceived.accept(mail);
                 }
@@ -45,8 +48,11 @@ public class MailsFetchTask implements Runnable {
             break;
 
             case ERROR: {
-                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, message);
+                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, response);
                 assert tmp != null;
+                // If tmp where null it means that there is a mismatch between message class
+                // and message type. This is a bug. We have to fix it in ErrorMessage class.
+
                 logger.print(tmp.getMessage());
             }
             break;

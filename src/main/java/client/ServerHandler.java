@@ -37,23 +37,14 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
             return null;
         }
 
-        switch (message.getType()) {
-            case LOGIN: {
-                sendMessage(message);
-                return readMessage();
-            }
-
-            case FETCH_REQUEST: {
-                sendMessage(message);
-                return readMessage();
-            }
-
-            case ERROR:
-            case SUCCESS: {
-                return message;
-            }
+        // All messages have a simple request-response protocol
+        // We don't need to know what type of message we are handling
+        boolean sendSuccessful = sendMessage(message);
+        if (!sendSuccessful) {
+            System.err.println("'sendMessage' method failed");
+            return null;
+        } else {
+            return readMessage();
         }
-
-        return null;
     }
 }

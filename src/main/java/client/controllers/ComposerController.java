@@ -5,6 +5,7 @@ import client.MainModel;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
 import client.exceptions.InvalidTextException;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -61,13 +62,6 @@ public final class ComposerController {
 
         model.getMailDraft().textProperty().bind(text.textProperty());
 
-        send.setOnAction(__ -> {
-            try {
-                Mail newMail = model.getMailDraft().makeMail();
-                model.send(newMail, MailDraftProperty::clear);
-            } catch (InvalidMailAddressException | InvalidTextException | InvalidSubjectException | InvalidRecipientsException e) {
-                model.setErrorMessage(e.getMessage());
-            }
-        });
+        send.setOnAction(__ -> model.send());
     }
 }

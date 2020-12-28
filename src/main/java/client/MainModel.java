@@ -1,11 +1,15 @@
 package client;
 
+import client.exceptions.InvalidRecipientsException;
+import client.exceptions.InvalidSubjectException;
+import client.exceptions.InvalidTextException;
 import client.tasks.MailSendTask;
 import client.tasks.MailsFetchTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 
@@ -53,8 +57,18 @@ public final class MainModel {
         mailSenderExecutor.shutdown();
     }
 
-    public void send(Mail mail, Consumer<MailDraftProperty> onSuccess) {
-        mailSenderExecutor.submit(new MailSendTask(mail, serverDispatcher, logger, onSuccess));
+    public void send() {
+        try {
+            Mail mail = mailDraft.makeMail();
+            mailSenderExecutor.submit(new MailSendTask(mail, serverDispatcher, logger));
+        } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
+            logger.print(e.getMessage());
+        }
+    }
+
+    // TODO: implement and add button to ui
+    public void clearDraft() {
+
     }
 
     public void setErrorMessage(String msg) {
