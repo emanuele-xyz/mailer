@@ -6,8 +6,12 @@ import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.*;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class MailsFetchTask implements Runnable {
 
@@ -41,7 +45,11 @@ public class MailsFetchTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in MailFetchResponseMessage class.
 
-                for (Mail mail : tmp.getMails()) {
+                List<Mail> mails = Arrays.stream(tmp.getMails())
+                        .sorted(Comparator.comparing(Mail::getDate))
+                        .collect(Collectors.toList());
+
+                for (Mail mail : mails) {
                     onMailReceived.accept(mail);
                 }
             }

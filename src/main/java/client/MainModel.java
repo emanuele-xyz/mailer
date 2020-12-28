@@ -16,7 +16,6 @@ import mailer.MailAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 public final class MainModel {
 
@@ -48,7 +47,7 @@ public final class MainModel {
         mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
         mailSenderExecutor = Executors.newFixedThreadPool(MAIL_SEND_THREADS);
 
-        getMailsFromServer();
+        fetchMails();
     }
 
     public void close() {
@@ -57,10 +56,24 @@ public final class MainModel {
         mailSenderExecutor.shutdown();
     }
 
-    public void send() {
+    public void fetchMails() {
+        mailFetcherExecutor.submit(new MailsFetchTask(
+                serverDispatcher,
+                logger,
+                (mail) -> Platform.runLater(() -> mails.add(mail)),
+                user.toString())
+        );
+    }
+
+    public void sendMail() {
         try {
             Mail mail = mailDraft.makeMail();
-            mailSenderExecutor.submit(new MailSendTask(mail, serverDispatcher, logger));
+            mailSenderExecutor.submit(new MailSendTask(
+                    mail,
+                    serverDispatcher,
+                    logger,
+                    () -> Platform.runLater(() -> mails.add(mail))
+            ));
         } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
             logger.print(e.getMessage());
         }
@@ -69,10 +82,6 @@ public final class MainModel {
     // TODO: implement and add button to ui
     public void clearDraft() {
 
-    }
-
-    public void setErrorMessage(String msg) {
-        logger.print(msg);
     }
 
     public MainModelStateProperty getCurrentState() {
@@ -97,14 +106,5 @@ public final class MainModel {
 
     public MailDraftProperty getMailDraft() {
         return mailDraft;
-    }
-
-    private void getMailsFromServer() {
-        mailFetcherExecutor.submit(new MailsFetchTask(
-                serverDispatcher,
-                logger,
-                (mail) -> Platform.runLater(() -> mails.add(mail)),
-                user.toString())
-        );
     }
 }

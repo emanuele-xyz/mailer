@@ -17,11 +17,13 @@ public final class MailSendTask implements Runnable {
     private final Mail mail;
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
+    private final MailSendCallback onSuccess;
 
-    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger) {
+    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger, MailSendCallback onSuccess) {
         this.mail = mail;
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
+        this.onSuccess = onSuccess;
     }
 
     @Override
@@ -36,6 +38,7 @@ public final class MailSendTask implements Runnable {
         switch (response.getType()) {
             case SUCCESS: {
                 logger.print("Mail successfully sent");
+                onSuccess.exec();
             }
             break;
 
