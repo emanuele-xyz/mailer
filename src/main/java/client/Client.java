@@ -1,7 +1,7 @@
 package client;
 
 import client.controllers.ComposerController;
-import client.controllers.ErrorController;
+import client.controllers.MessageController;
 import client.controllers.MailboxController;
 import client.controllers.ViewerController;
 import client.login.LoginController;
@@ -76,9 +76,9 @@ public final class Client extends Application {
             Parent composer = composerLoader.load();
             ComposerController composerController = composerLoader.getController();
 
-            FXMLLoader errorLoader = new FXMLLoader(getClass().getResource("/error.fxml"));
+            FXMLLoader errorLoader = new FXMLLoader(getClass().getResource("/message.fxml"));
             Parent error = errorLoader.load();
-            ErrorController errorController = errorLoader.getController();
+            MessageController messageController = errorLoader.getController();
 
             BorderPane root = new BorderPane();
             root.setLeft(mailbox);
@@ -97,7 +97,7 @@ public final class Client extends Application {
             mailboxController.initModel(mainModel);
             viewerController.initModel(mainModel);
             composerController.initModel(mainModel);
-            errorController.initModel(mainModel);
+            messageController.initModel(mainModel);
 
             // Set main model state transitions after all controllers have been initialized
             mainModel.getCurrentState().stateIndexProperty().addListener((__, oldVal, newVal) -> {

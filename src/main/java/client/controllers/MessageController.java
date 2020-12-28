@@ -4,12 +4,12 @@ import client.MainModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public final class ErrorController {
+public final class MessageController {
 
     private MainModel model;
 
     @FXML
-    private Label errorMessage;
+    private Label message;
 
     public void initModel(MainModel model) {
         if (this.model != null) {
@@ -18,6 +18,6 @@ public final class ErrorController {
 
         this.model = model;
 
-        errorMessage.textProperty().bind(model.errorMessageProperty());
+        message.textProperty().bind(model.errorMessageProperty());
     }
 }
