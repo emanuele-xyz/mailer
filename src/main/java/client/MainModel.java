@@ -81,7 +81,7 @@ public final class MainModel {
 
     // TODO: implement and add button to ui
     public void clearDraft() {
-
+        System.err.println("To be implemented");
     }
 
     public MainModelStateProperty getCurrentState() {

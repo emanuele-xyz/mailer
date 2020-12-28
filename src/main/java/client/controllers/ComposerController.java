@@ -25,6 +25,9 @@ public final class ComposerController {
     private TextArea text;
 
     @FXML
+    private Button clear;
+
+    @FXML
     private Button send;
 
     public void initModel(MainModel model) {
@@ -54,6 +57,8 @@ public final class ComposerController {
         });
 
         model.getMailDraft().textProperty().bind(text.textProperty());
+
+        clear.setOnAction(__ -> model.clearDraft());
 
         send.setOnAction(__ -> model.sendMail());
     }
