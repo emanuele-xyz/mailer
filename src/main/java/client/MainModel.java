@@ -6,6 +6,7 @@ import client.exceptions.InvalidTextException;
 import client.tasks.MailSendTask;
 import client.tasks.MailsFetchTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +26,7 @@ public final class MainModel {
     private final MainModelStateProperty currentState;
     private final MailAddress user;
     private final SimpleStringProperty errorMessage;
+    private final SimpleBooleanProperty isSending;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
     private final MailDraftProperty mailDraft;
@@ -38,6 +40,7 @@ public final class MainModel {
         currentState = new MainModelStateProperty();
         this.user = user;
         errorMessage = new SimpleStringProperty();
+        isSending = new SimpleBooleanProperty(false);
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
@@ -67,16 +70,14 @@ public final class MainModel {
 
     public void sendMail() {
         try {
-            // TODO: we have to disable send button and also state transitioning
-            // TODO: enable send button and state transitioning when sending procedure has finished
-            // TODO: mind that mail sending can fail and we have enable things even in this scenario
-            // TODO: to do so add a onFinish callback to MailSendTask
             Mail mail = mailDraft.makeMail();
+            isSending.set(true);
             mailSenderExecutor.submit(new MailSendTask(
                     mail,
                     serverDispatcher,
                     logger,
-                    () -> Platform.runLater(() -> mails.add(mail))
+                    () -> Platform.runLater(() -> mails.add(mail)),
+                    () -> Platform.runLater(() -> isSending.set(false))
             ));
         } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
             logger.print(e.getMessage());
@@ -119,6 +120,10 @@ public final class MainModel {
 
     public SimpleStringProperty errorMessageProperty() {
         return errorMessage;
+    }
+
+    public SimpleBooleanProperty isSendingProperty() {
+        return isSending;
     }
 
     public ObservableList<Mail> getMails() {

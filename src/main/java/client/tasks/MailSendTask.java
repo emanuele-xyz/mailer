@@ -18,12 +18,14 @@ public final class MailSendTask implements Runnable {
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
     private final MailSendCallback onSuccess;
+    private final MailSendCallback onFinish;
 
-    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger, MailSendCallback onSuccess) {
+    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger, MailSendCallback onSuccess, MailSendCallback omFinish) {
         this.mail = mail;
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
         this.onSuccess = onSuccess;
+        this.onFinish = omFinish;
     }
 
     @Override
@@ -61,5 +63,6 @@ public final class MailSendTask implements Runnable {
                 break;
         }
 
+        onFinish.exec();
     }
 }

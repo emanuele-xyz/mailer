@@ -49,7 +49,9 @@ public final class ViewerController {
         text.setFocusTraversable(false);
 
         reply.setOnAction(__ -> model.reply());
+        reply.disableProperty().bind(model.isSendingProperty());
 
         replyAll.setOnAction(__ -> model.replyAll());
+        replyAll.disableProperty().bind(model.isSendingProperty());
     }
 }

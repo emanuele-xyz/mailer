@@ -38,11 +38,13 @@ public final class ComposerController {
         this.model = model;
 
         model.getMailDraft().subjectProperty().bind(subject.textProperty());
+        subject.disableProperty().bind(model.isSendingProperty());
 
         addRecipient.setOnAction(__ -> {
             SimpleStringProperty recipient = model.getMailDraft().addRecipient();
             TextField textField = new TextField();
             recipient.bind(textField.textProperty());
+            textField.disableProperty().bind(model.isSendingProperty());
             to.getChildren().add(textField);
 
             textField.focusedProperty().addListener((___, ____, isFocused) -> {
@@ -51,15 +53,21 @@ public final class ComposerController {
                     // No recipient was added, delete this recipient and remove
                     // text field from flow pane
                     model.getMailDraft().removeRecipient(recipient);
+                    recipient.unbind();
+                    textField.disableProperty().unbind();
                     to.getChildren().remove(textField);
                 }
             });
         });
+        addRecipient.disableProperty().bind(model.isSendingProperty());
 
         model.getMailDraft().textProperty().bind(text.textProperty());
+        text.disableProperty().bind(model.isSendingProperty());
 
         clear.setOnAction(__ -> model.clearDraft());
+        clear.disableProperty().bind(model.isSendingProperty());
 
         send.setOnAction(__ -> model.sendMail());
+        send.disableProperty().bind(model.isSendingProperty());
     }
 }
