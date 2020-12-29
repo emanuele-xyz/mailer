@@ -3,6 +3,7 @@ package client;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
 import client.exceptions.InvalidTextException;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
 import mailer.InvalidMailAddressException;

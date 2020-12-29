@@ -37,7 +37,7 @@ public final class ComposerController {
 
         this.model = model;
 
-        model.getMailDraft().subjectProperty().bind(subject.textProperty());
+        model.getMailDraft().subjectProperty().bindBidirectional(subject.textProperty());
         subject.disableProperty().bind(model.isSendingProperty());
 
         addRecipient.setOnAction(__ -> {
@@ -61,10 +61,13 @@ public final class ComposerController {
         });
         addRecipient.disableProperty().bind(model.isSendingProperty());
 
-        model.getMailDraft().textProperty().bind(text.textProperty());
+        model.getMailDraft().textProperty().bindBidirectional(text.textProperty());
         text.disableProperty().bind(model.isSendingProperty());
 
-        clear.setOnAction(__ -> model.clearDraft());
+        clear.setOnAction(__ -> {
+            model.clearDraft();
+            to.getChildren().clear();
+        });
         clear.disableProperty().bind(model.isSendingProperty());
 
         send.setOnAction(__ -> model.sendMail());

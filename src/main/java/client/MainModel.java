@@ -107,7 +107,7 @@ public final class MainModel {
 
     // TODO: implement
     public void clearDraft() {
-        System.err.println("To be implemented");
+        mailDraft.clear();
     }
 
     public MainModelStateProperty getCurrentState() {
