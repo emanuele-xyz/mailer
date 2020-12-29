@@ -91,6 +91,7 @@ public final class MainModel {
         // Get currently selected mail from field
         String from = selectedMail.fromProperty().get();
         // Clear draft
+        clearDraft();
         // Add to draft recipient
         // Change state to composing
     }

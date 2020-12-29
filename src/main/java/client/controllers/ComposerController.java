@@ -2,7 +2,9 @@ package client.controllers;
 
 import client.MainModel;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -40,25 +42,34 @@ public final class ComposerController {
         model.getMailDraft().subjectProperty().bindBidirectional(subject.textProperty());
         subject.disableProperty().bind(model.isSendingProperty());
 
-        addRecipient.setOnAction(__ -> {
-            SimpleStringProperty recipient = model.getMailDraft().addRecipient();
-            TextField textField = new TextField();
-            recipient.bind(textField.textProperty());
-            textField.disableProperty().bind(model.isSendingProperty());
-            to.getChildren().add(textField);
+        model.getMailDraft().getTos().addListener((ListChangeListener<SimpleStringProperty>) change -> {
+            if (!change.next()) {
+                // this is the last change
+                return;
+            }
 
-            textField.focusedProperty().addListener((___, ____, isFocused) -> {
-                if (!isFocused && textField.getText().isEmpty()) {
-                    // Focusing out from text field and text field is empty
-                    // No recipient was added, delete this recipient and remove
-                    // text field from flow pane
-                    model.getMailDraft().removeRecipient(recipient);
-                    recipient.unbind();
-                    textField.disableProperty().unbind();
-                    to.getChildren().remove(textField);
-                }
-            });
+            if (change.wasRemoved()) {
+                return;
+            }
+
+            for (SimpleStringProperty added : change.getAddedSubList()) {
+                TextField textField = new TextField();
+                added.bind(textField.textProperty());
+                textField.disableProperty().bind(model.isSendingProperty());
+                to.getChildren().add(textField);
+
+                textField.focusedProperty().addListener((__, ___, isFocused) -> {
+                    if (!isFocused && textField.getText().isEmpty()) {
+                        model.getMailDraft().removeRecipient(added);
+                        added.unbind();
+                        textField.disableProperty().unbind();
+                        to.getChildren().remove(textField);
+                    }
+                });
+            }
         });
+
+        addRecipient.setOnAction(__ -> model.getMailDraft().addRecipient());
         addRecipient.disableProperty().bind(model.isSendingProperty());
 
         model.getMailDraft().textProperty().bindBidirectional(text.textProperty());

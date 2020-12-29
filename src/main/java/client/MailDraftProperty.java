@@ -6,6 +6,8 @@ import client.exceptions.InvalidTextException;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
@@ -20,14 +22,14 @@ public final class MailDraftProperty {
 
     private final MailAddress user;
     private final SimpleStringProperty subject;
-    private final List<SimpleStringProperty> tos;
+    private final ObservableList<SimpleStringProperty> tos;
     private final SimpleStringProperty text;
     private final SimpleBooleanProperty clear;
 
     public MailDraftProperty(MailAddress user) {
         this.user = user;
         subject = new SimpleStringProperty();
-        tos = new ArrayList<>();
+        tos = FXCollections.observableArrayList();
         text = new SimpleStringProperty();
         clear = new SimpleBooleanProperty(false);
     }
@@ -61,10 +63,9 @@ public final class MailDraftProperty {
         return new Mail(id, user, recipients, new Date(), subject, text);
     }
 
-    public SimpleStringProperty addRecipient() {
+    public void addRecipient() {
         SimpleStringProperty tmp = new SimpleStringProperty();
         tos.add(tmp);
-        return tmp;
     }
 
     public void removeRecipient(SimpleStringProperty prop) {
@@ -75,7 +76,7 @@ public final class MailDraftProperty {
         return subject;
     }
 
-    public List<SimpleStringProperty> getTos() {
+    public ObservableList<SimpleStringProperty> getTos() {
         return tos;
     }
 
