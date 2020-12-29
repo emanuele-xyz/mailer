@@ -53,7 +53,7 @@ public final class ComposerController {
             }
 
             for (SimpleStringProperty added : change.getAddedSubList()) {
-                TextField textField = new TextField();
+                TextField textField = new TextField(added.get());
                 added.bind(textField.textProperty());
                 textField.disableProperty().bind(model.isSendingProperty());
                 to.getChildren().add(textField);

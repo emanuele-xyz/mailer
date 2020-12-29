@@ -68,6 +68,11 @@ public final class MailDraftProperty {
         tos.add(tmp);
     }
 
+    public void addRecipient(String recipient) {
+        SimpleStringProperty tmp = new SimpleStringProperty(recipient);
+        tos.add(tmp);
+    }
+
     public void removeRecipient(SimpleStringProperty prop) {
         tos.remove(prop);
     }

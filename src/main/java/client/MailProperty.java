@@ -23,19 +23,7 @@ public final class MailProperty {
     public void select(Mail mail) {
         subject.set(mail.getSubject());
         from.set(mail.getFrom().toString());
-
-        {
-            StringBuilder sb = new StringBuilder();
-            MailAddress[] tos = mail.getTo();
-            for (int i = 0; i < tos.length; i++) {
-                sb.append(tos[i].toString());
-                if (i != tos.length - 1) {
-                    sb.append(", ");
-                }
-            }
-            to.set(sb.toString());
-        }
-
+        to.set(getTo(mail));
         date.set(mail.getDate().toString());
         text.set(mail.getText());
     }
@@ -58,5 +46,33 @@ public final class MailProperty {
 
     public SimpleStringProperty textProperty() {
         return text;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        String border = "-".repeat(30);
+        sb.append(border).append('\n');
+        sb.append("Subject: ").append(subject.get()).append('\n');
+        sb.append("From: ").append(from.get()).append('\n');
+        sb.append("To: ").append(to.get()).append('\n');
+        sb.append("Date: ").append(date.get()).append('\n');
+        sb.append(border).append('\n');
+        sb.append('\n');
+        sb.append(text.get());
+        sb.append('\n').append(border);
+        return sb.toString();
+    }
+
+    private String getTo(Mail mail) {
+        StringBuilder sb = new StringBuilder();
+        MailAddress[] tos = mail.getTo();
+        for (int i = 0; i < tos.length; i++) {
+            sb.append(tos[i].toString());
+            if (i != tos.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }

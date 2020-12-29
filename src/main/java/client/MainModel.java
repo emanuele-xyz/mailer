@@ -86,14 +86,32 @@ public final class MainModel {
 
     // TODO: implement
     public void reply() {
-        System.err.println("To be implemented");
-
-        // Get currently selected mail from field
+        // Get currently selected mail from and subject fields
         String from = selectedMail.fromProperty().get();
+        String subject = selectedMail.subjectProperty().get();
+
+        // If from field is the same as the user, we are trying to reply
+        // to a mail that we sent. This makes no sense
+        if (from.equals(user.toString())) {
+            logger.print("Cannot reply to a mail that you have sent");
+            return;
+        }
+
         // Clear draft
         clearDraft();
+
+        // Add to draft subject
+        mailDraft.subjectProperty().set(subject);
+
         // Add to draft recipient
+        mailDraft.addRecipient(from);
+
+        // Add to draft text
+        String tmp = String.format("\n\n\nReplying to\n%s\n", selectedMail.toString());
+        mailDraft.textProperty().set(tmp);
+
         // Change state to composing
+        currentState.setComposing();
     }
 
     // TODO: implement
