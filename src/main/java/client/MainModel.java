@@ -89,6 +89,7 @@ public final class MainModel {
         System.err.println("To be implemented");
 
         // Get currently selected mail from field
+        String from = selectedMail.fromProperty().get();
         // Clear draft
         // Add to draft recipient
         // Change state to composing
@@ -105,7 +106,6 @@ public final class MainModel {
         // Change state to composing
     }
 
-    // TODO: implement
     public void clearDraft() {
         mailDraft.clear();
     }

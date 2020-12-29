@@ -64,10 +64,12 @@ public final class ComposerController {
         model.getMailDraft().textProperty().bindBidirectional(text.textProperty());
         text.disableProperty().bind(model.isSendingProperty());
 
-        clear.setOnAction(__ -> {
-            model.clearDraft();
-            to.getChildren().clear();
+        model.getMailDraft().clearProperty().addListener((__, ___, mustClear) -> {
+            if (mustClear) {
+                to.getChildren().clear();
+            }
         });
+        clear.setOnAction(__ -> model.clearDraft());
         clear.disableProperty().bind(model.isSendingProperty());
 
         send.setOnAction(__ -> model.sendMail());

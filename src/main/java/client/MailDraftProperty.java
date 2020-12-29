@@ -22,18 +22,22 @@ public final class MailDraftProperty {
     private final SimpleStringProperty subject;
     private final List<SimpleStringProperty> tos;
     private final SimpleStringProperty text;
+    private final SimpleBooleanProperty clear;
 
     public MailDraftProperty(MailAddress user) {
         this.user = user;
         subject = new SimpleStringProperty();
         tos = new ArrayList<>();
         text = new SimpleStringProperty();
+        clear = new SimpleBooleanProperty(false);
     }
 
     public void clear() {
         subject.set("");
         tos.clear();
         text.set("");
+        clear.set(true);
+        clear.set(false);
     }
 
     public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException {
@@ -77,6 +81,10 @@ public final class MailDraftProperty {
 
     public SimpleStringProperty textProperty() {
         return text;
+    }
+
+    public SimpleBooleanProperty clearProperty() {
+        return clear;
     }
 
     private List<MailAddress> getRecipients() throws InvalidMailAddressException {
