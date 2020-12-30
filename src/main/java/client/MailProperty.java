@@ -8,14 +8,18 @@ public final class MailProperty {
 
     private final SimpleStringProperty subject;
     private final SimpleStringProperty from;
+    private MailAddress fromAddress;
     private final SimpleStringProperty to;
+    private MailAddress[] toAddresses;
     private final SimpleStringProperty date;
     private final SimpleStringProperty text;
 
     public MailProperty() {
         subject = new SimpleStringProperty("");
         from = new SimpleStringProperty("");
+        fromAddress = null;
         to = new SimpleStringProperty("");
+        toAddresses = null;
         date = new SimpleStringProperty("");
         text = new SimpleStringProperty("");
     }
@@ -23,7 +27,9 @@ public final class MailProperty {
     public void select(Mail mail) {
         subject.set(mail.getSubject());
         from.set(mail.getFrom().toString());
+        fromAddress = mail.getFrom();
         to.set(getTo(mail));
+        toAddresses = mail.getTo();
         date.set(mail.getDate().toString());
         text.set(mail.getText());
     }
@@ -36,8 +42,16 @@ public final class MailProperty {
         return from;
     }
 
+    public MailAddress getFromAddress() {
+        return fromAddress;
+    }
+
     public SimpleStringProperty toProperty() {
         return to;
+    }
+
+    public MailAddress[] getToAddresses() {
+        return toAddresses;
     }
 
     public SimpleStringProperty dateProperty() {

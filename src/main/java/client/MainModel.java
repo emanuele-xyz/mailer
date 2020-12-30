@@ -15,6 +15,8 @@ import mailer.Mail;
 import mailer.MailAddress;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -84,45 +86,19 @@ public final class MainModel {
         }
     }
 
-    // TODO: implement
     public void reply() {
-        // Get currently selected mail from and subject fields
-        String from = selectedMail.fromProperty().get();
+        MailAddress from = selectedMail.getFromAddress();
         String subject = selectedMail.subjectProperty().get();
 
-        // If from field is the same as the user, we are trying to reply
-        // to a mail that we sent. This makes no sense
-        if (from.equals(user.toString())) {
-            logger.print("Cannot reply to a mail that you have sent");
-            return;
-        }
-
-        // Clear draft
-        clearDraft();
-
-        // Add to draft subject
-        mailDraft.subjectProperty().set(subject);
-
-        // Add to draft recipient
-        mailDraft.addRecipient(from);
-
-        // Add to draft text
-        String tmp = String.format("\n\n\nReplying to\n%s\n", selectedMail.toString());
-        mailDraft.textProperty().set(tmp);
-
-        // Change state to composing
-        currentState.setComposing();
+        reply(subject, selectedMail.toString(), from);
     }
 
-    // TODO: implement
     public void replyAll() {
-        System.err.println("To be implemented");
+        MailAddress from = selectedMail.getFromAddress();
+        MailAddress[] to = selectedMail.getToAddresses();
+        String subject = selectedMail.subjectProperty().get();
 
-        // Get currently selected mail from and to fields
-        // Remove from to fields this account
-        // Clear draft
-        // Add to draft recipients
-        // Change state to composing
+        reply(subject, selectedMail.toString(), from, to);
     }
 
     public void clearDraft() {
@@ -155,5 +131,31 @@ public final class MainModel {
 
     public MailDraftProperty getMailDraft() {
         return mailDraft;
+    }
+
+    private void reply(String subject, String text, MailAddress from, MailAddress ... recipients) {
+        if (from.equals(user)) {
+            logger.print("Cannot reply to a mail that you have sent");
+            return;
+        }
+
+        // Clear draft
+        clearDraft();
+
+        // Add to draft subject
+        mailDraft.subjectProperty().set(subject);
+
+        // Add to draft recipients
+        mailDraft.addRecipient(from.toString());
+        Arrays.stream(recipients)
+                .filter(mailAddress -> !mailAddress.equals(user))
+                .forEach(mailAddress -> mailDraft.addRecipient(mailAddress.toString()));
+
+        // Add to draft text
+        String tmp = String.format("\n\n\nReplying to\n%s\n", text);
+        mailDraft.textProperty().set(tmp);
+
+        // Change state to composing
+        currentState.setComposing();
     }
 }
