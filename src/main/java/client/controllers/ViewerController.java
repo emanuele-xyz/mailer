@@ -31,6 +31,9 @@ public final class ViewerController {
     @FXML
     private Button replyAll;
 
+    @FXML
+    private Button forward;
+
     public void initModel(MainModel model) {
         if (this.model != null) {
             throw new IllegalStateException("Cannot initialize model more than once");
@@ -51,5 +54,8 @@ public final class ViewerController {
 
         replyAll.setOnAction(__ -> model.replyAll());
         replyAll.disableProperty().bind(model.isSendingProperty());
+
+        forward.setOnAction(__ -> model.forward());
+        forward.disableProperty().bind(model.isSendingProperty());
     }
 }

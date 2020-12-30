@@ -60,6 +60,7 @@
          <children>
             <Button fx:id="reply" mnemonicParsing="false" text="Reply" />
             <Button fx:id="replyAll" mnemonicParsing="false" text="Reply All" />
+            <Button fx:id="forward" mnemonicParsing="false" text="Forward" />
          </children>
          <opaqueInsets>
             <Insets />

@@ -16,7 +16,6 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -101,6 +100,18 @@ public final class MainModel {
         reply(subject, selectedMail.toString(), from, to);
     }
 
+    public void forward() {
+        String subject = selectedMail.subjectProperty().get();
+        String text = selectedMail.textProperty().get();
+
+        clearDraft();
+
+        mailDraft.subjectProperty().set(subject);
+        mailDraft.textProperty().set(text);
+
+        currentState.setComposing();
+    }
+
     public void clearDraft() {
         mailDraft.clear();
     }
@@ -133,7 +144,7 @@ public final class MainModel {
         return mailDraft;
     }
 
-    private void reply(String subject, String text, MailAddress from, MailAddress ... recipients) {
+    private void reply(String subject, String text, MailAddress from, MailAddress... recipients) {
         if (from.equals(user)) {
             logger.print("Cannot reply to a mail that you have sent");
             return;
