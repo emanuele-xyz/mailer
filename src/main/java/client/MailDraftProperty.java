@@ -12,10 +12,7 @@ import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class MailDraftProperty {
@@ -93,19 +90,24 @@ public final class MailDraftProperty {
         return clear;
     }
 
-    private List<MailAddress> getRecipients() throws InvalidMailAddressException {
+    private List<MailAddress> getRecipients() throws InvalidMailAddressException, InvalidRecipientsException {
         List<String> addresses = tos.stream()
                 .map(StringPropertyBase::get)
-                .map(String::trim)
+                .filter(Objects::nonNull)
+                // TODO: Should we trim each string?
                 .distinct()
                 .filter(s -> !s.isEmpty())
-                .filter(s -> !s.equals(user.toString()))
                 .collect(Collectors.toList());
 
         List<MailAddress> result = new ArrayList<>();
         for (String address : addresses) {
             result.add(new MailAddress(address));
         }
+
+        if (result.contains(user)) {
+            throw new InvalidRecipientsException(String.format("Invalid recipient: '%s'", user));
+        }
+
         return result;
     }
 }

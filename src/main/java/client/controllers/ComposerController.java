@@ -59,7 +59,20 @@ public final class ComposerController {
                 to.getChildren().add(textField);
 
                 textField.focusedProperty().addListener((__, ___, isFocused) -> {
-                    if (!isFocused && textField.getText().isEmpty()) {
+                    if (isFocused) {
+                        return;
+                    }
+
+                    // If there was input, trim it
+                    String text = textField.textProperty().get();
+                    if (text != null) {
+                        text = text.trim();
+                        textField.textProperty().set(text);
+                    }
+
+                    // If there is no input or the input is empty, remove the text field
+                    if (text == null || text.isEmpty()) {
+                        // If the inserted mail is
                         model.getMailDraft().removeRecipient(added);
                         added.unbind();
                         textField.disableProperty().unbind();

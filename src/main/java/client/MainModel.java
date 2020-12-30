@@ -24,29 +24,30 @@ public final class MainModel {
     private static final int MAIL_FETCH_THREADS = 1;
     private static final int MAIL_SEND_THREADS = 1;
 
+    private final SimpleStringProperty errorMessage;
+    private final Logger logger;
+
     private final MainModelStateProperty currentState;
     private final MailAddress user;
-    private final SimpleStringProperty errorMessage;
     private final SimpleBooleanProperty isSending;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
     private final MailDraftProperty mailDraft;
 
-    private final Logger logger;
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService mailFetcherExecutor;
     private final ExecutorService mailSenderExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
+        errorMessage = new SimpleStringProperty();
+        logger = new Logger(errorMessage);
         currentState = new MainModelStateProperty();
         this.user = user;
-        errorMessage = new SimpleStringProperty();
         isSending = new SimpleBooleanProperty(false);
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
 
-        logger = new Logger(errorMessage);
         serverDispatcher = new ServerDispatcher();
         mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
         mailSenderExecutor = Executors.newFixedThreadPool(MAIL_SEND_THREADS);
