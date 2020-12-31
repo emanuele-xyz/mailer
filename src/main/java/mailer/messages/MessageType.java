@@ -7,4 +7,5 @@ public enum MessageType {
     FETCH_REQUEST,
     FETCH_RESPONSE,
     MAIL_PUSH,
+    MAIL_DELETE,
 }
