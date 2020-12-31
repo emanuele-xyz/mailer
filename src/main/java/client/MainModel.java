@@ -113,6 +113,10 @@ public final class MainModel {
         currentState.setComposing();
     }
 
+    public void deleteMail() {
+        System.err.println("To be implemented");
+    }
+
     public void clearDraft() {
         mailDraft.clear();
     }

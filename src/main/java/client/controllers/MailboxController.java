@@ -18,6 +18,9 @@ public final class MailboxController {
     private Button newMail;
 
     @FXML
+    private Button deleteMail;
+
+    @FXML
     private ListView<Mail> mails;
 
     public void initModel(MainModel model) {
@@ -40,6 +43,8 @@ public final class MailboxController {
             }
         });
 
-        newMail.setOnAction(e -> model.getCurrentState().setComposing());
+        newMail.setOnAction(__ -> model.getCurrentState().setComposing());
+
+        deleteMail.setOnAction(__ -> model.deleteMail());
     }
 }
