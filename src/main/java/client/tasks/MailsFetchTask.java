@@ -13,7 +13,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class MailsFetchTask implements Runnable {
+public final class MailsFetchTask implements Runnable {
 
     private static final int MESSAGE_WAIT_TIME = 10 * 1000;
 
