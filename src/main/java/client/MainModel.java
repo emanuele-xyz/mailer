@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mailer.Constants;
 import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
@@ -21,8 +22,7 @@ import java.util.concurrent.Executors;
 
 public final class MainModel {
 
-    private static final int MAIL_FETCH_THREADS = 1;
-    private static final int MAIL_SEND_THREADS = 1;
+    private static final int TASK_RUNNER_THREADS = Constants.CORES / 2;
 
     private final SimpleStringProperty errorMessage;
     private final Logger logger;
@@ -35,8 +35,7 @@ public final class MainModel {
     private final MailDraftProperty mailDraft;
 
     private final ServerDispatcher serverDispatcher;
-    private final ExecutorService mailFetcherExecutor;
-    private final ExecutorService mailSenderExecutor;
+    private final ExecutorService tasksExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
         errorMessage = new SimpleStringProperty();
@@ -49,20 +48,18 @@ public final class MainModel {
         mailDraft = new MailDraftProperty(user);
 
         serverDispatcher = new ServerDispatcher();
-        mailFetcherExecutor = Executors.newFixedThreadPool(MAIL_FETCH_THREADS);
-        mailSenderExecutor = Executors.newFixedThreadPool(MAIL_SEND_THREADS);
+        tasksExecutor = Executors.newFixedThreadPool(TASK_RUNNER_THREADS);
 
         fetchMails();
     }
 
     public void close() {
         serverDispatcher.shutdown();
-        mailFetcherExecutor.shutdown();
-        mailSenderExecutor.shutdown();
+        tasksExecutor.shutdown();
     }
 
     public void fetchMails() {
-        mailFetcherExecutor.submit(new MailsFetchTask(
+        tasksExecutor.submit(new MailsFetchTask(
                 serverDispatcher,
                 logger,
                 (mail) -> Platform.runLater(() -> mails.add(mail)),
@@ -74,7 +71,7 @@ public final class MainModel {
         try {
             Mail mail = mailDraft.makeMail();
             isSending.set(true);
-            mailSenderExecutor.submit(new MailSendTask(
+            tasksExecutor.submit(new MailSendTask(
                     mail,
                     serverDispatcher,
                     logger,
