@@ -31,7 +31,6 @@ public final class Server extends Application {
 
             stage.setTitle("Mailer server");
             stage.setScene(new Scene(root));
-            stage.setAlwaysOnTop(true);
             stage.show();
 
         } catch (MkdirException | InvalidMailAddressException e) {
