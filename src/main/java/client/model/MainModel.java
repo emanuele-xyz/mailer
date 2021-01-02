@@ -1,5 +1,7 @@
-package client;
+package client.model;
 
+import client.Logger;
+import client.ServerDispatcher;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
 import client.exceptions.InvalidTextException;

@@ -1,4 +1,4 @@
-package client;
+package client.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import mailer.Mail;

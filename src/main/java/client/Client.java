@@ -7,6 +7,8 @@ import client.controllers.ViewerController;
 import client.login.LoginController;
 import client.login.LoginModel;
 import client.login.LoginResult;
+import client.model.MainModel;
+import client.model.MainModelStateProperty;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
