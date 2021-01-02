@@ -32,6 +32,11 @@ public final class MailboxController {
 
         username.setText(model.getUser());
 
+        newMail.setOnAction(__ -> model.getCurrentState().setComposing());
+
+        deleteMail.setOnAction(__ -> model.deleteMail());
+        deleteMail.disableProperty().bind(mails.getSelectionModel().selectedItemProperty().isNull());
+
         mails.setItems(model.getMails());
         mails.getSelectionModel().selectedItemProperty().addListener((__, ___, newSel) -> {
             model.getCurrentState().setViewing();
@@ -42,9 +47,5 @@ public final class MailboxController {
                 model.getCurrentState().setViewing();
             }
         });
-
-        newMail.setOnAction(__ -> model.getCurrentState().setComposing());
-
-        deleteMail.setOnAction(__ -> model.deleteMail());
     }
 }

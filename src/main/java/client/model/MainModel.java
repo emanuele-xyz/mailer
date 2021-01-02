@@ -5,6 +5,7 @@ import client.ServerDispatcher;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
 import client.exceptions.InvalidTextException;
+import client.tasks.MailDeleteTask;
 import client.tasks.MailSendTask;
 import client.tasks.MailsFetchTask;
 import javafx.application.Platform;
@@ -19,6 +20,7 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,7 +115,13 @@ public final class MainModel {
     }
 
     public void deleteMail() {
-        System.err.println("To be implemented");
+        Mail mail = selectedMail.getMail();
+        tasksExecutor.submit(new MailDeleteTask(
+                serverDispatcher,
+                logger,
+                mail.getId(),
+                () -> Platform.runLater(() -> mails.remove(mail))
+        ));
     }
 
     public void clearDraft() {

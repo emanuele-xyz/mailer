@@ -6,32 +6,33 @@ import mailer.MailAddress;
 
 public final class MailProperty {
 
+    private Mail mail = null;
     private final SimpleStringProperty subject;
     private final SimpleStringProperty from;
-    private MailAddress fromAddress;
     private final SimpleStringProperty to;
-    private MailAddress[] toAddresses;
     private final SimpleStringProperty date;
     private final SimpleStringProperty text;
 
     public MailProperty() {
+        mail = null;
         subject = new SimpleStringProperty("");
         from = new SimpleStringProperty("");
-        fromAddress = null;
         to = new SimpleStringProperty("");
-        toAddresses = null;
         date = new SimpleStringProperty("");
         text = new SimpleStringProperty("");
     }
 
     public void select(Mail mail) {
+        this.mail = mail;
         subject.set(mail.getSubject());
         from.set(mail.getFrom().toString());
-        fromAddress = mail.getFrom();
         to.set(getTo(mail));
-        toAddresses = mail.getTo();
         date.set(mail.getDate().toString());
         text.set(mail.getText());
+    }
+
+    public Mail getMail() {
+        return mail;
     }
 
     public SimpleStringProperty subjectProperty() {
@@ -43,7 +44,7 @@ public final class MailProperty {
     }
 
     public MailAddress getFromAddress() {
-        return fromAddress;
+        return mail.getFrom();
     }
 
     public SimpleStringProperty toProperty() {
@@ -51,7 +52,7 @@ public final class MailProperty {
     }
 
     public MailAddress[] getToAddresses() {
-        return toAddresses;
+        return mail.getTo();
     }
 
     public SimpleStringProperty dateProperty() {
