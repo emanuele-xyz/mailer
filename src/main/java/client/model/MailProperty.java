@@ -22,6 +22,15 @@ public final class MailProperty {
         text = new SimpleStringProperty("");
     }
 
+    public void clear() {
+        mail = null;
+        subject.set("");
+        from.set("");
+        to.set("");
+        date.set("");
+        text.set("");
+    }
+
     public void select(Mail mail) {
         this.mail = mail;
         subject.set(mail.getSubject());

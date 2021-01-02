@@ -120,7 +120,10 @@ public final class MainModel {
                 logger,
                 user,
                 mail.getId(),
-                () -> Platform.runLater(() -> mails.remove(mail))
+                () -> Platform.runLater(() -> {
+                    mails.remove(mail);
+                    selectedMail.clear();
+                })
         ));
     }
 
