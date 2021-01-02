@@ -27,6 +27,7 @@ public final class MainModel {
 
     private static final int TASK_RUNNER_THREADS = Constants.CORES / 2;
 
+    // TODO: add message and swap between those using logger
     private final SimpleStringProperty errorMessage;
     private final Logger logger;
 
