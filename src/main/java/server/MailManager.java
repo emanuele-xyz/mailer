@@ -4,6 +4,7 @@ import mailer.Constants;
 import mailer.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
+import server.exceptions.InvalidIDException;
 import server.exceptions.MkdirException;
 import server.exceptions.NoSuchAddressException;
 
@@ -60,6 +61,11 @@ public final class MailManager {
 
     public Mail[] loadMails(MailAddress address) {
         return accounts.get(address).loadMails();
+    }
+
+    public boolean deleteMail(MailAddress address, UUID mailID) throws NoSuchAddressException, InvalidIDException {
+        Account account = getAccount(address);
+        return account.deleteMail(mailID);
     }
 
     private Account getAccount(MailAddress address) throws NoSuchAddressException {

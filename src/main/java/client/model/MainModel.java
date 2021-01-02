@@ -20,7 +20,6 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -119,6 +118,7 @@ public final class MainModel {
         tasksExecutor.submit(new MailDeleteTask(
                 serverDispatcher,
                 logger,
+                user,
                 mail.getId(),
                 () -> Platform.runLater(() -> mails.remove(mail))
         ));

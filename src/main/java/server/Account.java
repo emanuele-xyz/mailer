@@ -2,6 +2,7 @@ package server;
 
 import mailer.Mail;
 import mailer.MailJSONConverter;
+import server.exceptions.InvalidIDException;
 import server.exceptions.MkdirException;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public final class Account {
 
@@ -59,6 +61,20 @@ public final class Account {
         return mails.toArray(new Mail[0]);
     }
 
+    public synchronized boolean deleteMail(UUID mailID) throws InvalidIDException {
+        File mail = new File(inboxDir, mailID.toString());
+        if (mail.exists()) {
+            return mail.delete();
+        }
+
+        mail = new File(outboxDir, mailID.toString());
+        if (mail.exists()) {
+            return mail.delete();
+        }
+
+        throw new InvalidIDException(mailID);
+    }
+
     @Override
     public String toString() {
         return accountDirectory;
@@ -80,6 +96,7 @@ public final class Account {
             // If there is no such file, it's a programming error
             // The programmer probably got the path wrong
             e.printStackTrace();
+            assert false;
         }
     }
 

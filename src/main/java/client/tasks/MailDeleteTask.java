@@ -2,6 +2,7 @@ package client.tasks;
 
 import client.Logger;
 import client.ServerDispatcher;
+import mailer.MailAddress;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
 import mailer.messages.MailDeleteMessage;
@@ -17,19 +18,21 @@ public final class MailDeleteTask implements Runnable {
 
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
+    private final MailAddress user;
     private final UUID mailID;
     private final MailDeleteCallback onSuccess;
 
-    public MailDeleteTask(ServerDispatcher serverDispatcher, Logger logger, UUID mailID, MailDeleteCallback onSuccess) {
+    public MailDeleteTask(ServerDispatcher serverDispatcher, Logger logger, MailAddress user, UUID mailID, MailDeleteCallback onSuccess) {
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
+        this.user = user;
         this.mailID = mailID;
         this.onSuccess = onSuccess;
     }
 
     @Override
     public void run() {
-        Future<Message> message = serverDispatcher.sendToServer(new MailDeleteMessage(mailID), MESSAGE_WAIT_TIME);
+        Future<Message> message = serverDispatcher.sendToServer(new MailDeleteMessage(user, mailID), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
             logger.print("Error sending delete message to server! Try again");

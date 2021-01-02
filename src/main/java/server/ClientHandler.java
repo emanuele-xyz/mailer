@@ -5,6 +5,7 @@ import mailer.Mail;
 import mailer.MailAddress;
 import mailer.connections.ConnectionHandler;
 import mailer.messages.*;
+import server.exceptions.InvalidIDException;
 import server.exceptions.NoSuchAddressException;
 
 import java.io.ObjectInputStream;
@@ -77,13 +78,49 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
             }
             break;
 
+            case MAIL_DELETE: {
+                MailDeleteMessage mailDeleteMessage = castMessage(MailDeleteMessage.class, message);
+                // If it's null there is a mismatch between message type and class. This is a bug.
+                // Fix it in MailDelete class
+                assert mailDeleteMessage != null;
+
+                processMailDelete(mailDeleteMessage);
+            }
+            break;
+
             case ERROR:
             case SUCCESS:
                 // TODO: is it a programmer error?
                 // If server receives a success or error message
                 // without any context it doesn't do anything
+                assert false;
                 break;
         }
+    }
+
+    private void processMailDelete(MailDeleteMessage mailDeleteMessage) {
+        logger.print("[%s] - received %s message", address, mailDeleteMessage.getType());
+
+        try {
+            boolean result = mailManager.deleteMail(mailDeleteMessage.getUser(), mailDeleteMessage.getMailID());
+            if (result) {
+                // Delete was successful
+                sendMessage(new Success());
+            } else {
+                // Delete failed
+                logger.print("[%s] - delete operation has failed", address);
+                sendMessage(new ErrorMessage("Delete operation failed"));
+            }
+        } catch (NoSuchAddressException e) {
+            logger.print("[%s] - %s", e.getMessage());
+            sendMessage(new ErrorMessage(String.format("Invalid mail address '%s'", mailDeleteMessage.getUser())));
+            e.printStackTrace();
+        } catch (InvalidIDException e) {
+            logger.print("[%s] - invalid mail id '%s'", address, e.getId());
+            sendMessage(new ErrorMessage("Invalid mail ID"));
+            e.printStackTrace();
+        }
+
     }
 
     private void processMailPushMessage(MailPushMessage mailPushMessage) {
@@ -125,9 +162,8 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
         } catch (InvalidMailAddressException e) {
             // Mail address is invalid, send error message back to the client
-            logger.print("[%s] - invalid address '%s'", address, addressString);
-            sendMessage(new ErrorMessage(
-                    String.format("Invalid mail address '%s'", addressString))
+            logger.print("[%s] - %s", address, e.getMessage());
+            sendMessage(new ErrorMessage(String.format("Invalid mail address '%s'", addressString))
             );
 
             e.printStackTrace();
