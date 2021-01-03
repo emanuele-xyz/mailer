@@ -8,7 +8,7 @@ public final class MainModelStateProperty {
     public static final int VIEWING = BLANK + 1;
     public static final int COMPOSING = VIEWING + 1;
 
-    private static final int DEFAULT_STATE = VIEWING;
+    private static final int DEFAULT_STATE = BLANK;
 
     private final SimpleIntegerProperty stateIndex;
 

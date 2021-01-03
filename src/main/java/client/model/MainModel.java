@@ -124,6 +124,7 @@ public final class MainModel {
                 () -> Platform.runLater(() -> {
                     mails.remove(mail);
                     selectedMail.clear();
+                    currentState.setBlank();
                 })
         ));
     }
