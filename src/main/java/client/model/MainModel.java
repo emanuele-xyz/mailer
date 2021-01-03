@@ -79,7 +79,7 @@ public final class MainModel {
                     mail,
                     serverDispatcher,
                     logger,
-                    () -> Platform.runLater(() -> mails.add(mail)),
+                    () -> Platform.runLater(() -> mails.add(0, mail)),
                     () -> Platform.runLater(() -> isSending.set(false))
             ));
         } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
@@ -165,8 +165,8 @@ public final class MainModel {
         mailFetchExecutor.scheduleAtFixedRate(new MailsFetchTask(
                 serverDispatcher,
                 logger,
-                (mail) -> Platform.runLater(() -> mails.add(mail)),
-                user.toString()
+                user.toString(),
+                mail -> Platform.runLater(() -> mails.add(0, mail))
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 
