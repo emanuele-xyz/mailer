@@ -2,6 +2,7 @@ package client.tasks;
 
 import client.Logger;
 import client.ServerDispatcher;
+import javafx.collections.ObservableList;
 import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
@@ -24,15 +25,13 @@ public final class MailsFetchTask implements Runnable {
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
     private final String address;
-    private final UUID[] received;
-    private final MailFetchCallback onMailsReceived;
+    private final ObservableList<Mail> mails;
 
-    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, UUID[] received, MailFetchCallback onMailsReceived) {
+    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, ObservableList<Mail> mails) {
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
         this.address = address;
-        this.received = received;
-        this.onMailsReceived = onMailsReceived;
+        this.mails = mails;
     }
 
     @Override
@@ -47,6 +46,7 @@ public final class MailsFetchTask implements Runnable {
         // to let other mail fetch tasks to run
         isFetching.set(true);
 
+        UUID[] received = mails.stream().map(Mail::getId).toArray(UUID[]::new);
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address, received), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
@@ -64,7 +64,7 @@ public final class MailsFetchTask implements Runnable {
 
                 Arrays.stream(tmp.getMails())
                         .sorted(Comparator.comparing(Mail::getDate))
-                        .forEach(onMailsReceived::exec);
+                        .forEach(mail -> mails.add(0, mail));
             }
             break;
 

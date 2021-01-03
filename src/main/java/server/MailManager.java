@@ -59,8 +59,13 @@ public final class MailManager {
         }
     }
 
-    public Mail[] loadMails(MailAddress address) {
-        return accounts.get(address).loadMails();
+    public Mail[] loadMails(MailAddress address, List<UUID> filter) {
+        try {
+            return getAccount(address).loadMails(filter);
+        } catch (NoSuchAddressException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean deleteMail(MailAddress address, UUID mailID) throws NoSuchAddressException, InvalidIDException {

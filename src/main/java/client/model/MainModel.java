@@ -55,7 +55,7 @@ public final class MainModel {
         currentState = new MainModelStateProperty();
         this.user = user;
         isSending = new SimpleBooleanProperty(false);
-        mails = FXCollections.observableArrayList();
+        mails = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
 
@@ -167,8 +167,7 @@ public final class MainModel {
                 serverDispatcher,
                 logger,
                 user.toString(),
-                mails.stream().map(Mail::getId).toArray(UUID[]::new),
-                mail -> Platform.runLater(() -> mails.add(0, mail))
+                mails
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 

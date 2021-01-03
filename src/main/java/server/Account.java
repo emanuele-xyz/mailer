@@ -12,7 +12,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class Account {
 
@@ -45,15 +47,15 @@ public final class Account {
         write(mail, inboxDir);
     }
 
-    public synchronized Mail[] loadMails() {
-        ArrayList<Mail> mails = new ArrayList<>();
+    public synchronized Mail[] loadMails(List<UUID> filter) {
+        List<Mail> mails = new ArrayList<>();
 
-        boolean result = loadMails(inboxDir, mails);
+        boolean result = loadMails(inboxDir, mails, filter);
         if (!result) {
             return null;
         }
 
-        result = loadMails(outboxDir, mails);
+        result = loadMails(outboxDir, mails, filter);
         if (!result) {
             return null;
         }
@@ -110,7 +112,7 @@ public final class Account {
         }
     }
 
-    private static boolean loadMails(String path, ArrayList<Mail> mails) {
+    private static boolean loadMails(String path, List<Mail> mails, List<UUID> filter) {
         File filePath = new File(path);
         String[] mailFilePaths = filePath.list((File current, String name) -> new File(current, name).isFile());
         if (mailFilePaths == null) {
@@ -118,7 +120,15 @@ public final class Account {
             return false;
         }
 
+        List<String> filterPaths = filter.stream().map(UUID::toString).collect(Collectors.toList());
         for (String mailFilePath : mailFilePaths) {
+
+            if (filterPaths.contains(mailFilePath)) {
+                // If this mail is in the filter, don't load it
+                // Get to the next mail
+                continue;
+            }
+
             Path fileName = Path.of(path, mailFilePath);
             try {
                 String json = Files.readString(fileName);

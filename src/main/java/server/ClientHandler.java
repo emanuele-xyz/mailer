@@ -11,6 +11,7 @@ import server.exceptions.NoSuchAddressException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public final class ClientHandler extends ConnectionHandler implements Runnable {
 
@@ -151,7 +152,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
                 return;
             }
 
-            Mail[] mails = mailManager.loadMails(mailAddress);
+            Mail[] mails = mailManager.loadMails(mailAddress, Arrays.asList(fetchRequestMessage.getReceived()));
             if (mails == null) {
                 logger.print("[%s] - error loading mails from storage", address);
                 sendMessage(new ErrorMessage("Error loading mails"));
