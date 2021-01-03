@@ -59,9 +59,9 @@ public final class MailManager {
         }
     }
 
-    public Mail[] loadMails(MailAddress address, List<UUID> filter) {
+    public Mail[] loadMails(MailAddress address) {
         try {
-            return getAccount(address).loadMails(filter);
+            return getAccount(address).loadMails();
         } catch (NoSuchAddressException e) {
             e.printStackTrace();
             return null;

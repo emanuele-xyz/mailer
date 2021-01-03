@@ -47,15 +47,15 @@ public final class Account {
         write(mail, inboxDir);
     }
 
-    public synchronized Mail[] loadMails(List<UUID> filter) {
+    public synchronized Mail[] loadMails() {
         List<Mail> mails = new ArrayList<>();
 
-        boolean result = loadMails(inboxDir, mails, filter);
+        boolean result = loadMails(inboxDir, mails);
         if (!result) {
             return null;
         }
 
-        result = loadMails(outboxDir, mails, filter);
+        result = loadMails(outboxDir, mails);
         if (!result) {
             return null;
         }
@@ -112,7 +112,7 @@ public final class Account {
         }
     }
 
-    private static boolean loadMails(String path, List<Mail> mails, List<UUID> filter) {
+    private static boolean loadMails(String path, List<Mail> mails) {
         File filePath = new File(path);
         String[] mailFilePaths = filePath.list((File current, String name) -> new File(current, name).isFile());
         if (mailFilePaths == null) {
@@ -120,15 +120,7 @@ public final class Account {
             return false;
         }
 
-        List<String> filterPaths = filter.stream().map(UUID::toString).collect(Collectors.toList());
         for (String mailFilePath : mailFilePaths) {
-
-            if (filterPaths.contains(mailFilePath)) {
-                // If this mail is in the filter, don't load it
-                // Get to the next mail
-                continue;
-            }
-
             Path fileName = Path.of(path, mailFilePath);
             try {
                 String json = Files.readString(fileName);

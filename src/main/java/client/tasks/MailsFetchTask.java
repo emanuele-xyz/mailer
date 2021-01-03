@@ -2,7 +2,6 @@ package client.tasks;
 
 import client.Logger;
 import client.ServerDispatcher;
-import javafx.collections.ObservableList;
 import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
@@ -12,9 +11,10 @@ import mailer.messages.Message;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.UUID;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public final class MailsFetchTask implements Runnable {
 
@@ -25,13 +25,13 @@ public final class MailsFetchTask implements Runnable {
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
     private final String address;
-    private final ObservableList<Mail> mails;
+    private final MailFetchCallback onMailsReceived;
 
-    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, ObservableList<Mail> mails) {
+    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, MailFetchCallback onMailsReceived) {
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
         this.address = address;
-        this.mails = mails;
+        this.onMailsReceived = onMailsReceived;
     }
 
     @Override
@@ -46,8 +46,7 @@ public final class MailsFetchTask implements Runnable {
         // to let other mail fetch tasks to run
         isFetching.set(true);
 
-        UUID[] received = mails.stream().map(Mail::getId).toArray(UUID[]::new);
-        Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address, received), MESSAGE_WAIT_TIME);
+        Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
             logger.print("Error fetching mails from server! Try again");
@@ -62,9 +61,11 @@ public final class MailsFetchTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in MailFetchResponseMessage class.
 
-                Arrays.stream(tmp.getMails())
+                List<Mail> receivedMails = Arrays.stream(tmp.getMails())
                         .sorted(Comparator.comparing(Mail::getDate))
-                        .forEach(mail -> mails.add(0, mail));
+                        .collect(Collectors.toList());
+
+                onMailsReceived.exec(receivedMails);
             }
             break;
 

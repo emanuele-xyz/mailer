@@ -20,7 +20,6 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -55,7 +54,7 @@ public final class MainModel {
         currentState = new MainModelStateProperty();
         this.user = user;
         isSending = new SimpleBooleanProperty(false);
-        mails = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+        mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
 
@@ -167,7 +166,11 @@ public final class MainModel {
                 serverDispatcher,
                 logger,
                 user.toString(),
-                mails
+                receivedMails -> Platform.runLater(
+                        () -> receivedMails.stream()
+                        .filter(receivedMail -> !mails.contains(receivedMail))
+                        .forEach(receivedMail -> mails.add(0, receivedMail))
+                )
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 
