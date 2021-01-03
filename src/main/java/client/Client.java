@@ -46,6 +46,7 @@ public final class Client extends Application {
             LoginController controller = loader.getController();
 
             stage.setTitle("Mailer client login");
+            stage.setResizable(false);
             Scene scene = new Scene(root);
             stage.setScene(scene);
 
@@ -82,9 +83,12 @@ public final class Client extends Application {
             Parent error = errorLoader.load();
             MessageController messageController = errorLoader.getController();
 
+            FXMLLoader blankLoader = new FXMLLoader(getClass().getResource("/blank.fxml"));
+            Parent blank = blankLoader.load();
+
             BorderPane root = new BorderPane();
             root.setLeft(mailbox);
-            root.setCenter(viewer);
+            root.setCenter(blank);
             root.setBottom(error);
 
             MailAddress userAddress = null;
@@ -108,7 +112,10 @@ public final class Client extends Application {
                     return;
                 }
 
-                if (newVal.equals(MainModelStateProperty.VIEWING)) {
+                if (newVal.equals(MainModelStateProperty.BLANK)) {
+                    // Transition to blank state
+                    root.setCenter(blank);
+                } else if (newVal.equals(MainModelStateProperty.VIEWING)) {
                     // Transition to viewing state
                     root.setCenter(viewer);
                 } else if (newVal.equals(MainModelStateProperty.COMPOSING)) {
