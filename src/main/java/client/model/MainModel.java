@@ -20,6 +20,7 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -166,6 +167,7 @@ public final class MainModel {
                 serverDispatcher,
                 logger,
                 user.toString(),
+                mails.stream().map(Mail::getId).toArray(UUID[]::new),
                 mail -> Platform.runLater(() -> mails.add(0, mail))
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }

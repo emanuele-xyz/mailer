@@ -11,10 +11,9 @@ import mailer.messages.Message;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public final class MailsFetchTask implements Runnable {
 
@@ -25,12 +24,14 @@ public final class MailsFetchTask implements Runnable {
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
     private final String address;
+    private final UUID[] received;
     private final MailFetchCallback onMailsReceived;
 
-    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, MailFetchCallback onMailsReceived) {
+    public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, UUID[] received, MailFetchCallback onMailsReceived) {
         this.serverDispatcher = serverDispatcher;
         this.logger = logger;
         this.address = address;
+        this.received = received;
         this.onMailsReceived = onMailsReceived;
     }
 
@@ -46,7 +47,7 @@ public final class MailsFetchTask implements Runnable {
         // to let other mail fetch tasks to run
         isFetching.set(true);
 
-        Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
+        Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address, received), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
             logger.print("Error fetching mails from server! Try again");
