@@ -22,10 +22,16 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public final class MainModel {
 
-    private static final int TASK_RUNNER_THREADS = Constants.CORES / 2;
+    private static final int TASK_RUNNER_THREADS = Math.max(Constants.CORES / 2, 1);
+
+    private static final int MAIL_FETCH_THREADS = 1;
+    private static final long MAIL_FETCH_PERIOD = 2;
+    private static final TimeUnit MAIL_FETCH_TIME_UNIT = TimeUnit.SECONDS;
 
     // TODO: add message and swap between those using logger
     private final SimpleStringProperty errorMessage;
@@ -40,6 +46,7 @@ public final class MainModel {
 
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService tasksExecutor;
+    private final ScheduledExecutorService mailFetchExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
         errorMessage = new SimpleStringProperty();
@@ -53,22 +60,14 @@ public final class MainModel {
 
         serverDispatcher = new ServerDispatcher();
         tasksExecutor = Executors.newFixedThreadPool(TASK_RUNNER_THREADS);
+        mailFetchExecutor = Executors.newScheduledThreadPool(MAIL_FETCH_THREADS);
 
-        fetchMails();
+        startFetchMailsService();
     }
 
     public void close() {
         serverDispatcher.shutdown();
         tasksExecutor.shutdown();
-    }
-
-    public void fetchMails() {
-        tasksExecutor.submit(new MailsFetchTask(
-                serverDispatcher,
-                logger,
-                (mail) -> Platform.runLater(() -> mails.add(mail)),
-                user.toString())
-        );
     }
 
     public void sendMail() {
@@ -159,6 +158,15 @@ public final class MainModel {
 
     public MailDraftProperty getMailDraft() {
         return mailDraft;
+    }
+
+    private void startFetchMailsService() {
+        mailFetchExecutor.scheduleAtFixedRate(new MailsFetchTask(
+                serverDispatcher,
+                logger,
+                (mail) -> Platform.runLater(() -> mails.add(mail)),
+                user.toString()
+        ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 
     private void reply(String subject, String text, MailAddress from, MailAddress... recipients) {

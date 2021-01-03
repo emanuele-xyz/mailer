@@ -4,18 +4,24 @@ import client.Logger;
 import client.ServerDispatcher;
 import mailer.Mail;
 import mailer.Utils;
-import mailer.messages.*;
+import mailer.messages.ErrorMessage;
+import mailer.messages.MailFetchRequestMessage;
+import mailer.messages.MailFetchResponseMessage;
+import mailer.messages.Message;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class MailsFetchTask implements Runnable {
 
     private static final int MESSAGE_WAIT_TIME = 10 * 1000;
+
+    private static final AtomicBoolean isFetching = new AtomicBoolean(false);
 
     private final ServerDispatcher serverDispatcher;
     private final Logger logger;
@@ -31,10 +37,21 @@ public final class MailsFetchTask implements Runnable {
 
     @Override
     public void run() {
+        // If there already is another mail fetch task running, then close this task
+        if (isFetching.get()) {
+            return;
+        }
+
+        // Start fetching
+        // Remember that we have to set it back to false when we finish fetching
+        // to let other mail fetch tasks to run
+        isFetching.set(true);
+
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
             logger.print("Error fetching mails from server! Try again");
+            isFetching.set(false);
             return;
         }
 
@@ -72,5 +89,7 @@ public final class MailsFetchTask implements Runnable {
                 assert false;
                 break;
         }
+
+        isFetching.set(false);
     }
 }
