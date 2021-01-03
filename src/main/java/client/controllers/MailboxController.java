@@ -46,5 +46,16 @@ public final class MailboxController {
             model.getCurrentState().setViewing();
             model.getSelectedMail().select(newSel);
         });
+        mails.focusedProperty().addListener((__, ___, isFocused) -> {
+            if (isFocused) {
+                // If mail list was not focused, if we click on the item we selected
+                // the the list view selectedItemProperty change listener won't be triggered.
+                // To fix this, we force the change listener to be triggered by programmatically
+                // re-selecting the item that was previously selected
+                Mail selectedMail = mails.getSelectionModel().getSelectedItem();
+                mails.getSelectionModel().select(null);
+                mails.getSelectionModel().select(selectedMail);
+            }
+        });
     }
 }
