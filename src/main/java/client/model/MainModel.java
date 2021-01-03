@@ -20,10 +20,12 @@ import mailer.MailAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class MainModel {
 
@@ -121,11 +123,7 @@ public final class MainModel {
                 logger,
                 user,
                 mail.getId(),
-                () -> Platform.runLater(() -> {
-                    mails.remove(mail);
-                    selectedMail.clear();
-                    currentState.setBlank();
-                })
+                () -> Platform.runLater(() -> onMailDeleted(mail))
         ));
     }
 
@@ -166,11 +164,20 @@ public final class MainModel {
                 serverDispatcher,
                 logger,
                 user.toString(),
-                receivedMails -> Platform.runLater(
-                        () -> receivedMails.stream()
-                        .filter(receivedMail -> !mails.contains(receivedMail))
-                        .forEach(receivedMail -> mails.add(0, receivedMail))
-                )
+                receivedMails -> Platform.runLater(() -> {
+                    // Remove mails that for whatever reason we have and the server hasn't
+                    // This is not impossible, we could issue and complete a mail delete request while we fetch mails
+                    // This could lead to inconsistencies between client and server
+                    List<Mail> toBeRemoved = mails.stream()
+                            .filter(mail -> !receivedMails.contains(mail))
+                            .collect(Collectors.toList());
+                    toBeRemoved.forEach(mails::remove);
+
+                    // Add new mails
+                    receivedMails.stream()
+                            .filter(receivedMail -> !mails.contains(receivedMail))
+                            .forEach(receivedMail -> mails.add(0, receivedMail));
+                })
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 
@@ -198,5 +205,13 @@ public final class MainModel {
 
         // Change state to composing
         currentState.setComposing();
+    }
+
+    // This should be called only in JavaFX thread since this method
+    // updates the ui
+    private void onMailDeleted(Mail mail) {
+        mails.remove(mail);
+        selectedMail.clear();
+        currentState.setBlank();
     }
 }
