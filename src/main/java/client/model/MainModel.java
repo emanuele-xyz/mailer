@@ -68,6 +68,7 @@ public final class MainModel {
     public void close() {
         serverDispatcher.shutdown();
         tasksExecutor.shutdown();
+        mailFetchExecutor.shutdown();
     }
 
     public void sendMail() {
