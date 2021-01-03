@@ -3,6 +3,7 @@ package mailer;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class Mail implements Serializable {
@@ -53,5 +54,18 @@ public final class Mail implements Serializable {
     @Override
     public String toString() {
         return subject;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mail mail = (Mail) o;
+        return id.equals(mail.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
