@@ -121,6 +121,11 @@ public final class MainModel {
 
     public void deleteMail() {
         Mail mail = selectedMail.getMail();
+        if (mail == null) {
+            logger.print("No mail is currently selected");
+            return;
+        }
+
         tasksExecutor.submit(new MailDeleteTask(
                 serverDispatcher,
                 logger,
