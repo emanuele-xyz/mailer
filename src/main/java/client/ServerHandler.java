@@ -31,14 +31,11 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
         return result;
     }
 
-    // TODO: should i simplify it? Since all messages are of the form request-response
     private Message processMessage(Message message) throws IOException {
         if (message == null) {
             return null;
         }
 
-        // All messages have a simple request-response protocol
-        // We don't need to know what type of message we are handling
         boolean sendSuccessful = sendMessage(message);
         if (!sendSuccessful) {
             System.err.println("'sendMessage' method failed");
