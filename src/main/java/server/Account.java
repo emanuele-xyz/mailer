@@ -90,13 +90,12 @@ public final class Account {
             throw new Error(String.format("file '%s' already exists", file.getName()));
         }
 
-        // TODO: find better handling later
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(MailJSONConverter.mailToJson(mail));
             out.flush();
         } catch (FileNotFoundException e) {
             // If there is no such file, it's a programming error
-            // The programmer probably got the path wrong
+            // The programmer probably got the inbox or outbox path wrong
             e.printStackTrace();
             assert false;
         }
