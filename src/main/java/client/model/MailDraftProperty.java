@@ -94,7 +94,8 @@ public final class MailDraftProperty {
         List<String> addresses = tos.stream()
                 .map(StringPropertyBase::get)
                 .filter(Objects::nonNull)
-                // TODO: Should we trim each string?
+                // We should not depend upon the fact that the string is trimmed
+                .map(String::trim)
                 .distinct()
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
