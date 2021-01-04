@@ -30,16 +30,13 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         // Wait for client message
         Message msg = readMessage();
         if (msg == null) {
-            // If we cannot read the message send an error to the client
-            // to avoid leaving it hanging
-            // TODO: always check send message return value
+            // If we cannot read the message, try to send an error to the client
             sendMessage(new ErrorMessage("Unable to correctly read message"));
             logger.print("[%s] - error reading message");
             return;
         }
 
         // Process message
-        // TODO: return boolean flag to signify failure
         processMessage(msg);
 
         closeConnection();
@@ -90,9 +87,10 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
             case ERROR:
             case SUCCESS:
-                // TODO: is it a programmer error?
                 // If server receives a success or error message
                 // without any context it doesn't do anything
+                // This is a programmer error, the client should never send such a message
+                logger.print("[%s] - received '%s' message: do nothing", address, message.getType());
                 assert false;
                 break;
         }
