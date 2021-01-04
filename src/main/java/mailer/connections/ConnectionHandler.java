@@ -44,6 +44,14 @@ public abstract class ConnectionHandler {
         return Utils.read(Message.class, in);
     }
 
+    // We check the sendMessage return value only in client code.
+    // Why is that? Because in server code, what can we do if sendMessage fails?
+    // We could try to resend the message, but what if it fails again?
+    // For this reason, in server code we try to send the message and if the send fails
+    // the client will timeout and retry later!
+    // In client code, however, we check for the return value, why?
+    // Because if we fail to send a message, it's useless to wait for a message that will never
+    // come, even if the connection will timeout. We stop what we were doing immediately
     protected final boolean sendMessage(Message message) {
         boolean success = true;
 
