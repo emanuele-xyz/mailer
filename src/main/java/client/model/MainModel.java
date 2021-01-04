@@ -10,6 +10,7 @@ import client.tasks.MailSendTask;
 import client.tasks.MailsFetchTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,6 +46,7 @@ public final class MainModel {
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
     private final MailDraftProperty mailDraft;
+    private final SimpleIntegerProperty newMailsReceived;
 
     private final ServerDispatcher serverDispatcher;
     private final ExecutorService tasksExecutor;
@@ -59,6 +61,7 @@ public final class MainModel {
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
+        newMailsReceived = new SimpleIntegerProperty(0);
 
         serverDispatcher = new ServerDispatcher();
         tasksExecutor = Executors.newFixedThreadPool(TASK_RUNNER_THREADS);
@@ -159,6 +162,10 @@ public final class MainModel {
         return mailDraft;
     }
 
+    public SimpleIntegerProperty newMailsReceivedProperty() {
+        return newMailsReceived;
+    }
+
     private void startFetchMailsService() {
         mailFetchExecutor.scheduleAtFixedRate(new MailsFetchTask(
                 serverDispatcher,
@@ -173,10 +180,15 @@ public final class MainModel {
                             .collect(Collectors.toList());
                     toBeRemoved.forEach(mails::remove);
 
-                    // Add new mails
-                    receivedMails.stream()
+                    // Add new mails and notify for popup dialog
+                    List<Mail> newMails = receivedMails.stream()
                             .filter(receivedMail -> !mails.contains(receivedMail))
-                            .forEach(receivedMail -> mails.add(0, receivedMail));
+                            .collect(Collectors.toList());
+
+                    newMailsReceived.set(newMails.size());
+                    newMailsReceived.set(0);
+
+                    newMails.forEach(receivedMail -> mails.add(0, receivedMail));
                 })
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }

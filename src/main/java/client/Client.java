@@ -1,9 +1,6 @@
 package client;
 
-import client.controllers.ComposerController;
-import client.controllers.MessageController;
-import client.controllers.MailboxController;
-import client.controllers.ViewerController;
+import client.controllers.*;
 import client.login.LoginController;
 import client.login.LoginModel;
 import client.login.LoginResult;
@@ -83,6 +80,10 @@ public final class Client extends Application {
             Parent error = errorLoader.load();
             MessageController messageController = errorLoader.getController();
 
+            FXMLLoader popupLoader = new FXMLLoader(getClass().getResource("/popup.fxml"));
+            Parent popup = popupLoader.load();
+            PopupController popupController = popupLoader.getController();
+
             FXMLLoader blankLoader = new FXMLLoader(getClass().getResource("/blank.fxml"));
             Parent blank = blankLoader.load();
 
@@ -104,6 +105,7 @@ public final class Client extends Application {
             viewerController.initModel(mainModel);
             composerController.initModel(mainModel);
             messageController.initModel(mainModel);
+            popupController.initModel(mainModel, popup, stage);
 
             // Set main model state transitions after all controllers have been initialized
             mainModel.getCurrentState().stateIndexProperty().addListener((__, oldVal, newVal) -> {
