@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public final class Account {
 
@@ -87,6 +86,7 @@ public final class Account {
         File file = new File(box, mail.getId().toString());
 
         if (file.exists()) {
+            // This should never happen, and if it does it means that our IDs are not unique!
             throw new Error(String.format("file '%s' already exists", file.getName()));
         }
 
