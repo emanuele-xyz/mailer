@@ -1,6 +1,6 @@
 package client.model;
 
-import client.Logger;
+import client.logger.StringPropertyLogger;
 import client.ServerDispatcher;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
@@ -36,10 +36,7 @@ public final class MainModel {
     private static final long MAIL_FETCH_PERIOD = 2;
     private static final TimeUnit MAIL_FETCH_TIME_UNIT = TimeUnit.SECONDS;
 
-    // TODO: add message and swap between those using logger
-    private final SimpleStringProperty errorMessage;
-    private final Logger logger;
-
+    private final StringPropertyLogger logger;
     private final MainModelStateProperty currentState;
     private final MailAddress user;
     private final SimpleBooleanProperty isSending;
@@ -53,8 +50,7 @@ public final class MainModel {
     private final ScheduledExecutorService mailFetchExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
-        errorMessage = new SimpleStringProperty();
-        logger = new Logger(errorMessage);
+        logger = new StringPropertyLogger(new SimpleStringProperty(), new SimpleStringProperty());
         currentState = new MainModelStateProperty();
         this.user = user;
         isSending = new SimpleBooleanProperty(false);
@@ -88,7 +84,7 @@ public final class MainModel {
                     () -> Platform.runLater(() -> isSending.set(false))
             ));
         } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
-            logger.print(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
@@ -122,7 +118,7 @@ public final class MainModel {
     public void deleteMail() {
         Mail mail = selectedMail.getMail();
         if (mail == null) {
-            logger.print("No mail is currently selected");
+            logger.error("No mail is currently selected");
             return;
         }
 
@@ -147,8 +143,12 @@ public final class MainModel {
         return user.toString();
     }
 
+    public SimpleStringProperty successMessageProperty() {
+        return logger.successMessageProperty();
+    }
+
     public SimpleStringProperty errorMessageProperty() {
-        return errorMessage;
+        return logger.errorMessageProperty();
     }
 
     public SimpleBooleanProperty isSendingProperty() {
@@ -200,7 +200,7 @@ public final class MainModel {
 
     private void reply(String subject, String text, MailAddress from, MailAddress... recipients) {
         if (from.equals(user)) {
-            logger.print("Cannot reply to a mail that you have sent");
+            logger.error("Cannot reply to a mail that you have sent");
             return;
         }
 

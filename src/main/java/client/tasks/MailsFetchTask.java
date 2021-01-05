@@ -1,7 +1,7 @@
 package client.tasks;
 
-import client.Logger;
 import client.ServerDispatcher;
+import client.logger.Logger;
 import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
@@ -49,7 +49,7 @@ public final class MailsFetchTask implements Runnable {
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
-            logger.print("Error fetching mails from server! Try again");
+            logger.error("Error fetching mails from server! Try again");
             isFetching.set(false);
             return;
         }
@@ -75,7 +75,7 @@ public final class MailsFetchTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in ErrorMessage class.
 
-                logger.print(tmp.getMessage());
+                logger.error(tmp.getMessage());
             }
             break;
 

@@ -1,7 +1,7 @@
 package client.tasks;
 
-import client.Logger;
 import client.ServerDispatcher;
+import client.logger.Logger;
 import mailer.MailAddress;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
@@ -35,7 +35,7 @@ public final class MailDeleteTask implements Runnable {
         Future<Message> message = serverDispatcher.sendToServer(new MailDeleteMessage(user, mailID), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
-            logger.print("Error sending delete message to server! Try again");
+            logger.error("Error sending delete message to server! Try again");
             return;
         }
 
@@ -46,7 +46,7 @@ public final class MailDeleteTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in ErrorMessage class.
 
-                logger.print(tmp.getMessage());
+                logger.error(tmp.getMessage());
             }
             break;
 
@@ -56,7 +56,7 @@ public final class MailDeleteTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in Success class.
 
-                logger.print("Successfully deleted mail");
+                logger.success("Successfully deleted mail");
 
                 onSuccess.exec();
             }

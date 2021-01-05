@@ -1,7 +1,7 @@
 package client.tasks;
 
-import client.Logger;
 import client.ServerDispatcher;
+import client.logger.Logger;
 import mailer.Mail;
 import mailer.Utils;
 import mailer.messages.ErrorMessage;
@@ -33,13 +33,13 @@ public final class MailSendTask implements Runnable {
         Future<Message> message = serverDispatcher.sendToServer(new MailPushMessage(mail), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (message == null) {
-            logger.print("Error sending mail to the server. Try later");
+            logger.error("Error sending mail to the server. Try later");
             return;
         }
 
         switch (response.getType()) {
             case SUCCESS: {
-                logger.print("Mail successfully sent");
+                logger.success("Mail successfully sent");
                 onSuccess.exec();
             }
             break;
@@ -50,7 +50,7 @@ public final class MailSendTask implements Runnable {
                 // If tmp where null it means that there is a mismatch between message class
                 // and message type. This is a bug. We have to fix it in ErrorMessage class.
 
-                logger.print(tmp.getMessage());
+                logger.error(tmp.getMessage());
             }
             break;
 

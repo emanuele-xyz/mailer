@@ -9,7 +9,10 @@ public final class MessageController {
     private MainModel model;
 
     @FXML
-    private Label message;
+    private Label success;
+
+    @FXML
+    private Label error;
 
     public void initModel(MainModel model) {
         if (this.model != null) {
@@ -18,6 +21,7 @@ public final class MessageController {
 
         this.model = model;
 
-        message.textProperty().bind(model.errorMessageProperty());
+        success.textProperty().bind(model.successMessageProperty());
+        error.textProperty().bind(model.errorMessageProperty());
     }
 }
