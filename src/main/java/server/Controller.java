@@ -16,20 +16,21 @@ public final class Controller {
 
     public void initModel(Model model) {
         if (this.model != null) {
-            throw new IllegalStateException("Model can only be initialized once");
+            throw new IllegalStateException("Cannot initialize model more than once");
         }
 
         this.model = model;
+
         closeButton.setOnAction(e -> {
-            this.model.close();
+            model.close();
 
             // Disable the close button so that the user cannot press it anymore
             // and trigger the model's close method multiple times
             closeButton.setDisable(true);
         });
-        logListView.setItems(this.model.getLog());
+        logListView.setItems(model.getLog());
 
-        this.model.start();
+        model.start();
     }
 
     public void setStage(Stage stage) {
