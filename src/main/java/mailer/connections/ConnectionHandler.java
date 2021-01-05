@@ -1,7 +1,6 @@
 package mailer.connections;
 
 import mailer.Utils;
-import mailer.messages.LoginMessage;
 import mailer.messages.Message;
 
 import java.io.IOException;
