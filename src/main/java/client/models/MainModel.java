@@ -1,4 +1,4 @@
-package client.model;
+package client.models;
 
 import client.logger.StringPropertyLogger;
 import client.ServerDispatcher;

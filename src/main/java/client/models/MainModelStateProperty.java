@@ -1,4 +1,4 @@
-package client.model;
+package client.models;
 
 import javafx.beans.property.SimpleIntegerProperty;
 

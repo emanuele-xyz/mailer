@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.model.MainModel;
+import client.models.MainModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;

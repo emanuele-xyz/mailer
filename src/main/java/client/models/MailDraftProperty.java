@@ -1,4 +1,4 @@
-package client.model;
+package client.models;
 
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;

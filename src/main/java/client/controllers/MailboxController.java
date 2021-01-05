@@ -1,6 +1,6 @@
 package client.controllers;
 
-import client.model.MainModel;
+import client.models.MainModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
