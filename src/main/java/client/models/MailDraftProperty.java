@@ -40,7 +40,6 @@ public final class MailDraftProperty {
     }
 
     public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException {
-        UUID id = UUID.randomUUID();
 
         String subject = this.subject.getValue().trim();
         if (subject.isEmpty()) {
@@ -49,7 +48,7 @@ public final class MailDraftProperty {
 
         List<MailAddress> recipients = getRecipients();
         if (recipients.isEmpty()) {
-            throw new InvalidRecipientsException("There are no valid recipients");
+            throw new InvalidRecipientsException("Recipients list is empty");
         }
 
         String text = this.text.getValue().trim();
@@ -57,7 +56,7 @@ public final class MailDraftProperty {
             throw new InvalidTextException("Mail has no text");
         }
 
-        return new Mail(id, user, recipients, new Date(), subject, text);
+        return new Mail(UUID.randomUUID(), user, recipients, new Date(), subject, text);
     }
 
     public void addRecipient() {
@@ -66,7 +65,7 @@ public final class MailDraftProperty {
     }
 
     public void addRecipient(String recipient) {
-        SimpleStringProperty tmp = new SimpleStringProperty(recipient);
+        SimpleStringProperty tmp = new SimpleStringProperty(recipient.trim());
         tos.add(tmp);
     }
 
@@ -94,11 +93,12 @@ public final class MailDraftProperty {
         List<String> addresses = tos.stream()
                 .map(StringPropertyBase::get)
                 .filter(Objects::nonNull)
-                // We should not depend upon the fact that the string is trimmed
-                .map(String::trim)
-                .distinct()
+                // We should not depend upon the fact that mail address strings are trimmed
+                // .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+
+        addresses = getDistinct(addresses);
 
         List<MailAddress> result = new ArrayList<>();
         for (String address : addresses) {
@@ -110,5 +110,17 @@ public final class MailDraftProperty {
         }
 
         return result;
+    }
+
+    private List<String> getDistinct(List<String> addresses) throws InvalidRecipientsException {
+        Set<String> set = new HashSet<>();
+        for (String address : addresses) {
+            boolean alreadyPresent = !set.add(address);
+            if (alreadyPresent) {
+                throw new InvalidRecipientsException(String.format("Duplicate recipient '%s'", address));
+            }
+        }
+
+        return new ArrayList<>(set);
     }
 }
