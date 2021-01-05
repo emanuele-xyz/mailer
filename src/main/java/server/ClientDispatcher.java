@@ -12,21 +12,18 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ClientDispatcher implements Runnable {
 
     private static final String THREAD_NAME = "Client Dispatcher";
 
     private final Logger logger;
-    private final AtomicBoolean closeRequested;
     private final ServerSocket serverSocket;
     private final MailManager mailManager;
     private final ExecutorService exec;
 
     public ClientDispatcher(Logger logger) throws IOException, MkdirException, InvalidMailAddressException {
         this.logger = logger;
-        closeRequested = new AtomicBoolean(false);
         // If we can't open the server socket, we are done
         serverSocket = new ServerSocket(Constants.SERVER_PORT);
         mailManager = new MailManager();
@@ -37,7 +34,6 @@ public final class ClientDispatcher implements Runnable {
 
     public void close() {
         logger.print("Closing client dispatcher");
-        closeRequested.set(true);
 
         exec.shutdown();
         try {
@@ -56,9 +52,6 @@ public final class ClientDispatcher implements Runnable {
             try {
                 // the incoming socket must be closed by its handler
                 Socket incoming = serverSocket.accept();
-                if (closeRequested.get()) {
-                    break;
-                }
 
                 String clientAddress = incoming.getRemoteSocketAddress().toString();
                 logger.print("[%s] - connection accepted", clientAddress);
