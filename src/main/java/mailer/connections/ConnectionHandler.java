@@ -1,6 +1,7 @@
 package mailer.connections;
 
 import mailer.Utils;
+import mailer.messages.LoginMessage;
 import mailer.messages.Message;
 
 import java.io.IOException;
@@ -66,6 +67,12 @@ public abstract class ConnectionHandler {
     }
 
     protected final <T> T castMessage(Class<T> target, Message message) {
-        return Utils.tryCast(target, message);
+        T tmp =  Utils.tryCast(target, message);
+
+        // If it's null there is a mismatch between message type and class. This is a bug.
+        // Fix it in the appropriate message class!
+        assert tmp != null;
+
+        return tmp;
     }
 }

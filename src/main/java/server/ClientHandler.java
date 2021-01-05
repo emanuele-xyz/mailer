@@ -47,40 +47,24 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         switch (message.getType()) {
             case LOGIN: {
                 LoginMessage loginMessage = castMessage(LoginMessage.class, message);
-                // If it's null there is a mismatch between message type and class. This is a bug.
-                // Fix it in LoginMessage class
-                assert loginMessage != null;
-
                 processLogin(loginMessage);
             }
             break;
 
             case FETCH_REQUEST: {
                 MailFetchRequestMessage fetchRequestMessage = castMessage(MailFetchRequestMessage.class, message);
-                // If it's null there is a mismatch between message type and class. This is a bug.
-                // Fix it in MailFetchRequestMessage class
-                assert fetchRequestMessage != null;
-
                 processFetchRequestMessage(fetchRequestMessage);
             }
             break;
 
             case MAIL_PUSH: {
                 MailPushMessage mailPushMessage = castMessage(MailPushMessage.class, message);
-                // If it's null there is a mismatch between message type and class. This is a bug.
-                // Fix it in MailPushMessage class
-                assert mailPushMessage != null;
-
                 processMailPushMessage(mailPushMessage);
             }
             break;
 
             case MAIL_DELETE: {
                 MailDeleteMessage mailDeleteMessage = castMessage(MailDeleteMessage.class, message);
-                // If it's null there is a mismatch between message type and class. This is a bug.
-                // Fix it in MailDelete class
-                assert mailDeleteMessage != null;
-
                 processMailDelete(mailDeleteMessage);
             }
             break;
