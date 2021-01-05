@@ -3,6 +3,8 @@ package client.logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 
+import java.time.LocalDateTime;
+
 public final class StringPropertyLogger implements Logger {
 
     private final SimpleStringProperty successMessage;
@@ -15,9 +17,19 @@ public final class StringPropertyLogger implements Logger {
 
     @Override
     public void success(String message) {
+        String time = getTimeString();
         Platform.runLater(() -> {
             errorMessage.set("");
-            successMessage.set(message);
+            successMessage.set(String.format("[%s] - %s", time, message));
+        });
+    }
+
+    @Override
+    public void error(String message) {
+        String time = getTimeString();
+        Platform.runLater(() -> {
+            successMessage.set("");
+            errorMessage.set(String.format("[%s] - %s", time, message));
         });
     }
 
@@ -27,15 +39,7 @@ public final class StringPropertyLogger implements Logger {
     }
 
     @Override
-    public void error(String message) {
-        Platform.runLater(() -> {
-            successMessage.set("");
-            errorMessage.set(message);
-        });
-    }
-
-    @Override
-    public void error(String message, Object ... args) {
+    public void error(String message, Object... args) {
         error(String.format(message, args));
     }
 
@@ -46,5 +50,13 @@ public final class StringPropertyLogger implements Logger {
 
     public SimpleStringProperty errorMessageProperty() {
         return errorMessage;
+    }
+
+    private String getTimeString() {
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int min = now.getMinute();
+        int sec = now.getSecond();
+        return String.format("%02d:%02d:%02d", hour, min, sec);
     }
 }
