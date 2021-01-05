@@ -37,6 +37,7 @@ public final class ClientDispatcher implements Runnable {
 
         exec.shutdown();
         try {
+            // We don't need to synchronize the server socket since close() is thread safe
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
