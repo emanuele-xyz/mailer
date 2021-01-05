@@ -36,7 +36,8 @@ public final class Account {
     // What if more than one thread tries to write the same email at the same time?
     // Each mail should have a unique ID.
     // Hence processing the same mail more than once sounds like an error.
-    // But can we trust the client? Never trust the client!
+    // But can we trust the client? Never trust the client! If we care about security
+    // we should handle malicious clients.
     public synchronized void send(Mail mail) {
         write(mail, outboxDir);
     }
