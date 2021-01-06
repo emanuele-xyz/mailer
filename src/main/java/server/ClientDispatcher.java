@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 public final class ClientDispatcher implements Runnable {
 
     private static final String THREAD_NAME = "Client Dispatcher";
+    private static final int CLIENT_SOCKET_TIMEOUT = 10 * 1000;
 
     private final Logger logger;
     private final ServerSocket serverSocket;
@@ -59,7 +60,9 @@ public final class ClientDispatcher implements Runnable {
 
                 // If data stream initialization fails, we will close the socket, otherwise it is
                 // responsibility of our handler to close all the resources
+                // If socket timeout set fails, we close the socket
                 try {
+                    incoming.setSoTimeout(CLIENT_SOCKET_TIMEOUT);
                     ObjectOutputStream out = new ObjectOutputStream(incoming.getOutputStream());
                     ObjectInputStream in = new ObjectInputStream(incoming.getInputStream());
                     Runnable task = new ClientHandler(incoming, in, out, clientAddress, mailManager, logger);
@@ -67,7 +70,7 @@ public final class ClientDispatcher implements Runnable {
                 } catch (IOException e) {
                     // Data stream initialization failed, we have to close the socket ourselves
 
-                    logger.print("[%s] - cannot open data stream, connection is automatically closed", clientAddress);
+                    logger.print("[%s] - error connection setup ... closing socket", clientAddress);
 
                     try {
                         incoming.close();
