@@ -12,7 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import mailer.MailAddress;
 
 import java.io.IOException;

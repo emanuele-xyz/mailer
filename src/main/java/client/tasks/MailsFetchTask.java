@@ -16,20 +16,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public final class MailsFetchTask implements Runnable {
-
-    private static final int MESSAGE_WAIT_TIME = 10 * 1000;
+public final class MailsFetchTask extends Task {
 
     private static final AtomicBoolean isFetching = new AtomicBoolean(false);
 
-    private final ServerDispatcher serverDispatcher;
-    private final Logger logger;
     private final String address;
     private final MailFetchCallback onMailsReceived;
 
     public MailsFetchTask(ServerDispatcher serverDispatcher, Logger logger, String address, MailFetchCallback onMailsReceived) {
-        this.serverDispatcher = serverDispatcher;
-        this.logger = logger;
+        super(serverDispatcher, logger);
         this.address = address;
         this.onMailsReceived = onMailsReceived;
     }
@@ -56,10 +51,7 @@ public final class MailsFetchTask implements Runnable {
 
         switch (response.getType()) {
             case FETCH_RESPONSE: {
-                MailFetchResponseMessage tmp = Utils.tryCast(MailFetchResponseMessage.class, response);
-                assert tmp != null;
-                // If tmp where null it means that there is a mismatch between message class
-                // and message type. This is a bug. We have to fix it in MailFetchResponseMessage class.
+                MailFetchResponseMessage tmp = Utils.cast(MailFetchResponseMessage.class, response);
 
                 List<Mail> receivedMails = Arrays.stream(tmp.getMails())
                         .sorted(Comparator.comparing(Mail::getDate))
@@ -70,11 +62,7 @@ public final class MailsFetchTask implements Runnable {
             break;
 
             case ERROR: {
-                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, response);
-                assert tmp != null;
-                // If tmp where null it means that there is a mismatch between message class
-                // and message type. This is a bug. We have to fix it in ErrorMessage class.
-
+                ErrorMessage tmp = Utils.cast(ErrorMessage.class, response);
                 logger.error(tmp.getMessage());
             }
             break;

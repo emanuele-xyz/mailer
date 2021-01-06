@@ -15,7 +15,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 
@@ -77,9 +77,9 @@ public final class MainModel {
             Mail mail = mailDraft.makeMail();
             isSending.set(true);
             tasksExecutor.submit(new MailSendTask(
-                    mail,
                     serverDispatcher,
                     logger,
+                    mail,
                     () -> Platform.runLater(() -> mails.add(0, mail)),
                     () -> Platform.runLater(() -> isSending.set(false))
             ));

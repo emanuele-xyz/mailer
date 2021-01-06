@@ -12,19 +12,14 @@ import mailer.messages.Success;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
-public final class MailDeleteTask implements Runnable {
+public final class MailDeleteTask extends Task {
 
-    private static final int MESSAGE_WAIT_TIME = 10 * 1000;
-
-    private final ServerDispatcher serverDispatcher;
-    private final Logger logger;
     private final MailAddress user;
     private final UUID mailID;
     private final MailDeleteCallback onSuccess;
 
     public MailDeleteTask(ServerDispatcher serverDispatcher, Logger logger, MailAddress user, UUID mailID, MailDeleteCallback onSuccess) {
-        this.serverDispatcher = serverDispatcher;
-        this.logger = logger;
+        super(serverDispatcher, logger);
         this.user = user;
         this.mailID = mailID;
         this.onSuccess = onSuccess;
@@ -41,23 +36,14 @@ public final class MailDeleteTask implements Runnable {
 
         switch (response.getType()) {
             case ERROR: {
-                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, response);
-                assert tmp != null;
-                // If tmp where null it means that there is a mismatch between message class
-                // and message type. This is a bug. We have to fix it in ErrorMessage class.
-
+                ErrorMessage tmp = Utils.cast(ErrorMessage.class, response);
                 logger.error(tmp.getMessage());
             }
             break;
 
             case SUCCESS: {
-                Success tmp = Utils.tryCast(Success.class, response);
-                assert tmp != null;
-                // If tmp where null it means that there is a mismatch between message class
-                // and message type. This is a bug. We have to fix it in Success class.
-
+                Success tmp = Utils.cast(Success.class, response);
                 logger.success("Successfully deleted mail");
-
                 onSuccess.exec();
             }
             break;

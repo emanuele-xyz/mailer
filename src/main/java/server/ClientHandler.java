@@ -1,6 +1,6 @@
 package server;
 
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 import mailer.connections.ConnectionHandler;

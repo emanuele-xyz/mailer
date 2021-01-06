@@ -3,7 +3,7 @@ package server;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import server.exceptions.MkdirException;
 import server.logger.ObservableListStringLogger;
 

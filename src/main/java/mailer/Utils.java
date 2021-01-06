@@ -30,6 +30,10 @@ public final class Utils {
         }
     }
 
+    public static <T> T cast(Class <T> target, Object obj) {
+        return target.cast(obj);
+    }
+
     public static <T> T getResult(Future<T> future) {
         if (future == null) {
             return null;

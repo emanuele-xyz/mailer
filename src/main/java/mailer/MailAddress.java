@@ -2,6 +2,8 @@ package mailer;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+import mailer.exceptions.InvalidMailAddressException;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public final class MailAddress implements Serializable {

@@ -10,22 +10,17 @@ import mailer.messages.Message;
 
 import java.util.concurrent.Future;
 
-public final class MailSendTask implements Runnable {
-
-    private static final int MESSAGE_WAIT_TIME = 10 * 1000;
+public final class MailSendTask extends Task {
 
     private final Mail mail;
-    private final ServerDispatcher serverDispatcher;
-    private final Logger logger;
     private final MailSendCallback onSuccess;
     private final MailSendCallback onFinish;
 
-    public MailSendTask(Mail mail, ServerDispatcher serverDispatcher, Logger logger, MailSendCallback onSuccess, MailSendCallback omFinish) {
+    public MailSendTask(ServerDispatcher serverDispatcher, Logger logger, Mail mail, MailSendCallback onSuccess, MailSendCallback onFinish) {
+        super(serverDispatcher, logger);
         this.mail = mail;
-        this.serverDispatcher = serverDispatcher;
-        this.logger = logger;
         this.onSuccess = onSuccess;
-        this.onFinish = omFinish;
+        this.onFinish = onFinish;
     }
 
     @Override
@@ -45,11 +40,7 @@ public final class MailSendTask implements Runnable {
             break;
 
             case ERROR: {
-                ErrorMessage tmp = Utils.tryCast(ErrorMessage.class, response);
-                assert tmp != null;
-                // If tmp where null it means that there is a mismatch between message class
-                // and message type. This is a bug. We have to fix it in ErrorMessage class.
-
+                ErrorMessage tmp = Utils.cast(ErrorMessage.class, response);
                 logger.error(tmp.getMessage());
             }
             break;
@@ -59,6 +50,7 @@ public final class MailSendTask implements Runnable {
                 // If it happens the server sends back an unexpected
                 // message.
                 // This is a server bug.
+                System.err.println("Server sends an incorrect response to mail send message");
                 assert false;
                 break;
         }

@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import server.exceptions.MkdirException;
 
 import java.io.IOException;

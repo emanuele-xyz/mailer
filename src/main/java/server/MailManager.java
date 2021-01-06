@@ -1,7 +1,7 @@
 package server;
 
 import mailer.Constants;
-import mailer.InvalidMailAddressException;
+import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 import server.exceptions.InvalidIDException;
