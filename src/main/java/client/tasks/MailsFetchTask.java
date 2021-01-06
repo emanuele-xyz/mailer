@@ -38,7 +38,7 @@ public final class MailsFetchTask extends Task {
 
         // Start fetching
         // Remember that we have to set it back to false when we finish fetching
-        // to let other mail fetch tasks to run
+        // to allow other mail fetch tasks to run
         isFetching.set(true);
 
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
@@ -75,6 +75,7 @@ public final class MailsFetchTask extends Task {
                 break;
         }
 
+        // IMPORTANT!
         isFetching.set(false);
     }
 }
