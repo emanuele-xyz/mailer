@@ -14,6 +14,10 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ClientDispatcher waits for client connections and serves them as they arrive.
+ * You must call the close method in order to shutdown this service
+ */
 public final class ClientDispatcher implements Runnable {
 
     private static final String THREAD_NAME = "Client Dispatcher";

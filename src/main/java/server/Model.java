@@ -10,7 +10,7 @@ import server.logger.ObservableListStringLogger;
 import java.io.IOException;
 
 /**
- * Model for mailer server.
+ * Model for mailer server
  */
 public final class Model {
 
