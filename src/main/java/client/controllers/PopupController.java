@@ -31,8 +31,17 @@ public final class PopupController {
         initPopupStage(popup, stage);
 
         model.newMailsReceivedProperty().addListener((__, ___, newMails) -> {
+            // If there are no new mails, don't show popup
             if (newMails.equals(0)) {
                 return;
+            }
+
+            // If there is already a popup on the screen
+            if (popupStage.isShowing()) {
+                // Hide popup
+                popupStage.hide();
+                // Add previous mail number to newMails
+                newMails = ((Integer) newMails) + Integer.parseInt(number.getText());
             }
 
             number.setText(newMails.toString());
