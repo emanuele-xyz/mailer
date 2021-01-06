@@ -18,7 +18,7 @@
         </HBox>
         <HBox alignment="CENTER" spacing="3.0">
             <children>
-                <Label text="You have received">
+                <Label text="You have">
                     <font>
                         <Font size="16.0" />
                     </font>
