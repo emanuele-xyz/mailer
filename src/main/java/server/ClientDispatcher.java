@@ -3,6 +3,7 @@ package server;
 import mailer.Constants;
 import mailer.InvalidMailAddressException;
 import server.exceptions.MkdirException;
+import server.logger.Logger;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

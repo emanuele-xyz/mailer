@@ -5,25 +5,24 @@ import javafx.collections.ObservableList;
 import mailer.Constants;
 import mailer.InvalidMailAddressException;
 import server.exceptions.MkdirException;
+import server.logger.ObservableListStringLogger;
 
 import java.io.IOException;
 
 public final class Model {
 
-    private final ObservableList<String> log;
-    private final Logger logger;
+    private final ObservableListStringLogger logger;
 
     private final ClientDispatcher clientDispatcher;
 
     public Model() throws IOException, MkdirException, InvalidMailAddressException {
-        log = FXCollections.observableArrayList();
-        logger = new Logger(log);
+        logger = new ObservableListStringLogger(FXCollections.observableArrayList());
         // If ClientDispatcher creation fails, we are done
         clientDispatcher = new ClientDispatcher(logger);
     }
 
     public ObservableList<String> getLog() {
-        return log;
+        return logger.getLog();
     }
 
     /**

@@ -7,6 +7,7 @@ import mailer.connections.ConnectionHandler;
 import mailer.messages.*;
 import server.exceptions.InvalidIDException;
 import server.exceptions.NoSuchAddressException;
+import server.logger.Logger;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

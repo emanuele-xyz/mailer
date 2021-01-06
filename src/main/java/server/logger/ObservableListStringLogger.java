@@ -1,21 +1,27 @@
-package server;
+package server.logger;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 
-public final class Logger {
+public final class ObservableListStringLogger implements Logger {
 
     private final ObservableList<String> log;
 
-    public Logger(ObservableList<String> log) {
+    public ObservableListStringLogger(ObservableList<String> log) {
         this.log = log;
     }
 
+    @Override
     public void print(String message) {
         Platform.runLater(() -> log.add(message));
     }
 
+    @Override
     public void print(String message, Object ... args) {
-        Platform.runLater(() -> log.add(String.format(message, args)));
+        print(String.format(message, args));
+    }
+
+    public ObservableList<String> getLog() {
+        return log;
     }
 }
