@@ -9,10 +9,12 @@ import server.logger.ObservableListStringLogger;
 
 import java.io.IOException;
 
+/**
+ * Model for mailer server.
+ */
 public final class Model {
 
     private final ObservableListStringLogger logger;
-
     private final ClientDispatcher clientDispatcher;
 
     public Model() throws IOException, MkdirException, InvalidMailAddressException {

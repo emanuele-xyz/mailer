@@ -8,6 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * ConnectionHandler manages some kind of connection consisting of a socket and its data streams
+ */
 public abstract class ConnectionHandler {
 
     private final Socket socket;
@@ -20,6 +23,14 @@ public abstract class ConnectionHandler {
         this.out = out;
     }
 
+    /**
+     * Close the connection
+     *
+     * <p>
+     *     If closing the socket or the streams fails, the error is
+     *     reported to standard error, close doesn't throw
+     * </p>
+     */
     public final void closeConnection() {
         try {
             in.close();
@@ -40,6 +51,10 @@ public abstract class ConnectionHandler {
         }
     }
 
+    /**
+     * Read a message from socket input stream
+     * @return A message if the read was successful, null otherwise
+     */
     protected final Message readMessage() {
         return Utils.read(Message.class, in);
     }
@@ -52,6 +67,12 @@ public abstract class ConnectionHandler {
     // In client code, however, we check for the return value, why?
     // Because if we fail to send a message, it's useless to wait for a message that will never
     // come, even if the connection will timeout. We stop what we were doing immediately
+
+    /**
+     * Send a message into socket output stream
+     * @param message the message to be sent
+     * @return true if the send was successful, false otherwise
+     */
     protected final boolean sendMessage(Message message) {
         boolean success = true;
 
@@ -65,8 +86,14 @@ public abstract class ConnectionHandler {
         return success;
     }
 
-    protected final <T> T castMessage(Class<T> target, Message message) {
-        T tmp =  Utils.tryCast(target, message);
+    /**
+     * Cast a message to the specified target message subtype
+     * @param target target message class
+     * @param message the message to be cast
+     * @return the cast message
+     */
+    protected final <T extends Message> T castMessage(Class<T> target, Message message) {
+        T tmp = Utils.tryCast(target, message);
 
         // If it's null there is a mismatch between message type and class. This is a bug.
         // Fix it in the appropriate message class!

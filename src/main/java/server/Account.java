@@ -33,20 +33,32 @@ public final class Account {
         makeDirIfNotPresent(outboxDir);
     }
 
-    // What if more than one thread tries to write the same email at the same time?
-    // Each mail should have a unique ID.
-    // Hence processing the same mail more than once sounds like an error.
-    // But can we trust the client? Never trust the client! If we care about security
-    // we should handle malicious clients.
+    /**
+     * Save a mail in the account outbox
+     * @param mail the mail to save
+     */
     public synchronized void send(Mail mail) {
+        // Each mail has an unique id.
+        // (Note that the same mail is stored in different places in different accounts!)
+        // Hence processing the same mail (since mails are unique) more than once sounds like an error.
+        // But can we trust the client? Never trust the client! If we care about security
+        // we should handle malicious clients that create mails with ids of previously processed mails.
         write(mail, outboxDir);
     }
 
-    // Read 'send' method comment
+    /**
+     * Save a mail in the account inbox
+     * @param mail the mail to save
+     */
     public synchronized void receive(Mail mail) {
+        // Read 'send' method comment
         write(mail, inboxDir);
     }
 
+    /**
+     * Load all mails associated with this account
+     * @return a list of mails
+     */
     public synchronized Mail[] loadMails() {
         List<Mail> mails = new ArrayList<>();
 
@@ -63,6 +75,12 @@ public final class Account {
         return mails.toArray(new Mail[0]);
     }
 
+    /**
+     * Delete a mail from this account
+     * @param mailID the mail's id
+     * @return true if the delete was successful, false otherwise
+     * @throws InvalidIDException thrown if there is no such mail in this account
+     */
     public synchronized boolean deleteMail(UUID mailID) throws InvalidIDException {
         File mail = new File(inboxDir, mailID.toString());
         if (mail.exists()) {
@@ -82,12 +100,21 @@ public final class Account {
         return accountDirectory;
     }
 
-    // Two threads could write to the same file concurrently: a disaster!
+    /**
+     * Write a mail to a box. Note that this is not thread safe since, in the
+     * erroneous case of two mails with the same ids or one mail with the same
+     * address for sender and receiver, two threads could write the same file
+     * concurrently!
+     * TODO: fix when mails cannot have the sender also in the recipients
+     * @param mail the mail to be saved
+     * @param box the box directory
+     */
     private static void write(Mail mail, String box) {
         File file = new File(box, mail.getId().toString());
 
         if (file.exists()) {
             // This should never happen, and if it does it means that our IDs are not unique!
+            assert false;
             throw new Error(String.format("file '%s' already exists", file.getName()));
         }
 
@@ -102,22 +129,36 @@ public final class Account {
         }
     }
 
+    /**
+     * Create directory if <code>dir</code> is not present
+     * @param dir the directory
+     * @throws MkdirException thrown if directory creation went wrong
+     */
     private static void makeDirIfNotPresent(String dir) throws MkdirException {
         File inbox = new File(dir);
-        if (!inbox.exists()) {
-            boolean res = inbox.mkdir();
-            if (!res) {
-                throw new MkdirException(String.format("Unable to create '%s' directory", dir));
-            }
+        if (inbox.exists()) {
+            return;
+        }
+
+        boolean res = inbox.mkdir();
+        if (!res) {
+            throw new MkdirException(String.format("Unable to create '%s' directory", dir));
         }
     }
 
+    /**
+     * Load all mails associated with this account
+     * @param path box path
+     * @param mails where to store the loaded mails
+     * @return true if the load was successful, false otherwise
+     */
     private static boolean loadMails(String path, List<Mail> mails) {
         File filePath = new File(path);
         String[] mailFilePaths = filePath.list((File current, String name) -> new File(current, name).isFile());
         if (mailFilePaths == null) {
-            System.err.printf("Error loading emails in '%s' directory\n", path);
-            return false;
+            // This is a programmer error
+            assert false;
+            throw new Error(String.format("Path '%s' is wrong", path));
         }
 
         for (String mailFilePath : mailFilePaths) {

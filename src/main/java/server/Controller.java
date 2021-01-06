@@ -34,6 +34,7 @@ public final class Controller {
     }
 
     public void setStage(Stage stage) {
+        // Closing the window closes the model
         stage.setOnCloseRequest(e -> model.close());
     }
 }

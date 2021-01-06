@@ -17,6 +17,10 @@ import java.util.concurrent.Executors;
 public final class ClientDispatcher implements Runnable {
 
     private static final String THREAD_NAME = "Client Dispatcher";
+
+    /**
+     * Max time that the socket waits in MILLISECONDS
+     */
     private static final int CLIENT_SOCKET_TIMEOUT = 10 * 1000;
 
     private final Logger logger;
@@ -28,6 +32,7 @@ public final class ClientDispatcher implements Runnable {
         this.logger = logger;
         // If we can't open the server socket, we are done
         serverSocket = new ServerSocket(Constants.SERVER_PORT);
+        // If we can't initialize the mail manager, we are done
         mailManager = new MailManager();
         // Be careful, we initialize exec last so that we don't
         // have to shutdown exec if something goes wrong
@@ -59,9 +64,9 @@ public final class ClientDispatcher implements Runnable {
                 String clientAddress = incoming.getRemoteSocketAddress().toString();
                 logger.print("[%s] - connection accepted", clientAddress);
 
-                // If data stream initialization fails, we will close the socket, otherwise it is
-                // responsibility of our handler to close all the resources
-                // If socket timeout set fails, we close the socket
+                // If something goes wrong, we close the socket
+                // Once the client handler has been submitted, it's its own responsibility to
+                // close the socket and data streams
                 try {
                     incoming.setSoTimeout(CLIENT_SOCKET_TIMEOUT);
                     ObjectOutputStream out = new ObjectOutputStream(incoming.getOutputStream());
@@ -70,6 +75,7 @@ public final class ClientDispatcher implements Runnable {
                     exec.submit(task);
                 } catch (IOException e) {
                     // Data stream initialization failed, we have to close the socket ourselves
+                    // Socket timeout set method failed, we close the socket
 
                     logger.print("[%s] - error connection setup ... closing socket", clientAddress);
 
@@ -83,9 +89,10 @@ public final class ClientDispatcher implements Runnable {
                 }
 
             } catch (SocketException e) {
-                // Thrown when the server socket is closed.
-                // If socket is closed, then the client dispatcher was closed.
-                // Hence we return, terminating the dispatcher thread.
+                // Thrown when the server socket is closed
+                // If socket is closed, then the client dispatcher was closed
+                // Hence we return, terminating the dispatcher thread
+                // This is not a proper error
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
