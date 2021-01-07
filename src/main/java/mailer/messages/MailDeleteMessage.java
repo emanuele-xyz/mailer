@@ -1,10 +1,12 @@
 package mailer.messages;
 
-import mailer.Mail;
 import mailer.MailAddress;
 
 import java.util.UUID;
 
+/**
+ * Message sent from the client to request for a mail deletion
+ */
 public final class MailDeleteMessage extends Message {
 
     private final MailAddress user;
@@ -16,14 +18,16 @@ public final class MailDeleteMessage extends Message {
         this.mailID = mailID;
     }
 
-    public MailDeleteMessage(Mail mail) {
-        this(mail.getFrom(), mail.getId());
-    }
-
+    /**
+     * @return the client's mail address
+     */
     public MailAddress getUser() {
         return user;
     }
 
+    /**
+     * @return the id of the mail to be deleted
+     */
     public UUID getMailID() {
         return mailID;
     }

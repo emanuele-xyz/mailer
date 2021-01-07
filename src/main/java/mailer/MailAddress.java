@@ -6,6 +6,9 @@ import java.util.Objects;
 import mailer.exceptions.InvalidMailAddressException;
 import org.apache.commons.validator.routines.EmailValidator;
 
+/**
+ * MailAddress represents a mail address
+ */
 public final class MailAddress implements Serializable {
 
     private static final String AT = "@";
@@ -17,6 +20,13 @@ public final class MailAddress implements Serializable {
         return EmailValidator.getInstance().isValid(mailAddress);
     }
 
+
+    /**
+     * Constructs a newly allocated MailAddress object from a String representation
+     * of a mail address
+     * @param mailAddress mail address string
+     * @throws InvalidMailAddressException thrown when mail address string is invalid
+     */
     public MailAddress(String mailAddress) throws InvalidMailAddressException {
         boolean isValid = validate(mailAddress);
         if (!isValid) {
@@ -30,6 +40,11 @@ public final class MailAddress implements Serializable {
         domain = tmp[1];
     }
 
+    /**
+     * Constructs a newly allocated MailAddress object from a local and a domain String
+     * @param local mail address's local part
+     * @param domain mail address's domain part
+     */
     public MailAddress(String local, String domain) {
         this.local = local;
         this.domain = domain;

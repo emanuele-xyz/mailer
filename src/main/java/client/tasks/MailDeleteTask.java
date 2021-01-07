@@ -7,7 +7,7 @@ import mailer.Utils;
 import mailer.messages.ErrorMessage;
 import mailer.messages.MailDeleteMessage;
 import mailer.messages.Message;
-import mailer.messages.Success;
+import mailer.messages.SuccessMessage;
 
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -42,7 +42,7 @@ public final class MailDeleteTask extends Task {
             break;
 
             case SUCCESS: {
-                Success tmp = Utils.cast(Success.class, response);
+                SuccessMessage tmp = Utils.cast(SuccessMessage.class, response);
                 logger.success("Successfully deleted mail");
                 onSuccess.exec();
             }

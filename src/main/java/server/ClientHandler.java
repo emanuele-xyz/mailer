@@ -99,7 +99,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
             if (result) {
                 // Delete was successful
                 logger.print("[%s] - mail delete succeeded", address);
-                sendMessage(new Success());
+                sendMessage(new SuccessMessage());
             } else {
                 // Delete failed
                 logger.print("[%s] - mail delete failed", address);
@@ -131,7 +131,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         }
 
         logger.print("[%s] - mail push succeeded", address);
-        sendMessage(new Success());
+        sendMessage(new SuccessMessage());
     }
 
     /***
@@ -181,7 +181,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
         if (result) {
             logger.print("[%s] - login succeeded", address);
-            sendMessage(new Success());
+            sendMessage(new SuccessMessage());
         } else {
             logger.print("[%s] - login failed", address);
             sendMessage(new ErrorMessage("Unknown mail"));

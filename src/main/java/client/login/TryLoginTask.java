@@ -36,7 +36,7 @@ public final class TryLoginTask implements Runnable {
         }
 
         if (isLoginSuccessful(message)) {
-            onResult.run(true, "Success!");
+            onResult.run(true, "SuccessMessage!");
         } else {
             ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
             onResult.run(false, err != null ? err.getMessage() : "Login error!");

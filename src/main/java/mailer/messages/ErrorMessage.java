@@ -1,5 +1,8 @@
 package mailer.messages;
 
+/**
+ * Message meaning that something went wrong
+ */
 public final class ErrorMessage extends Message {
 
     private final String message;
@@ -9,6 +12,9 @@ public final class ErrorMessage extends Message {
         this.message = message;
     }
 
+    /**
+     * @return the error message
+     */
     public String getMessage() {
         return message;
     }

@@ -4,12 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+/**
+ * Utils collects utility functions
+ */
 public final class Utils {
 
-    // This never throws, if it fails, for whatever reason it returns null
+    /**
+     * Read an object of target type from an object input stream
+     * @param target target type
+     * @param in source
+     * @return an object of type <code>target</code> if operation succeeded, null otherwise
+     */
     public static <T> T read(Class<T> target, ObjectInputStream in) {
 
         Object tmp = null;
@@ -22,6 +28,12 @@ public final class Utils {
         return tryCast(target, tmp);
     }
 
+    /**
+     * Try to cast an object to a target type
+     * @param target target type
+     * @param obj the object to be cast
+     * @return the object after casting if the operation succeeds, null otherwise
+     */
     public static <T> T tryCast(Class<T> target, Object obj) {
         if (target.isInstance(obj)) {
             return target.cast(obj);
@@ -30,6 +42,13 @@ public final class Utils {
         }
     }
 
+    /**
+     * Cast an object to a target type
+     * @param target the target type
+     * @param obj the object to be cast
+     * @throws ClassCastException thrown if cast fails
+     * @return the object after casting
+     */
     public static <T> T cast(Class <T> target, Object obj) {
         return target.cast(obj);
     }
@@ -44,22 +63,6 @@ public final class Utils {
         try {
             tmp = future.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return tmp;
-    }
-
-    public static <T> T getResult(Future<T> future, long timeout, TimeUnit timeUnit) {
-        if (future == null) {
-            return null;
-        }
-
-        T tmp = null;
-
-        try {
-            tmp = future.get(timeout, timeUnit);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
         }
 

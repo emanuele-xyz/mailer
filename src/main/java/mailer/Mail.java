@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Mail represents a mail
+ */
 public final class Mail implements Serializable {
 
     private final UUID id;
     private final MailAddress from;
     private final List<MailAddress> to;
+    /** When the mail was sent */
     private final Date date;
     private final String subject;
     private final String text;
@@ -41,12 +45,14 @@ public final class Mail implements Serializable {
 
     public MailAddress[] getTo() {
         // Why an array instead of a list?
-        // I want my Mail objects to be immutable!
+        // We want mails to be immutable
         MailAddress[] to = new MailAddress[this.to.size()];
         return this.to.toArray(to);
     }
 
     public Date getDate() {
+        // date is not immutable, we have to clone it to keep our
+        // mail immutable
         return (Date) date.clone();
     }
 
