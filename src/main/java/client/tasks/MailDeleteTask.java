@@ -7,7 +7,6 @@ import mailer.Utils;
 import mailer.messages.ErrorMessage;
 import mailer.messages.MailDeleteMessage;
 import mailer.messages.Message;
-import mailer.messages.SuccessMessage;
 
 import java.util.UUID;
 import java.util.concurrent.Future;
@@ -17,12 +16,14 @@ public final class MailDeleteTask extends Task {
     private final MailAddress user;
     private final UUID mailID;
     private final MailDeleteCallback onSuccess;
+    private final MailDeleteCallback onFinish;
 
-    public MailDeleteTask(ServerDispatcher serverDispatcher, Logger logger, MailAddress user, UUID mailID, MailDeleteCallback onSuccess) {
+    public MailDeleteTask(ServerDispatcher serverDispatcher, Logger logger, MailAddress user, UUID mailID, MailDeleteCallback onSuccess, MailDeleteCallback onFinish) {
         super(serverDispatcher, logger);
         this.user = user;
         this.mailID = mailID;
         this.onSuccess = onSuccess;
+        this.onFinish = onFinish;
     }
 
     @Override
@@ -31,12 +32,12 @@ public final class MailDeleteTask extends Task {
         Message response = Utils.getResult(message);
         if (response == null) {
             logger.error("Error sending delete message to server! Try again");
+            onFinish.exec();
             return;
         }
 
         switch (response.getType()) {
             case SUCCESS: {
-                SuccessMessage tmp = Utils.cast(SuccessMessage.class, response);
                 logger.success("Successfully deleted mail");
                 onSuccess.exec();
             }
@@ -55,5 +56,7 @@ public final class MailDeleteTask extends Task {
             }
             break;
         }
+
+        onFinish.exec();
     }
 }

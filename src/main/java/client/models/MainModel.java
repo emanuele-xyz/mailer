@@ -41,6 +41,7 @@ public final class MainModel {
     private final MainModelStateProperty currentState;
     private final MailAddress user;
     private final SimpleBooleanProperty isSending;
+    private final SimpleBooleanProperty isDeleting;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
     private final MailDraftProperty mailDraft;
@@ -55,6 +56,7 @@ public final class MainModel {
         currentState = new MainModelStateProperty();
         this.user = user;
         isSending = new SimpleBooleanProperty(false);
+        isDeleting = new SimpleBooleanProperty(false);
         mails = FXCollections.observableArrayList();
         selectedMail = new MailProperty();
         mailDraft = new MailDraftProperty(user);
@@ -123,12 +125,14 @@ public final class MainModel {
             return;
         }
 
+        isDeleting.set(true);
         tasksExecutor.submit(new MailDeleteTask(
                 serverDispatcher,
                 logger,
                 user,
                 mail.getId(),
-                () -> Platform.runLater(() -> onMailDeleted(mail))
+                () -> Platform.runLater(() -> onMailDeleted(mail)),
+                () -> Platform.runLater(() -> isDeleting.set(false))
         ));
     }
 
@@ -154,6 +158,10 @@ public final class MainModel {
 
     public SimpleBooleanProperty isSendingProperty() {
         return isSending;
+    }
+
+    public SimpleBooleanProperty isDeletingProperty() {
+        return isDeleting;
     }
 
     public ObservableList<Mail> getMails() {
