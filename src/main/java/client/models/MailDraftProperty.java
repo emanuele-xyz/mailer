@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mailer.exceptions.IllegalMailException;
 import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
@@ -39,7 +40,7 @@ public final class MailDraftProperty {
         clear.set(false);
     }
 
-    public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException {
+    public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException, IllegalMailException {
 
         String subject = this.subject.getValue().trim();
         if (subject.isEmpty()) {
@@ -94,25 +95,21 @@ public final class MailDraftProperty {
                 .map(StringPropertyBase::get)
                 .filter(Objects::nonNull)
                 // We should not depend upon the fact that mail address strings are trimmed
-                // .map(String::trim)
+                .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
         addresses = getDistinct(addresses);
 
-        List<MailAddress> result = new ArrayList<>();
+        List<MailAddress> recipients = new ArrayList<>();
         for (String address : addresses) {
-            result.add(new MailAddress(address));
+            recipients.add(new MailAddress(address));
         }
 
-        if (result.contains(user)) {
-            throw new InvalidRecipientsException(String.format("Invalid recipient: '%s'", user));
-        }
-
-        return result;
+        return recipients;
     }
 
-    private List<String> getDistinct(List<String> addresses) throws InvalidRecipientsException {
+    private static List<String> getDistinct(List<String> addresses) throws InvalidRecipientsException {
         Set<String> set = new HashSet<>();
         for (String address : addresses) {
             boolean alreadyPresent = !set.add(address);

@@ -1,5 +1,7 @@
 package mailer;
 
+import mailer.exceptions.IllegalMailException;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +17,12 @@ public final class Mail implements Serializable {
     private final String subject;
     private final String text;
 
-    public Mail(UUID id, MailAddress from, List<MailAddress> to, Date date, String subject, String text) {
+    public Mail(UUID id, MailAddress from, List<MailAddress> to, Date date, String subject, String text) throws IllegalMailException {
+
+        if (to.contains(from)) {
+            throw new IllegalMailException("Sender mail address is also a recipient");
+        }
+
         this.id = id;
         this.from = from;
         this.to = to;
@@ -40,7 +47,7 @@ public final class Mail implements Serializable {
     }
 
     public Date getDate() {
-        return date;
+        return (Date) date.clone();
     }
 
     public String getSubject() {

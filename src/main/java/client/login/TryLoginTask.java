@@ -31,7 +31,7 @@ public final class TryLoginTask implements Runnable {
         if (message == null) {
             // Something went wrong during communication between client
             // and server. Login has failed
-            onResult.run(false, "Server connection failure :(");
+            onResult.run(false, "Server connection failure. Try later");
             return;
         }
 

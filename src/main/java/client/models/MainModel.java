@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
+import mailer.exceptions.IllegalMailException;
 import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
@@ -83,7 +84,7 @@ public final class MainModel {
                     () -> Platform.runLater(() -> mails.add(0, mail)),
                     () -> Platform.runLater(() -> isSending.set(false))
             ));
-        } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException e) {
+        } catch (InvalidMailAddressException | InvalidSubjectException | InvalidTextException | InvalidRecipientsException | IllegalMailException e) {
             logger.error(e.getMessage());
         }
     }
