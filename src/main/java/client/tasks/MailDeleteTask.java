@@ -35,12 +35,6 @@ public final class MailDeleteTask extends Task {
         }
 
         switch (response.getType()) {
-            case ERROR: {
-                ErrorMessage tmp = Utils.cast(ErrorMessage.class, response);
-                logger.error(tmp.getMessage());
-            }
-            break;
-
             case SUCCESS: {
                 SuccessMessage tmp = Utils.cast(SuccessMessage.class, response);
                 logger.success("Successfully deleted mail");
@@ -48,10 +42,15 @@ public final class MailDeleteTask extends Task {
             }
             break;
 
+            case ERROR: {
+                ErrorMessage tmp = Utils.cast(ErrorMessage.class, response);
+                logger.error(tmp.getMessage());
+            }
+            break;
+
             default: {
                 // This should not happen, if it does it's a programmer error!
-                // Fix this by sending back a message that is expected
-                System.err.println("Server sends an incorrect response message for a fetch request message");
+                System.err.printf("Received unexpected '%s' message in response to mail delete message\n", response.getType());
                 assert false;
             }
             break;

@@ -76,14 +76,15 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
             }
             break;
 
-            case ERROR:
-            case SUCCESS:
-                // If server receives a success or error message
-                // without any context it doesn't do anything
-                // This is a programmer error, the client should never send such a message
-                logger.print("[%s] - received '%s' message: do nothing", address, message.getType());
+            default: {
+                // If the server receives a message that it doesn't know how to handle it does nothing
+                // If not done by an attacker, this is a programmer error.
+                // Hence, in debug mode we crash the server
+                // If not debugging, we don't crash the server
+                logger.print("[%s] - received unexpected '%s' message: do nothing", address, message.getType());
                 assert false;
-                break;
+            }
+            break;
         }
     }
 

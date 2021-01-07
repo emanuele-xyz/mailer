@@ -46,11 +46,10 @@ public final class MailSendTask extends Task {
             break;
 
             default:
-                // This case should never be reached.
-                // If it happens the server sends back an unexpected
-                // message.
-                // This is a server bug.
-                System.err.println("Server sends an incorrect response to mail send message");
+                // This case should never be reached
+                // If it happens the server has sent back an unexpected message
+                // This is a programmer error
+                System.err.printf("Received unexpected '%s' message in response to mail push message\n", response.getType());
                 assert false;
                 break;
         }

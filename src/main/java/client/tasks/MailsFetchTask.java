@@ -69,8 +69,7 @@ public final class MailsFetchTask extends Task {
 
             default:
                 // This should not happen, if it does it's a programmer error!
-                // Fix this by sending back a message that is expected
-                System.err.println("Server sends an incorrect response message for a fetch request message");
+                System.err.printf("Received unexpected '%s' message in response to mail fetch message\n", response.getType());
                 assert false;
                 break;
         }
