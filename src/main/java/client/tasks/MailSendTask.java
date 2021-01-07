@@ -29,6 +29,7 @@ public final class MailSendTask extends Task {
         Message response = Utils.getResult(message);
         if (message == null) {
             logger.error("Error sending mail to the server. Try later");
+            onFinish.exec();
             return;
         }
 

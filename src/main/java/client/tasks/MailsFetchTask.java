@@ -44,7 +44,8 @@ public final class MailsFetchTask extends Task {
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
-            logger.error("Error fetching mails from server! Try again");
+            // Silence fetching errors since is a background task
+            // logger.error("Error fetching mails from server! Try again");
             isFetching.set(false);
             return;
         }

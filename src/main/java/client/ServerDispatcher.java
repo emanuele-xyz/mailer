@@ -60,9 +60,7 @@ public final class ServerDispatcher {
                 e.printStackTrace();
             }
 
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
+        } catch (UnknownHostException | SocketException e ) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

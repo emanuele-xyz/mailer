@@ -35,7 +35,7 @@ public final class MailboxController {
         newMail.setOnAction(__ -> model.getCurrentState().setComposing());
 
         deleteMail.setOnAction(__ -> model.deleteMail());
-        deleteMail.disableProperty().bind(mails.getSelectionModel().selectedItemProperty().isNull());
+        deleteMail.disableProperty().bind(model.isDeletingProperty());
 
         mails.setItems(model.getMails());
         mails.getSelectionModel().selectedItemProperty().addListener((__, ___, newSel) -> {
