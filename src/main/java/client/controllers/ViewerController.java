@@ -48,6 +48,7 @@ public final class ViewerController {
 
         text.textProperty().bind(model.getSelectedMail().textProperty());
         text.setEditable(false);
+        text.setWrapText(true);
 
         reply.setOnAction(__ -> model.reply());
         reply.disableProperty().bind(model.isSendingProperty());

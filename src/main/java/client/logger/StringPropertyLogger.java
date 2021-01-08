@@ -5,6 +5,9 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.time.LocalDateTime;
 
+/**
+ * Logger that uses a <code>SimpleStringProperty</code> as output
+ */
 public final class StringPropertyLogger implements Logger {
 
     private final SimpleStringProperty successMessage;
@@ -52,7 +55,7 @@ public final class StringPropertyLogger implements Logger {
         return errorMessage;
     }
 
-    private String getTimeString() {
+    private static String getTimeString() {
         LocalDateTime now = LocalDateTime.now();
         int hour = now.getHour();
         int min = now.getMinute();

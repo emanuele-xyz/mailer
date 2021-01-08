@@ -10,13 +10,16 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * LoginModel handles login logic
+ */
 public final class LoginModel {
 
     private static final int LOGIN_EXECUTOR_THREADS = 1;
 
     private final SimpleStringProperty username;
     private final SimpleStringProperty errorMessage;
-    private final SimpleBooleanProperty isLoginButtonDisabled;
+    private final SimpleBooleanProperty isLoggingIn;
     private final SimpleBooleanProperty isLoggedIn;
 
     private final ServerDispatcher serverDispatcher;
@@ -25,18 +28,24 @@ public final class LoginModel {
     public LoginModel() throws UnknownHostException {
         username = new SimpleStringProperty();
         errorMessage = new SimpleStringProperty();
-        isLoginButtonDisabled = new SimpleBooleanProperty(false);
+        isLoggingIn = new SimpleBooleanProperty(false);
         isLoggedIn = new SimpleBooleanProperty(false);
 
         serverDispatcher = new ServerDispatcher();
         loginExecutor = Executors.newFixedThreadPool(LOGIN_EXECUTOR_THREADS);
     }
 
+    /**
+     * Close the model
+     */
     public void close() {
         serverDispatcher.shutdown();
         loginExecutor.shutdown();
     }
 
+    /**
+     * Try to login
+     */
     public void tryLogin() {
         String mailAddress = validateUsername();
         if (mailAddress == null) {
@@ -44,14 +53,14 @@ public final class LoginModel {
             return;
         }
 
-        isLoginButtonDisabled.set(true);
+        isLoggingIn.set(true);
         TryLoginCallback onResult = (result, msg) -> {
             if (result) {
                 Platform.runLater(() -> isLoggedIn.set(true));
             } else {
                 Platform.runLater(() -> errorMessage.set(msg));
             }
-            Platform.runLater(() -> isLoginButtonDisabled.set(false));
+            Platform.runLater(() -> isLoggingIn.set(false));
         };
         Runnable tryLoginTask = new TryLoginTask(mailAddress, serverDispatcher, onResult);
         loginExecutor.submit(tryLoginTask);
@@ -65,8 +74,8 @@ public final class LoginModel {
         return errorMessage;
     }
 
-    public SimpleBooleanProperty isLoginButtonDisabledProperty() {
-        return isLoginButtonDisabled;
+    public SimpleBooleanProperty isLoggingInProperty() {
+        return isLoggingIn;
     }
 
     public SimpleBooleanProperty isLoggedInProperty() {
@@ -81,6 +90,10 @@ public final class LoginModel {
         return username.get().trim();
     }
 
+    /**
+     * Checks if the username is a valid mail address
+     * @return the trimmed username string if valid, null otherwise
+     */
     private String validateUsername() {
         // Trim the input text since user can mistype some
         // spaces at the start and at the end of the input field

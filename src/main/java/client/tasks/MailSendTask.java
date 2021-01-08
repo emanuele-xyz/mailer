@@ -10,6 +10,9 @@ import mailer.messages.Message;
 
 import java.util.concurrent.Future;
 
+/**
+ * Task that handles a mail send message
+ */
 public final class MailSendTask extends Task {
 
     private final Mail mail;

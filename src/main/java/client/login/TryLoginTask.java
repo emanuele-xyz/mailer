@@ -9,6 +9,9 @@ import mailer.messages.MessageType;
 
 import java.util.concurrent.Future;
 
+/**
+ * Task that sends to the server a login request
+ */
 public final class TryLoginTask implements Runnable {
 
     private static final int LOGIN_WAIT_TIME = 10 * 1000;
@@ -29,14 +32,14 @@ public final class TryLoginTask implements Runnable {
         Future<Message> response = serverDispatcher.sendToServer(msg, LOGIN_WAIT_TIME);
         Message message = Utils.getResult(response);
         if (message == null) {
-            // Something went wrong during communication between client
-            // and server. Login has failed
+            // Something went wrong during communication between client and server.
+            // Login has failed
             onResult.run(false, "Server connection failure. Try later");
             return;
         }
 
         if (isLoginSuccessful(message)) {
-            onResult.run(true, "SuccessMessage!");
+            onResult.run(true, "");
         } else {
             ErrorMessage err = Utils.tryCast(ErrorMessage.class, message);
             onResult.run(false, err != null ? err.getMessage() : "Login error!");

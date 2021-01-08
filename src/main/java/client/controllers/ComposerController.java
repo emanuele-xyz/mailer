@@ -71,7 +71,6 @@ public final class ComposerController {
 
                     // If there is no input or the input is empty, remove the text field
                     if (text == null || text.isEmpty()) {
-                        // If the inserted mail is
                         model.getMailDraft().removeRecipient(added);
                         added.unbind();
                         textField.disableProperty().unbind();
@@ -86,6 +85,7 @@ public final class ComposerController {
 
         model.getMailDraft().textProperty().bindBidirectional(text.textProperty());
         text.disableProperty().bind(model.isSendingProperty());
+        text.setWrapText(true);
 
         model.getMailDraft().clearProperty().addListener((__, ___, mustClear) -> {
             if (mustClear) {

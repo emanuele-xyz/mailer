@@ -11,6 +11,9 @@ import mailer.messages.Message;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
+/**
+ * Task that handles a mail delete message
+ */
 public final class MailDeleteTask extends Task {
 
     private final MailAddress user;

@@ -29,7 +29,7 @@ public final class Client extends Application {
     public void start(Stage stage) throws IOException {
         LoginResult loginResult = showLoginAndWait();
         if (loginResult.isSuccessful()) {
-            showMainScreen(stage, loginResult.getAccount());
+            showMainScreen(stage, loginResult.getAddress());
         }
     }
 
@@ -62,7 +62,7 @@ public final class Client extends Application {
         return new LoginResult(false, "");
     }
 
-    private void showMainScreen(Stage stage, String user) throws IOException {
+    private void showMainScreen(Stage stage, String userMailAddress) throws IOException {
         try {
             FXMLLoader mailboxLoader = new FXMLLoader(getClass().getResource("/mailbox.fxml"));
             Parent mailbox = mailboxLoader.load();
@@ -77,7 +77,7 @@ public final class Client extends Application {
             ComposerController composerController = composerLoader.getController();
 
             FXMLLoader errorLoader = new FXMLLoader(getClass().getResource("/message.fxml"));
-            Parent error = errorLoader.load();
+            Parent message = errorLoader.load();
             MessageController messageController = errorLoader.getController();
 
             FXMLLoader popupLoader = new FXMLLoader(getClass().getResource("/popup.fxml"));
@@ -90,15 +90,16 @@ public final class Client extends Application {
             BorderPane root = new BorderPane();
             root.setLeft(mailbox);
             root.setCenter(blank);
-            root.setBottom(error);
+            root.setBottom(message);
 
-            MailAddress userAddress = null;
+            MailAddress userAddress;
             try {
-                userAddress = new MailAddress(user);
+                userAddress = new MailAddress(userMailAddress);
             } catch (InvalidMailAddressException e) {
-                // Passing an invalid user should not happen.
-                // If it does, it's a programmer error
+                // Passing an invalid user mail address should not happen.
+                // If it does, it's a programmer error!
                 assert false;
+                throw new IllegalStateException(String.format("Invalid userMailAddress mail address '%s' after login", userMailAddress));
             }
             MainModel mainModel = new MainModel(userAddress);
             mailboxController.initModel(mainModel);
@@ -108,19 +109,19 @@ public final class Client extends Application {
             popupController.initModel(mainModel, popup, stage);
 
             // Set main model state transitions after all controllers have been initialized
-            mainModel.getCurrentState().stateIndexProperty().addListener((__, oldVal, newVal) -> {
-                if (oldVal.equals(newVal)) {
+            mainModel.getCurrentState().stateIndexProperty().addListener((__, oldState, newState) -> {
+                if (oldState.equals(newState)) {
                     // the state is the same
                     return;
                 }
 
-                if (newVal.equals(MainModelStateProperty.BLANK)) {
+                if (newState.equals(MainModelStateProperty.BLANK)) {
                     // Transition to blank state
                     root.setCenter(blank);
-                } else if (newVal.equals(MainModelStateProperty.VIEWING)) {
+                } else if (newState.equals(MainModelStateProperty.VIEWING)) {
                     // Transition to viewing state
                     root.setCenter(viewer);
-                } else if (newVal.equals(MainModelStateProperty.COMPOSING)) {
+                } else if (newState.equals(MainModelStateProperty.COMPOSING)) {
                     // Transition to composing state
                     root.setCenter(composer);
                 } else {

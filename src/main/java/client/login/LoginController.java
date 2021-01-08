@@ -25,12 +25,14 @@ public final class LoginController {
         }
 
         this.model = model;
-        this.model.usernameProperty().bind(usernameTextField.textProperty());
-        this.model.isLoginButtonDisabledProperty().addListener((__, ___, newVal) -> loginButton.setDisable(newVal));
 
-        loginButton.setOnAction(e -> this.model.tryLogin());
+        model.usernameProperty().bind(usernameTextField.textProperty());
 
-        errorLabel.textProperty().bind(this.model.errorMessageProperty());
+        loginButton.disableProperty().bind(model.isLoggingInProperty());
+
+        loginButton.setOnAction(e -> model.tryLogin());
+
+        errorLabel.textProperty().bind(model.errorMessageProperty());
     }
 
     public void initStage(Stage stage) {

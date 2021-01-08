@@ -16,6 +16,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+/**
+ * Task that handles a mails fetch message
+ */
 public final class MailsFetchTask extends Task {
 
     private static final AtomicBoolean isFetching = new AtomicBoolean(false);
@@ -31,7 +34,7 @@ public final class MailsFetchTask extends Task {
 
     @Override
     public void run() {
-        // If there already is another mail fetch task running, then close this task
+        // If there is another mail fetch task running, then close this task
         if (isFetching.get()) {
             return;
         }
@@ -44,7 +47,7 @@ public final class MailsFetchTask extends Task {
         Future<Message> message = serverDispatcher.sendToServer(new MailFetchRequestMessage(address), MESSAGE_WAIT_TIME);
         Message response = Utils.getResult(message);
         if (response == null) {
-            // Silence fetching errors since is a background task
+            // Silence fetching errors since it's a background task
             // logger.error("Error fetching mails from server! Try again");
             isFetching.set(false);
             return;
