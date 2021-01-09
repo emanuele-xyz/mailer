@@ -102,10 +102,8 @@ public final class Account {
 
     /**
      * Write a mail to a box. Note that this is not thread safe since, in the
-     * erroneous case of two mails with the same ids or one mail with the same
-     * address for sender and receiver, two threads could write the same file
-     * concurrently!
-     * TODO: fix when mails cannot have the sender also in the recipients
+     * erroneous case of two mails with the same ids, two threads could write
+     * the same file concurrently!
      * @param mail the mail to be saved
      * @param box the box directory
      */
