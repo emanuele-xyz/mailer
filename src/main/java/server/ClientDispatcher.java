@@ -43,6 +43,10 @@ public final class ClientDispatcher implements Runnable {
         exec = Executors.newFixedThreadPool(Constants.CORES);
     }
 
+    /**
+     * Close client dispatcher.
+     * This is called from another thread
+     */
     public void close() {
         logger.print("Closing client dispatcher");
 

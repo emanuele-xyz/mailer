@@ -50,6 +50,10 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         logger.print("[%s] - closing connection", address);
     }
 
+    /**
+     * Select correct way to handle a message
+     * @param message the message to be handled
+     */
     private void processMessage(Message message) {
         switch (message.getType()) {
             case LOGIN: {
