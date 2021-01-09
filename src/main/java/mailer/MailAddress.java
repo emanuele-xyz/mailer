@@ -20,7 +20,6 @@ public final class MailAddress implements Serializable {
         return EmailValidator.getInstance().isValid(mailAddress);
     }
 
-
     /**
      * Constructs a newly allocated MailAddress object from a String representation
      * of a mail address
