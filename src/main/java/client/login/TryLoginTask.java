@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
  */
 public final class TryLoginTask implements Runnable {
 
-    private static final int LOGIN_WAIT_TIME = 10 * 1000;
+    private static final int WAIT_TIME = 10 * 1000;
 
     private final String mailAddress;
     private final ServerDispatcher serverDispatcher;
@@ -29,7 +29,7 @@ public final class TryLoginTask implements Runnable {
     @Override
     public void run() {
         LoginMessage msg = new LoginMessage(mailAddress);
-        Future<Message> response = serverDispatcher.sendToServer(msg, LOGIN_WAIT_TIME);
+        Future<Message> response = serverDispatcher.sendToServer(msg, WAIT_TIME);
         Message message = Utils.getResult(response);
         if (message == null) {
             // Something went wrong during communication between client and server.

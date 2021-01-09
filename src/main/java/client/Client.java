@@ -12,8 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import mailer.exceptions.InvalidMailAddressException;
 import mailer.MailAddress;
+import mailer.exceptions.InvalidMailAddressException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -101,6 +101,7 @@ public final class Client extends Application {
                 assert false;
                 throw new IllegalStateException(String.format("Invalid userMailAddress mail address '%s' after login", userMailAddress));
             }
+
             MainModel mainModel = new MainModel(userAddress);
             mailboxController.initModel(mainModel);
             viewerController.initModel(mainModel);
@@ -128,6 +129,7 @@ public final class Client extends Application {
                     // This should never happen.
                     // If it does, it's a programmer error!
                     assert false;
+                    throw new IllegalStateException(String.format("'%s' is an invalid main model state", newState));
                 }
             });
 

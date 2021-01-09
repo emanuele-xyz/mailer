@@ -26,6 +26,7 @@ public final class MailManager {
 
     /**
      * Check whether a mail address is associated with some account
+     *
      * @param mailAddress the string representing a mail address
      * @return true if the mail address is valid, false otherwise
      */
@@ -40,6 +41,7 @@ public final class MailManager {
 
     /**
      * Check whether a mail address is associated with some account
+     *
      * @param mailAddress the string representing a mail address
      * @return true if the mail address is valid, false otherwise
      */
@@ -52,6 +54,7 @@ public final class MailManager {
     /**
      * Process a mail. This means inserting the mail into the sender
      * outbox, and inserting the mail into each recipient inbox
+     *
      * @param mail the mail to be processed
      * @throws NoSuchAddressException thrown if at least one of the involved accounts is invalid
      */
@@ -82,6 +85,7 @@ public final class MailManager {
 
     /**
      * Load all mails associated with an account
+     *
      * @param address the account's address
      * @return the loaded mails if the load
      * @throws NoSuchAddressException if there is no account associated with <code>address</code>
@@ -92,11 +96,12 @@ public final class MailManager {
 
     /**
      * Delete a mail associated with an account
+     *
      * @param address the account address
-     * @param mailID the id of the mail to be deleted
+     * @param mailID  the id of the mail to be deleted
      * @return true if the delete succeeded, false otherwise
      * @throws NoSuchAddressException thrown if there is no account associated <code>address</code>
-     * @throws InvalidIDException thrown if there is no mail with the same <code>id</code>
+     * @throws InvalidIDException     thrown if there is no mail with the same <code>id</code>
      */
     public boolean deleteMail(MailAddress address, UUID mailID) throws NoSuchAddressException, InvalidIDException {
         Account account = getAccount(address);
@@ -105,6 +110,7 @@ public final class MailManager {
 
     /**
      * Get the account associated with a mail address in a thread safe manner
+     *
      * @param address a mail address
      * @return the associated account
      * @throws NoSuchAddressException thrown if there is no account for <code>address</code>
@@ -127,8 +133,9 @@ public final class MailManager {
     /**
      * Helper function for mail manager initialization.
      * Load all accounts stored in mail server file system
+     *
      * @return a table that associates each known mail address to its mail account
-     * @throws MkdirException thrown if write to a directory went wrong
+     * @throws MkdirException              thrown if write to a directory went wrong
      * @throws InvalidMailAddressException thrown if an invalid mail address was retrieved
      */
     private static Map<MailAddress, Account> loadAccounts() throws MkdirException, InvalidMailAddressException {
@@ -145,6 +152,7 @@ public final class MailManager {
     /**
      * Helper function for mail manager initialization.
      * List all account directories in mail server file system
+     *
      * @return list of account directories
      * @throws MkdirException thrown if write to a directory went wrong
      */

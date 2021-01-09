@@ -11,6 +11,7 @@ public class MailJSONConverter {
 
     /**
      * Build a mail object from JSON data
+     *
      * @param json json data
      * @return mail built from JSON data
      */
@@ -20,6 +21,7 @@ public class MailJSONConverter {
 
     /**
      * Converts a mail into a JSON data
+     *
      * @param mail the mail to convert
      * @return mail JSON data
      */

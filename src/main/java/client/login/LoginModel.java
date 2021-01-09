@@ -49,7 +49,7 @@ public final class LoginModel {
     public void tryLogin() {
         String mailAddress = validateUsername();
         if (mailAddress == null) {
-            errorMessage.set("This is not a correct mail address :(");
+            errorMessage.set("Invalid mail address :(");
             return;
         }
 
@@ -92,11 +92,10 @@ public final class LoginModel {
 
     /**
      * Checks if the username is a valid mail address
+     *
      * @return the trimmed username string if valid, null otherwise
      */
     private String validateUsername() {
-        // Trim the input text since user can mistype some
-        // spaces at the start and at the end of the input field
         String tmp = getUsername();
         if (MailAddress.validate(tmp)) {
             return tmp;

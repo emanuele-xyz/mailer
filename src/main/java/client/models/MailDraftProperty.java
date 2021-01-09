@@ -8,10 +8,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mailer.exceptions.IllegalMailException;
-import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
+import mailer.exceptions.IllegalMailException;
+import mailer.exceptions.InvalidMailAddressException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,12 +51,13 @@ public final class MailDraftProperty {
 
     /**
      * Create a new mail using the draft
+     *
      * @return the newly created mail
      * @throws InvalidMailAddressException thrown if there is at least one invalid mail address as a recipient
-     * @throws InvalidSubjectException thrown if the draft's subject is blank
-     * @throws InvalidTextException thrown if the draft's text is blank
-     * @throws InvalidRecipientsException thrown if there are no recipients
-     * @throws IllegalMailException thrown if sender mail address is also a recipient
+     * @throws InvalidSubjectException     thrown if the draft's subject is blank
+     * @throws InvalidTextException        thrown if the draft's text is blank
+     * @throws InvalidRecipientsException  thrown if there are no recipients
+     * @throws IllegalMailException        thrown if sender mail address is also a recipient
      */
     public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException, IllegalMailException {
 
@@ -110,10 +111,11 @@ public final class MailDraftProperty {
 
     /**
      * Get the list of recipients for this mail
+     *
      * @return the recipients list
      * @throws InvalidMailAddressException thrown if there is at least one invalid mail
-     * address as a recipient
-     * @throws InvalidRecipientsException thrown if there are duplicate recipients
+     *                                     address as a recipient
+     * @throws InvalidRecipientsException  thrown if there are duplicate recipients
      */
     private List<MailAddress> getRecipients() throws InvalidMailAddressException, InvalidRecipientsException {
         List<String> addresses = tos.stream()
@@ -136,6 +138,7 @@ public final class MailDraftProperty {
 
     /**
      * Remove duplicates from a list of string mail addresses
+     *
      * @param addresses the list to remove duplicates from
      * @return the list without duplicates
      * @throws InvalidRecipientsException thrown if at least a duplicate is found

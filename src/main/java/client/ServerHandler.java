@@ -30,6 +30,7 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
 
     /**
      * Sends a message to the server and returns a response
+     *
      * @param message the message to be sent
      * @return server response message
      */
@@ -42,7 +43,7 @@ public final class ServerHandler extends ConnectionHandler implements Callable<M
         if (!sendSuccessful) {
             // We don't have to wait for a message that will never
             // come since sendMessage failed
-            System.err.println("'sendMessage' method failed");
+            System.err.println("'sendMessage' failed");
             return null;
         } else {
             return readMessage();

@@ -13,7 +13,7 @@ public final class LoginMessage extends Message {
     }
 
     /**
-      * @return the client's mail address
+     * @return the client's mail address
      */
     public String getMailAddress() {
         return mailAddress;

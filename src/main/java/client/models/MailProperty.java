@@ -39,6 +39,7 @@ public final class MailProperty {
 
     /**
      * Initialize the mail property with a mail
+     *
      * @param mail the mail we are initializing from
      */
     public void select(Mail mail) {

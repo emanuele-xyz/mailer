@@ -1,6 +1,5 @@
 package server;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
 import mailer.exceptions.InvalidMailAddressException;

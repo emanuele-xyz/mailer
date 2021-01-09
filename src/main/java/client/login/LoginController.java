@@ -29,7 +29,6 @@ public final class LoginController {
         model.usernameProperty().bind(usernameTextField.textProperty());
 
         loginButton.disableProperty().bind(model.isLoggingInProperty());
-
         loginButton.setOnAction(e -> model.tryLogin());
 
         errorLabel.textProperty().bind(model.errorMessageProperty());

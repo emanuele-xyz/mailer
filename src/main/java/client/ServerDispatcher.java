@@ -25,8 +25,9 @@ public final class ServerDispatcher {
 
     /**
      * Initializes a newly allocated ServerDispatcher object
+     *
      * @throws UnknownHostException thrown if the local host name could not be
-     * resolved into an address
+     *                              resolved into an address
      */
     public ServerDispatcher() throws UnknownHostException {
         hostname = InetAddress.getLocalHost().getHostName();
@@ -45,14 +46,15 @@ public final class ServerDispatcher {
 
     /**
      * Send a message to a server
-     * @param message the message to be sent
+     *
+     * @param message      the message to be sent
      * @param timeoutAfter socket timeout time
      * @return a future to the server response message or null if something went wrong
      */
     public Future<Message> sendToServer(Message message, int timeoutAfter) {
         Future<Message> result = null;
 
-        try  {
+        try {
             Socket socket = new Socket(hostname, Constants.SERVER_PORT);
             socket.setSoTimeout(timeoutAfter);
 
@@ -78,7 +80,7 @@ public final class ServerDispatcher {
                 e.printStackTrace();
             }
 
-        } catch (UnknownHostException | SocketException e ) {
+        } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

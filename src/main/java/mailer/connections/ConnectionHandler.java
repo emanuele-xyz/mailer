@@ -27,8 +27,8 @@ public abstract class ConnectionHandler {
      * Close the connection
      *
      * <p>
-     *     If closing the socket or the streams fails, the error is
-     *     reported to standard error, close doesn't throw
+     * If closing the socket or the streams fails, the error is
+     * reported to standard error, close doesn't throw
      * </p>
      */
     public final void closeConnection() {
@@ -53,6 +53,7 @@ public abstract class ConnectionHandler {
 
     /**
      * Read a message from socket input stream
+     *
      * @return A message if the read was successful, null otherwise
      */
     protected final Message readMessage() {
@@ -70,6 +71,7 @@ public abstract class ConnectionHandler {
 
     /**
      * Send a message into socket output stream
+     *
      * @param message the message to be sent
      * @return true if the send was successful, false otherwise
      */
@@ -88,7 +90,8 @@ public abstract class ConnectionHandler {
 
     /**
      * Cast a message to the specified target message subtype
-     * @param target target message class
+     *
+     * @param target  target message class
      * @param message the message to be cast
      * @return the cast message
      */

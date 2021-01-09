@@ -1,9 +1,9 @@
 package server;
 
-import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
 import mailer.connections.ConnectionHandler;
+import mailer.exceptions.InvalidMailAddressException;
 import mailer.messages.*;
 import server.exceptions.InvalidIDException;
 import server.exceptions.NoSuchAddressException;
@@ -52,6 +52,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     /**
      * Select correct way to handle a message
+     *
      * @param message the message to be handled
      */
     private void processMessage(Message message) {
@@ -94,6 +95,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     /**
      * Logic for processing a mail delete message
+     *
      * @param mailDeleteMessage the message to be processed
      */
     private void processMailDelete(MailDeleteMessage mailDeleteMessage) {
@@ -122,6 +124,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     /**
      * Logic for processing a mail push message
+     *
      * @param mailPushMessage the message to be processed
      */
     private void processMailPushMessage(MailPushMessage mailPushMessage) {
@@ -175,6 +178,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
 
     /**
      * Logic for processing a login message
+     *
      * @param loginMessage the message to be processed
      */
     private void processLogin(LoginMessage loginMessage) {

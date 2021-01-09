@@ -21,7 +21,7 @@ public final class ObservableListStringLogger implements Logger {
     }
 
     @Override
-    public void print(String format, Object ... args) {
+    public void print(String format, Object... args) {
         print(String.format(format, args));
     }
 

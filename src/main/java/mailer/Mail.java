@@ -16,7 +16,9 @@ public final class Mail implements Serializable {
     private final UUID id;
     private final MailAddress from;
     private final List<MailAddress> to;
-    /** When the mail was sent */
+    /**
+     * When the mail was sent
+     */
     private final Date date;
     private final String subject;
     private final String text;

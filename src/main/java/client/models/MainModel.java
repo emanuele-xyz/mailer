@@ -1,10 +1,10 @@
 package client.models;
 
-import client.logger.StringPropertyLogger;
 import client.ServerDispatcher;
 import client.exceptions.InvalidRecipientsException;
 import client.exceptions.InvalidSubjectException;
 import client.exceptions.InvalidTextException;
+import client.logger.StringPropertyLogger;
 import client.tasks.MailDeleteTask;
 import client.tasks.MailSendTask;
 import client.tasks.MailsFetchTask;
@@ -15,10 +15,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mailer.Constants;
-import mailer.exceptions.IllegalMailException;
-import mailer.exceptions.InvalidMailAddressException;
 import mailer.Mail;
 import mailer.MailAddress;
+import mailer.exceptions.IllegalMailException;
+import mailer.exceptions.InvalidMailAddressException;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -43,9 +43,13 @@ public final class MainModel {
     private final MailAddress user;
     private final StringPropertyLogger logger;
     private final MainModelStateProperty currentState;
-    /** true if a send task is currently running */
+    /**
+     * true if a send task is currently running
+     */
     private final SimpleBooleanProperty isSending;
-    /** true if a delete task is currently running */
+    /**
+     * true if a delete task is currently running
+     */
     private final SimpleBooleanProperty isDeleting;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
@@ -239,9 +243,10 @@ public final class MainModel {
     /**
      * Set up main model for a reply.
      * This is used to implement reply and reply all
-     * @param subject the subject of the mail we are replying to
-     * @param text the text of the mail we are replying to
-     * @param from the sender of the mail we are replying to
+     *
+     * @param subject    the subject of the mail we are replying to
+     * @param text       the text of the mail we are replying to
+     * @param from       the sender of the mail we are replying to
      * @param recipients the recipients of the mail we are replying to
      */
     private void reply(String subject, String text, MailAddress from, MailAddress... recipients) {
@@ -274,6 +279,7 @@ public final class MainModel {
      * Callback used when mail is successfully deleted.
      * This should be called only in JavaFX thread since this method updates
      * properties bounded to the ui
+     *
      * @param mail the deleted mail
      */
     private void onMailDeleted(Mail mail) {

@@ -35,6 +35,7 @@ public final class Account {
 
     /**
      * Save a mail in the account outbox
+     *
      * @param mail the mail to save
      */
     public synchronized void send(Mail mail) {
@@ -48,6 +49,7 @@ public final class Account {
 
     /**
      * Save a mail in the account inbox
+     *
      * @param mail the mail to save
      */
     public synchronized void receive(Mail mail) {
@@ -57,6 +59,7 @@ public final class Account {
 
     /**
      * Load all mails associated with this account
+     *
      * @return a list of mails
      */
     public synchronized Mail[] loadMails() {
@@ -77,6 +80,7 @@ public final class Account {
 
     /**
      * Delete a mail from this account
+     *
      * @param mailID the mail's id
      * @return true if the delete was successful, false otherwise
      * @throws InvalidIDException thrown if there is no such mail in this account
@@ -104,8 +108,9 @@ public final class Account {
      * Write a mail to a box. Note that this is not thread safe since, in the
      * erroneous case of two mails with the same ids, two threads could write
      * the same file concurrently!
+     *
      * @param mail the mail to be saved
-     * @param box the box directory
+     * @param box  the box directory
      */
     private static void write(Mail mail, String box) {
         File file = new File(box, mail.getId().toString());
@@ -129,6 +134,7 @@ public final class Account {
 
     /**
      * Create directory if <code>dir</code> is not present
+     *
      * @param dir the directory
      * @throws MkdirException thrown if directory creation went wrong
      */
@@ -146,7 +152,8 @@ public final class Account {
 
     /**
      * Load all mails associated with this account
-     * @param path box path
+     *
+     * @param path  box path
      * @param mails where to store the loaded mails
      * @return true if the load was successful, false otherwise
      */

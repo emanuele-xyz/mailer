@@ -22,6 +22,7 @@ public final class LoginResult {
 
     /**
      * Meaningful only if <code>isSuccessful</code> returns <code>true</code>
+     *
      * @return the logged in user mail address
      */
     public String getAddress() {

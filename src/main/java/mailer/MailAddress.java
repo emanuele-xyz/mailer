@@ -1,10 +1,10 @@
 package mailer;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import mailer.exceptions.InvalidMailAddressException;
 import org.apache.commons.validator.routines.EmailValidator;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * MailAddress represents a mail address
@@ -23,6 +23,7 @@ public final class MailAddress implements Serializable {
     /**
      * Constructs a newly allocated MailAddress object from a String representation
      * of a mail address
+     *
      * @param mailAddress mail address string
      * @throws InvalidMailAddressException thrown when mail address string is invalid
      */
@@ -41,7 +42,8 @@ public final class MailAddress implements Serializable {
 
     /**
      * Constructs a newly allocated MailAddress object from a local and a domain String
-     * @param local mail address's local part
+     *
+     * @param local  mail address's local part
      * @param domain mail address's domain part
      */
     public MailAddress(String local, String domain) {

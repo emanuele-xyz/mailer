@@ -41,7 +41,7 @@ public final class MailDeleteTask extends Task {
 
         switch (response.getType()) {
             case SUCCESS: {
-                logger.success("Successfully deleted mail");
+                logger.success("Mail successfully deleted");
                 onSuccess.exec();
             }
             break;

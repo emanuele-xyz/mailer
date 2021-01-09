@@ -12,8 +12,9 @@ public final class Utils {
 
     /**
      * Read an object of target type from an object input stream
+     *
      * @param target target type
-     * @param in source
+     * @param in     source
      * @return an object of type <code>target</code> if operation succeeded, null otherwise
      */
     public static <T> T read(Class<T> target, ObjectInputStream in) {
@@ -30,8 +31,9 @@ public final class Utils {
 
     /**
      * Try to cast an object to a target type
+     *
      * @param target target type
-     * @param obj the object to be cast
+     * @param obj    the object to be cast
      * @return the object after casting if the operation succeeds, null otherwise
      */
     public static <T> T tryCast(Class<T> target, Object obj) {
@@ -44,12 +46,13 @@ public final class Utils {
 
     /**
      * Cast an object to a target type
+     *
      * @param target the target type
-     * @param obj the object to be cast
-     * @throws ClassCastException thrown if cast fails
+     * @param obj    the object to be cast
      * @return the object after casting
+     * @throws ClassCastException thrown if cast fails
      */
-    public static <T> T cast(Class <T> target, Object obj) {
+    public static <T> T cast(Class<T> target, Object obj) {
         return target.cast(obj);
     }
 
