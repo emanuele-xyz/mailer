@@ -4,9 +4,12 @@ import javafx.beans.property.SimpleStringProperty;
 import mailer.Mail;
 import mailer.MailAddress;
 
+/**
+ * MailProperty is a custom property that represents a mail as a collection of properties
+ */
 public final class MailProperty {
 
-    private Mail mail = null;
+    private Mail mail;
     private final SimpleStringProperty subject;
     private final SimpleStringProperty from;
     private final SimpleStringProperty to;
@@ -22,6 +25,9 @@ public final class MailProperty {
         text = new SimpleStringProperty("");
     }
 
+    /**
+     * Clear the mail property resetting all fields to default values
+     */
     public void clear() {
         mail = null;
         subject.set("");
@@ -31,6 +37,10 @@ public final class MailProperty {
         text.set("");
     }
 
+    /**
+     * Initialize the mail property with a mail
+     * @param mail the mail we are initializing from
+     */
     public void select(Mail mail) {
         this.mail = mail;
         subject.set(mail.getSubject());
@@ -88,6 +98,9 @@ public final class MailProperty {
         return sb.toString();
     }
 
+    /**
+     * Get a string representation of a mail's to field
+     */
     private String getTo(Mail mail) {
         StringBuilder sb = new StringBuilder();
         MailAddress[] tos = mail.getTo();

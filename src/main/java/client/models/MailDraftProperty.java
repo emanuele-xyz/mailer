@@ -16,6 +16,9 @@ import mailer.MailAddress;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * MailDraftProperty models a draft for a mail
+ */
 public final class MailDraftProperty {
 
     private final MailAddress user;
@@ -32,14 +35,29 @@ public final class MailDraftProperty {
         clear = new SimpleBooleanProperty(false);
     }
 
+    /**
+     * Clear the draft
+     */
     public void clear() {
         subject.set("");
         tos.clear();
         text.set("");
+
+        // Why this obscenity?
+        // 'clear' is not used as a property, it's more like a trigger
         clear.set(true);
         clear.set(false);
     }
 
+    /**
+     * Create a new mail using the draft
+     * @return the newly created mail
+     * @throws InvalidMailAddressException thrown if there is at least one invalid mail address as a recipient
+     * @throws InvalidSubjectException thrown if the draft's subject is blank
+     * @throws InvalidTextException thrown if the draft's text is blank
+     * @throws InvalidRecipientsException thrown if there are no recipients
+     * @throws IllegalMailException thrown if sender mail address is also a recipient
+     */
     public Mail makeMail() throws InvalidMailAddressException, InvalidSubjectException, InvalidTextException, InvalidRecipientsException, IllegalMailException {
 
         String subject = this.subject.getValue().trim();
@@ -57,7 +75,7 @@ public final class MailDraftProperty {
             throw new InvalidTextException("Mail has no text");
         }
 
-        return new Mail(UUID.randomUUID(), user, recipients, new Date(), subject, text);
+        return new Mail(user, recipients, subject, text);
     }
 
     public void addRecipient() {
@@ -90,6 +108,13 @@ public final class MailDraftProperty {
         return clear;
     }
 
+    /**
+     * Get the list of recipients for this mail
+     * @return the recipients list
+     * @throws InvalidMailAddressException thrown if there is at least one invalid mail
+     * address as a recipient
+     * @throws InvalidRecipientsException thrown if there are duplicate recipients
+     */
     private List<MailAddress> getRecipients() throws InvalidMailAddressException, InvalidRecipientsException {
         List<String> addresses = tos.stream()
                 .map(StringPropertyBase::get)
@@ -109,6 +134,12 @@ public final class MailDraftProperty {
         return recipients;
     }
 
+    /**
+     * Remove duplicates from a list of string mail addresses
+     * @param addresses the list to remove duplicates from
+     * @return the list without duplicates
+     * @throws InvalidRecipientsException thrown if at least a duplicate is found
+     */
     private static List<String> getDistinct(List<String> addresses) throws InvalidRecipientsException {
         Set<String> set = new HashSet<>();
         for (String address : addresses) {

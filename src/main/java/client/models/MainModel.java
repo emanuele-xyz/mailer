@@ -29,6 +29,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Model of main ui view
+ */
 public final class MainModel {
 
     private static final int TASK_RUNNER_THREADS = Math.max(Constants.CORES / 2, 1);
@@ -37,10 +40,12 @@ public final class MainModel {
     private static final long MAIL_FETCH_PERIOD = 2;
     private static final TimeUnit MAIL_FETCH_TIME_UNIT = TimeUnit.SECONDS;
 
+    private final MailAddress user;
     private final StringPropertyLogger logger;
     private final MainModelStateProperty currentState;
-    private final MailAddress user;
+    /** true if a send task is currently running */
     private final SimpleBooleanProperty isSending;
+    /** true if a delete task is currently running */
     private final SimpleBooleanProperty isDeleting;
     private final ObservableList<Mail> mails;
     private final MailProperty selectedMail;
@@ -52,9 +57,9 @@ public final class MainModel {
     private final ScheduledExecutorService mailFetchExecutor;
 
     public MainModel(MailAddress user) throws UnknownHostException {
-        logger = new StringPropertyLogger(new SimpleStringProperty(), new SimpleStringProperty());
-        currentState = new MainModelStateProperty();
         this.user = user;
+        logger = new StringPropertyLogger();
+        currentState = new MainModelStateProperty();
         isSending = new SimpleBooleanProperty(false);
         isDeleting = new SimpleBooleanProperty(false);
         mails = FXCollections.observableArrayList();
@@ -69,12 +74,18 @@ public final class MainModel {
         startFetchMailsService();
     }
 
+    /**
+     * Close the model
+     */
     public void close() {
         serverDispatcher.shutdown();
         tasksExecutor.shutdown();
         mailFetchExecutor.shutdown();
     }
 
+    /**
+     * Issue a send mail task
+     */
     public void sendMail() {
         try {
             Mail mail = mailDraft.makeMail();
@@ -91,6 +102,9 @@ public final class MainModel {
         }
     }
 
+    /**
+     * Set up model for reply
+     */
     public void reply() {
         MailAddress from = selectedMail.getFromAddress();
         String subject = selectedMail.subjectProperty().get();
@@ -98,6 +112,9 @@ public final class MainModel {
         reply(subject, selectedMail.toString(), from);
     }
 
+    /**
+     * Set up model for reply all
+     */
     public void replyAll() {
         MailAddress from = selectedMail.getFromAddress();
         MailAddress[] to = selectedMail.getToAddresses();
@@ -106,6 +123,9 @@ public final class MainModel {
         reply(subject, selectedMail.toString(), from, to);
     }
 
+    /**
+     * Set up state for forward
+     */
     public void forward() {
         String subject = selectedMail.subjectProperty().get();
         String text = selectedMail.textProperty().get();
@@ -118,6 +138,9 @@ public final class MainModel {
         currentState.setComposing();
     }
 
+    /**
+     * Issue a delete mail task
+     */
     public void deleteMail() {
         Mail mail = selectedMail.getMail();
         if (mail == null) {
@@ -136,6 +159,9 @@ public final class MainModel {
         ));
     }
 
+    /**
+     * Clear mail draft
+     */
     public void clearDraft() {
         mailDraft.clear();
     }
@@ -180,13 +206,16 @@ public final class MainModel {
         return newMailsReceived;
     }
 
+    /**
+     * Start service that fetches mails periodically
+     */
     private void startFetchMailsService() {
         mailFetchExecutor.scheduleAtFixedRate(new MailsFetchTask(
                 serverDispatcher,
                 logger,
                 user.toString(),
                 receivedMails -> Platform.runLater(() -> {
-                    // Remove mails that for whatever reason we have and the server hasn't
+                    // Remove mails that, for whatever reason, we have and the server hasn't
                     // This is not impossible, we could issue and complete a mail delete request while we fetch mails
                     // This could lead to inconsistencies between client and server
                     List<Mail> toBeRemoved = mails.stream()
@@ -207,6 +236,14 @@ public final class MainModel {
         ), 0, MAIL_FETCH_PERIOD, MAIL_FETCH_TIME_UNIT);
     }
 
+    /**
+     * Set up main model for a reply.
+     * This is used to implement reply and reply all
+     * @param subject the subject of the mail we are replying to
+     * @param text the text of the mail we are replying to
+     * @param from the sender of the mail we are replying to
+     * @param recipients the recipients of the mail we are replying to
+     */
     private void reply(String subject, String text, MailAddress from, MailAddress... recipients) {
         if (from.equals(user)) {
             logger.error("Cannot reply to a mail that you have sent");
@@ -233,8 +270,12 @@ public final class MainModel {
         currentState.setComposing();
     }
 
-    // This should be called only in JavaFX thread since this method
-    // updates the ui
+    /**
+     * Callback used when mail is successfully deleted.
+     * This should be called only in JavaFX thread since this method updates
+     * properties bounded to the ui
+     * @param mail the deleted mail
+     */
     private void onMailDeleted(Mail mail) {
         mails.remove(mail);
         selectedMail.clear();

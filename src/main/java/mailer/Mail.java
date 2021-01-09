@@ -21,16 +21,16 @@ public final class Mail implements Serializable {
     private final String subject;
     private final String text;
 
-    public Mail(UUID id, MailAddress from, List<MailAddress> to, Date date, String subject, String text) throws IllegalMailException {
+    public Mail(MailAddress from, List<MailAddress> to, String subject, String text) throws IllegalMailException {
 
         if (to.contains(from)) {
             throw new IllegalMailException("Sender mail address is also a recipient");
         }
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.from = from;
         this.to = to;
-        this.date = date;
+        this.date = new Date();
         this.subject = subject;
         this.text = text;
     }

@@ -15,22 +15,39 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**
+ * ServerDispatcher dispatches messages to the server
+ */
 public final class ServerDispatcher {
 
     private final String hostname;
     private final ExecutorService exec;
 
+    /**
+     * Initializes a newly allocated ServerDispatcher object
+     * @throws UnknownHostException thrown if the local host name could not be
+     * resolved into an address
+     */
     public ServerDispatcher() throws UnknownHostException {
         hostname = InetAddress.getLocalHost().getHostName();
         exec = Executors.newFixedThreadPool(Constants.CORES);
     }
 
+    /**
+     * Shutdown the server dispatcher
+     */
     public void shutdown() {
         synchronized (exec) {
             exec.shutdown();
         }
     }
 
+    /**
+     * Send a message to a server
+     * @param message the message to be sent
+     * @param timeoutAfter socket timeout time
+     * @return a future to the server response message or null if something went wrong
+     */
     public Future<Message> sendToServer(Message message, int timeoutAfter) {
         Future<Message> result = null;
 
@@ -49,7 +66,7 @@ public final class ServerDispatcher {
                 }
 
             } catch (IOException e) {
-                // Input or output stream creation
+                // Input or output stream creation failed
 
                 try {
                     socket.close();

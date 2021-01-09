@@ -13,9 +13,9 @@ public final class StringPropertyLogger implements Logger {
     private final SimpleStringProperty successMessage;
     private final SimpleStringProperty errorMessage;
 
-    public StringPropertyLogger(SimpleStringProperty successMessage, SimpleStringProperty errorMessage) {
-        this.successMessage = successMessage;
-        this.errorMessage = errorMessage;
+    public StringPropertyLogger() {
+        this.successMessage = new SimpleStringProperty();
+        this.errorMessage = new SimpleStringProperty();
     }
 
     @Override
