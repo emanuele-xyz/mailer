@@ -1,6 +1,6 @@
 package client.exceptions;
 
-public class InvalidRecipientsException extends Exception {
+public final class InvalidRecipientsException extends Exception {
     public InvalidRecipientsException(String message) {
         super(message);
     }
