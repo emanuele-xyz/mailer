@@ -34,7 +34,8 @@ public final class ServerDispatcher {
     }
 
     /**
-     * Shutdown the server dispatcher
+     * Shutdown the server dispatcher.
+     * This will be called from other threads
      */
     public void shutdown() {
         synchronized (exec) {
