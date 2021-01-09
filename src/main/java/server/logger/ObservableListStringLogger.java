@@ -1,6 +1,7 @@
 package server.logger;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -10,8 +11,8 @@ public final class ObservableListStringLogger implements Logger {
 
     private final ObservableList<String> log;
 
-    public ObservableListStringLogger(ObservableList<String> log) {
-        this.log = log;
+    public ObservableListStringLogger() {
+        this.log = FXCollections.observableArrayList();
     }
 
     @Override

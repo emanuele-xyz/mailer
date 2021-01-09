@@ -18,7 +18,7 @@ public final class Model {
     private final ClientDispatcher clientDispatcher;
 
     public Model() throws IOException, MkdirException, InvalidMailAddressException {
-        logger = new ObservableListStringLogger(FXCollections.observableArrayList());
+        logger = new ObservableListStringLogger();
         // If ClientDispatcher creation fails, we are done
         clientDispatcher = new ClientDispatcher(logger);
     }
