@@ -46,7 +46,10 @@ public final class ClientDispatcher implements Runnable {
     public void close() {
         logger.print("Closing client dispatcher");
 
-        exec.shutdown();
+        synchronized (exec) {
+            exec.shutdown();
+        }
+
         try {
             // We don't need to synchronize the server socket since close() is thread safe
             serverSocket.close();
@@ -76,7 +79,11 @@ public final class ClientDispatcher implements Runnable {
                     ObjectOutputStream out = new ObjectOutputStream(incoming.getOutputStream());
                     ObjectInputStream in = new ObjectInputStream(incoming.getInputStream());
                     Runnable task = new ClientHandler(incoming, in, out, clientAddress, mailManager, logger);
-                    exec.submit(task);
+
+                    synchronized (exec) {
+                        exec.submit(task);
+                    }
+
                 } catch (IOException e) {
                     // Data stream initialization failed, we have to close the socket ourselves
                     // Socket timeout set method failed, we close the socket
