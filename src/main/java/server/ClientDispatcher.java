@@ -34,12 +34,20 @@ public final class ClientDispatcher implements Runnable {
 
     public ClientDispatcher(Logger logger) throws IOException, MkdirException, InvalidMailAddressException {
         this.logger = logger;
+
         // If we can't open the server socket, we are done
         serverSocket = new ServerSocket(Constants.SERVER_PORT);
-        // If we can't initialize the mail manager, we are done
-        mailManager = new MailManager();
-        // Be careful, we initialize exec last so that we don't
-        // have to shutdown exec if something goes wrong
+
+        // If we can't initialize the mail manager, close the socket
+        try {
+            mailManager = new MailManager();
+        } catch (MkdirException | InvalidMailAddressException e) {
+            serverSocket.close();
+            throw e;
+        }
+
+        // We initialize the service executor last so that we don't have
+        // to shut it down if something goes wrong
         exec = Executors.newFixedThreadPool(Constants.CORES);
     }
 

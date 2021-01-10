@@ -36,8 +36,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         Message msg = readMessage();
         if (msg == null) {
             // If we cannot read the message, try to send an error to the client
-            // If sendMessage fails, we can't do anything. Hence, we don't check the
-            // return value
+            // If sendMessage fails, we can't do anything. Hence, we don't check the return value
             sendMessage(new ErrorMessage("Unable to correctly read message"));
             logger.print("[%s] - error reading message");
             return;
@@ -85,7 +84,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
                 // If the server receives a message that it doesn't know how to handle it does nothing
                 // If not done by an attacker, this is a programmer error.
                 // Hence, in debug mode we crash the server
-                // If not debugging, we don't crash the server
+                // If not in debug mode, we don't crash the server
                 logger.print("[%s] - received unexpected '%s' message: do nothing", address, message.getType());
                 assert false;
             }
@@ -114,10 +113,10 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
             }
         } catch (NoSuchAddressException e) {
             logger.print("[%s] - %s", e.getMessage());
-            sendMessage(new ErrorMessage(String.format("Invalid mail address '%s'", mailDeleteMessage.getUser())));
+            sendMessage(new ErrorMessage(e.getMessage()));
         } catch (InvalidIDException e) {
             logger.print("[%s] - invalid mail id '%s'", address, e.getId());
-            sendMessage(new ErrorMessage("Invalid mail ID"));
+            sendMessage(new ErrorMessage(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -168,7 +167,7 @@ public final class ClientHandler extends ConnectionHandler implements Runnable {
         } catch (InvalidMailAddressException e) {
             // Mail address is invalid, send error message back to the client
             logger.print("[%s] - %s", address, e.getMessage());
-            sendMessage(new ErrorMessage(String.format("Invalid mail address '%s'", addressString)));
+            sendMessage(new ErrorMessage(e.getMessage()));
         } catch (NoSuchAddressException e) {
             // There is no account associated with mailAddress
             logger.print("[%s] - %s", address, e.getMessage());

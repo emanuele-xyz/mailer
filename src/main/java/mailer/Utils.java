@@ -62,7 +62,6 @@ public final class Utils {
         }
 
         T tmp = null;
-
         try {
             tmp = future.get();
         } catch (InterruptedException | ExecutionException e) {

@@ -25,26 +25,10 @@ public abstract class ConnectionHandler {
 
     /**
      * Close the connection
-     *
-     * <p>
-     * If closing the socket or the streams fails, the error is
-     * reported to standard error, close doesn't throw
-     * </p>
      */
     public final void closeConnection() {
         try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
+            // Closing the socket will also close it's input and output streams
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,15 +44,6 @@ public abstract class ConnectionHandler {
         return Utils.read(Message.class, in);
     }
 
-    // We check the sendMessage return value only in client code.
-    // Why is that? Because in server code, what can we do if sendMessage fails?
-    // We could try to resend the message, but what if it fails again?
-    // For this reason, in server code we try to send the message and if the send fails
-    // the client will timeout and retry later!
-    // In client code, however, we check for the return value, why?
-    // Because if we fail to send a message, it's useless to wait for a message that will never
-    // come, even if the connection will timeout. We stop what we were doing immediately
-
     /**
      * Send a message into socket output stream
      *
@@ -76,6 +51,15 @@ public abstract class ConnectionHandler {
      * @return true if the send was successful, false otherwise
      */
     protected final boolean sendMessage(Message message) {
+        // We check the sendMessage return value only in client code.
+        // Why is that? Because in server code, what can we do if sendMessage fails?
+        // We could try to resend the message, but what if it fails again?
+        // For this reason, in server code we try to send the message and if the send fails
+        // the client will timeout and retry later!
+        // In client code, however, we check for the return value, why?
+        // Because if we fail to send a message, it's useless to wait for a message that will never
+        // come, even if the connection will timeout. We stop what we were doing immediately
+
         boolean success = true;
 
         try {
@@ -98,7 +82,8 @@ public abstract class ConnectionHandler {
     protected final <T extends Message> T castMessage(Class<T> target, Message message) {
         T tmp = Utils.tryCast(target, message);
 
-        // If it's null there is a mismatch between message type and class. This is a bug.
+        // If it's null, it's reasonable to assume that there is a mismatch between message type and class.
+        // This is a bug.
         // Fix it in the appropriate message class!
         assert tmp != null;
 

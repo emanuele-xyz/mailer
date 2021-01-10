@@ -27,6 +27,23 @@ public final class LoginController {
         this.model = model;
 
         model.usernameProperty().bind(usernameTextField.textProperty());
+        usernameTextField.focusedProperty().addListener((__, ___, isFocused) -> {
+            if (isFocused) {
+                return;
+            }
+
+            String input = usernameTextField.getText();
+            if (input == null) {
+                return;
+            }
+
+            input = input.trim();
+            if (input.isEmpty()) {
+                return;
+            }
+
+            usernameTextField.textProperty().set(input);
+        });
 
         loginButton.disableProperty().bind(model.isLoggingInProperty());
         loginButton.setOnAction(e -> model.tryLogin());

@@ -41,7 +41,7 @@ public final class Account {
     public synchronized void send(Mail mail) {
         // Each mail has an unique id.
         // (Note that the same mail is stored in different places in different accounts!)
-        // Hence processing the same mail (since mails are unique) more than once sounds like an error.
+        // Hence processing the same mail (since mails are unique) more than once is an error.
         // But can we trust the client? Never trust the client! If we care about security
         // we should handle malicious clients that create mails with ids of previously processed mails.
         write(mail, outboxDir);
@@ -118,7 +118,7 @@ public final class Account {
         if (file.exists()) {
             // This should never happen, and if it does it means that our IDs are not unique!
             assert false;
-            throw new Error(String.format("file '%s' already exists", file.getName()));
+            throw new Error(String.format("Mail '%s' already exists", file.getName()));
         }
 
         try (PrintWriter out = new PrintWriter(file)) {

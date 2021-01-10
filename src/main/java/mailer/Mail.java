@@ -23,6 +23,15 @@ public final class Mail implements Serializable {
     private final String subject;
     private final String text;
 
+    /**
+     * Initialize a newly allocated Mail
+     *
+     * @param from    the sender
+     * @param to      the recipients
+     * @param subject the subject
+     * @param text    the text
+     * @throws IllegalMailException thrown if sender is also a recipient
+     */
     public Mail(MailAddress from, List<MailAddress> to, String subject, String text) throws IllegalMailException {
 
         if (to.contains(from)) {

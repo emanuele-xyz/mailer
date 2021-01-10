@@ -21,7 +21,7 @@ public final class Controller {
 
         this.model = model;
 
-        closeButton.setOnAction(e -> {
+        closeButton.setOnAction(__ -> {
             model.close();
 
             // Disable the close button so that the user cannot press it anymore
@@ -35,6 +35,6 @@ public final class Controller {
 
     public void setStage(Stage stage) {
         // Closing the window closes the model
-        stage.setOnCloseRequest(e -> model.close());
+        stage.setOnCloseRequest(__ -> model.close());
     }
 }
