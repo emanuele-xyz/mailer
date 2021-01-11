@@ -53,6 +53,7 @@ public final class PopupController {
 
     private void initPopupStage(Parent popup, Stage stage) {
         popupStage = new Stage();
+        popupStage.setTitle("New Mail!");
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.initOwner(stage);
         Scene scene = new Scene(popup);
